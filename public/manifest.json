@@ -1,0 +1,22 @@
+{
+  "name": "AWS SAA-C03 Study",
+  "short_name": "SAA Study",
+  "description": "AWS Solutions Architect Associate 2주 완성 학습 도구",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
