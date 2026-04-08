@@ -47,14 +47,19 @@ export default function MockExamStartPage() {
 
   function handleSelect(label: string) {
     const q = questions[currentIndex];
-    const isMulti = q.correct_answers.length > 1;
+    const expectedCount = detectMultiSelectCount(q.question_text);
+    const isMulti = expectedCount > 1 || q.correct_answers.length > 1;
+    const selectCount = Math.max(expectedCount, q.correct_answers.length);
     setAnswers((prev) => {
       const current = prev[currentIndex] || [];
       if (isMulti) {
-        const updated = current.includes(label)
-          ? current.filter((a) => a !== label)
-          : [...current, label];
-        return { ...prev, [currentIndex]: updated };
+        if (current.includes(label)) {
+          return { ...prev, [currentIndex]: current.filter((a) => a !== label) };
+        }
+        if (current.length >= selectCount) {
+          return { ...prev, [currentIndex]: [...current.slice(1), label] };
+        }
+        return { ...prev, [currentIndex]: [...current, label] };
       }
       return { ...prev, [currentIndex]: [label] };
     });
@@ -155,7 +160,9 @@ export default function MockExamStartPage() {
 
   const q = questions[currentIndex];
   const selected = answers[currentIndex] || [];
-  const isMulti = q.correct_answers.length > 1;
+  const expectedCount = detectMultiSelectCount(q.question_text);
+  const isMulti = expectedCount > 1 || q.correct_answers.length > 1;
+  const selectCount = Math.max(expectedCount, q.correct_answers.length);
   const isTimeWarning = timeLeft < 600; // 10분 미만
 
   return (
@@ -179,7 +186,7 @@ export default function MockExamStartPage() {
       {/* 문제 */}
       <div className="bg-card rounded-xl border border-border p-4 mb-3 mt-2">
         {isMulti && (
-          <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mb-2">복수 선택</span>
+          <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mb-2">{selectCount}개 선택</span>
         )}
         <p className="text-sm leading-relaxed whitespace-pre-line">{q.question_text}</p>
       </div>
@@ -258,6 +265,12 @@ export default function MockExamStartPage() {
       </div>
     </div>
   );
+}
+
+function detectMultiSelectCount(text: string): number {
+  if (/3개|세\s*가지|THREE|three|choose\s*3/i.test(text)) return 3;
+  if (/2개|두\s*개|두\s*가지|TWO|two|choose\s*2/i.test(text)) return 2;
+  return 1;
 }
 
 function guessDomain(q: Question): string {

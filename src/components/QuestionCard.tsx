@@ -20,6 +20,7 @@ export default function QuestionCard({
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [explanationTab, setExplanationTab] = useState<"explanation" | "detail" | "services">("explanation");
   const timerRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
 
@@ -28,6 +29,7 @@ export default function QuestionCard({
     setSelectedAnswers([]);
     setSubmitted(false);
     setShowExplanation(false);
+    setExplanationTab("explanation");
     startTimeRef.current = Date.now();
   }, [question.id]);
 
@@ -40,14 +42,24 @@ export default function QuestionCard({
     return () => clearInterval(interval);
   }, [submitted]);
 
-  const isMultiSelect = question.correct_answers.length > 1;
+  // 문제 텍스트에서 복수선택 감지
+  const expectedSelectCount = detectMultiSelectCount(question.question_text);
+  const isMultiSelect = expectedSelectCount > 1 || question.correct_answers.length > 1;
+  const selectCount = Math.max(expectedSelectCount, question.correct_answers.length);
 
   function handleSelect(label: string) {
     if (submitted) return;
     if (isMultiSelect) {
-      setSelectedAnswers((prev) =>
-        prev.includes(label) ? prev.filter((a) => a !== label) : [...prev, label]
-      );
+      setSelectedAnswers((prev) => {
+        if (prev.includes(label)) {
+          return prev.filter((a) => a !== label);
+        }
+        // 선택 개수 제한
+        if (prev.length >= selectCount) {
+          return [...prev.slice(1), label];
+        }
+        return [...prev, label];
+      });
     } else {
       setSelectedAnswers([label]);
     }
@@ -98,7 +110,7 @@ export default function QuestionCard({
       <div className="bg-card rounded-xl border border-border p-4 mb-4">
         {isMultiSelect && (
           <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mb-2">
-            복수 선택
+            {selectCount}개 선택
           </span>
         )}
         <p className="text-sm leading-relaxed whitespace-pre-line">{question.question_text}</p>
@@ -173,37 +185,116 @@ export default function QuestionCard({
             {isCorrect ? "정답입니다!" : `오답입니다. 정답: ${question.correct_answers.join(", ")}`}
           </div>
 
-          {/* 풀이 토글 */}
-          {question.explanation && (
-            <button
-              onClick={() => setShowExplanation(!showExplanation)}
-              className="w-full text-left bg-gray-50 rounded-xl border border-border p-3 mb-3"
-            >
-              <div className="flex justify-between items-center">
+          {/* 풀이 해설 */}
+          {(question.explanation || question.detailed_explanation) && (
+            <div className="bg-gray-50 rounded-xl border border-border mb-3 overflow-hidden">
+              {/* 토글 헤더 */}
+              <button
+                onClick={() => setShowExplanation(!showExplanation)}
+                className="w-full flex justify-between items-center p-3"
+              >
                 <span className="text-sm font-medium">풀이 보기</span>
                 <span className="text-xs text-muted">{showExplanation ? "접기" : "펼치기"}</span>
-              </div>
+              </button>
+
               {showExplanation && (
-                <div className="mt-3 text-sm text-gray-700 leading-relaxed whitespace-pre-line border-t border-border pt-3">
-                  {question.explanation}
-                  {question.detailed_explanation && (
-                    <div className="mt-3 pt-3 border-t border-border text-xs text-gray-600">
-                      {question.detailed_explanation}
+                <div className="border-t border-border">
+                  {/* 탭 */}
+                  <div className="flex border-b border-border">
+                    <button
+                      onClick={() => setExplanationTab("explanation")}
+                      className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                        explanationTab === "explanation"
+                          ? "text-primary border-b-2 border-primary"
+                          : "text-muted"
+                      }`}
+                    >
+                      정답 해설
+                    </button>
+                    <button
+                      onClick={() => setExplanationTab("detail")}
+                      disabled={!question.detailed_explanation}
+                      className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                        explanationTab === "detail"
+                          ? "text-primary border-b-2 border-primary"
+                          : !question.detailed_explanation
+                          ? "text-gray-300"
+                          : "text-muted"
+                      }`}
+                    >
+                      상세 풀이
+                    </button>
+                    <button
+                      onClick={() => setExplanationTab("services")}
+                      disabled={question.related_services.length === 0}
+                      className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                        explanationTab === "services"
+                          ? "text-primary border-b-2 border-primary"
+                          : question.related_services.length === 0
+                          ? "text-gray-300"
+                          : "text-muted"
+                      }`}
+                    >
+                      관련 서비스
+                    </button>
+                  </div>
+
+                  {/* 탭 콘텐츠 */}
+                  <div className="p-3">
+                    {explanationTab === "explanation" && (
+                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                        {question.explanation || "해설이 없습니다."}
+                      </div>
+                    )}
+
+                    {explanationTab === "detail" && (
+                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                        {question.detailed_explanation || (
+                          <div className="text-center text-muted py-4">
+                            <p className="mb-2">상세 풀이가 아직 없습니다.</p>
+                            {question.source_url && (
+                              <a
+                                href={question.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary text-xs font-medium"
+                              >
+                                원본 블로그에서 확인 &rarr;
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {explanationTab === "services" && (
+                      <div className="space-y-2">
+                        {question.related_services.map((svc) => (
+                          <div key={svc} className="flex items-center gap-2">
+                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
+                              {svc}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 원본 링크 */}
+                  {question.source_url && (
+                    <div className="border-t border-border p-2">
+                      <a
+                        href={question.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center text-xs text-primary font-medium py-1"
+                      >
+                        원본 풀이 보기 (Tistory) &rarr;
+                      </a>
                     </div>
                   )}
                 </div>
               )}
-            </button>
-          )}
-
-          {/* 관련 서비스 */}
-          {question.related_services.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {question.related_services.map((svc) => (
-                <span key={svc} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
-                  {svc}
-                </span>
-              ))}
             </div>
           )}
 
@@ -217,4 +308,10 @@ export default function QuestionCard({
       )}
     </div>
   );
+}
+
+function detectMultiSelectCount(text: string): number {
+  if (/3개|세\s*가지|THREE|three|choose\s*3/i.test(text)) return 3;
+  if (/2개|두\s*개|두\s*가지|TWO|two|choose\s*2/i.test(text)) return 2;
+  return 1;
 }

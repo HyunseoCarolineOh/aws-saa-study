@@ -1,37 +1,102 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Question } from "@/lib/types";
 import QuestionCard from "@/components/QuestionCard";
+import {
+  getQuizProgress,
+  saveQuizProgress,
+  clearQuizProgress,
+  getTodayReviewQuestionIds,
+} from "@/lib/store";
+import Link from "next/link";
 
-export default function QuestionsPage() {
+function QuestionsContent() {
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode") === "review" ? "review" : "normal";
+
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadQuestions();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   async function loadQuestions() {
     try {
       const res = await fetch("/api/questions");
       const data = await res.json();
-      // 랜덤 셔플
-      const shuffled = [...data.questions].sort(() => Math.random() - 0.5);
-      setQuestions(shuffled);
+
+      if (mode === "review") {
+        // 복습 모드: 오늘 복습할 문제만 필터링
+        const reviewIds = getTodayReviewQuestionIds();
+        const reviewQuestions = (data.questions as Question[]).filter((q) =>
+          reviewIds.includes(q.id)
+        );
+        const shuffled = [...reviewQuestions].sort(() => Math.random() - 0.5);
+        setQuestions(shuffled);
+        setCurrentIndex(0);
+      } else {
+        // 일반 모드: 저장된 진행 상태 복원 or 새로 셔플
+        const saved = getQuizProgress();
+        const allQuestions = data.questions as Question[];
+
+        if (saved && saved.mode === "normal" && saved.questionIds.length > 0) {
+          // 저장된 순서로 문제 복원
+          const questionMap = new Map(allQuestions.map((q) => [q.id, q]));
+          const restored = saved.questionIds
+            .map((id) => questionMap.get(id))
+            .filter((q): q is Question => !!q);
+
+          if (restored.length > 0) {
+            setQuestions(restored);
+            setCurrentIndex(Math.min(saved.currentIndex, restored.length - 1));
+          } else {
+            // 저장된 ID가 현재 데이터와 안 맞으면 새로 셔플
+            startFresh(allQuestions);
+          }
+        } else {
+          startFresh(allQuestions);
+        }
+      }
     } catch {
-      // fallback: 샘플 데이터
       setQuestions(getSampleQuestions());
     }
     setLoading(false);
   }
 
+  function startFresh(allQuestions: Question[]) {
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    setQuestions(shuffled);
+    setCurrentIndex(0);
+    saveQuizProgress({
+      questionIds: shuffled.map((q) => q.id),
+      currentIndex: 0,
+      mode: "normal",
+    });
+  }
+
+  function handleRestart() {
+    clearQuizProgress();
+    loadQuestions();
+  }
+
   const handleNext = useCallback(() => {
     if (currentIndex < questions.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      if (mode === "normal") {
+        saveQuizProgress({
+          questionIds: questions.map((q) => q.id),
+          currentIndex: nextIndex,
+          mode: "normal",
+        });
+      }
     }
-  }, [currentIndex, questions.length]);
+  }, [currentIndex, questions, mode]);
 
   if (loading) {
     return (
@@ -44,18 +109,66 @@ export default function QuestionsPage() {
   if (questions.length === 0) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">문제가 없습니다.</p>
+        {mode === "review" ? (
+          <>
+            <p className="text-lg mb-2">복습할 문제가 없습니다</p>
+            <p className="text-sm text-muted mb-4">오늘 복습 예정인 문제가 없거나, 아직 틀린 문제가 없습니다.</p>
+            <Link href="/review" className="text-primary font-medium text-sm">
+              오답노트로 돌아가기 &rarr;
+            </Link>
+          </>
+        ) : (
+          <p className="text-muted">문제가 없습니다.</p>
+        )}
       </div>
     );
   }
 
   return (
-    <QuestionCard
-      question={questions[currentIndex]}
-      questionIndex={currentIndex}
-      totalQuestions={questions.length}
-      onNext={handleNext}
-    />
+    <div>
+      {/* 복습 모드 배너 */}
+      {mode === "review" && (
+        <div className="max-w-lg mx-auto px-4 pt-2">
+          <div className="bg-orange-50 border border-orange-200 rounded-xl px-4 py-2 text-sm text-orange-800 flex justify-between items-center">
+            <span>복습 모드</span>
+            <span>{questions.length}문제</span>
+          </div>
+        </div>
+      )}
+
+      {/* 처음부터 버튼 (일반 모드에서만) */}
+      {mode === "normal" && currentIndex > 0 && (
+        <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end">
+          <button
+            onClick={handleRestart}
+            className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
+          >
+            처음부터 다시 풀기
+          </button>
+        </div>
+      )}
+
+      <QuestionCard
+        question={questions[currentIndex]}
+        questionIndex={currentIndex}
+        totalQuestions={questions.length}
+        onNext={handleNext}
+      />
+    </div>
+  );
+}
+
+export default function QuestionsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-lg mx-auto px-4 pt-20 text-center">
+          <p className="text-muted">문제 로딩 중...</p>
+        </div>
+      }
+    >
+      <QuestionsContent />
+    </Suspense>
   );
 }
 

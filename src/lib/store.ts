@@ -11,7 +11,15 @@ const STORAGE_KEYS = {
   REVIEW_SCHEDULE: "saa_review_schedule",
   DAILY_STATS: "saa_daily_stats",
   STUDY_START: "saa_study_start",
+  QUIZ_PROGRESS: "saa_quiz_progress",
 } as const;
+
+// 퀴즈 진행 상태
+export interface QuizProgress {
+  questionIds: string[];
+  currentIndex: number;
+  mode: "normal" | "review";
+}
 
 function getFromStorage<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -125,6 +133,36 @@ function updateDailyStats(isCorrect: boolean) {
   if (isCorrect) todayStat.correct_count += 1;
 
   setToStorage(STORAGE_KEYS.DAILY_STATS, stats);
+}
+
+// 퀴즈 진행 상태 관리
+export function getQuizProgress(): QuizProgress | null {
+  return getFromStorage<QuizProgress | null>(STORAGE_KEYS.QUIZ_PROGRESS, null);
+}
+
+export function saveQuizProgress(progress: QuizProgress) {
+  setToStorage(STORAGE_KEYS.QUIZ_PROGRESS, progress);
+}
+
+export function clearQuizProgress() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
+}
+
+// 오답 요약 (문제별 틀린 횟수, 마지막 시도)
+export function getWrongAttemptsSummary(): { questionId: string; lastAttemptAt: string; attemptCount: number }[] {
+  const attempts = getAttempts();
+  const wrongMap = new Map<string, { lastAttemptAt: string; attemptCount: number }>();
+  for (const a of attempts) {
+    if (!a.is_correct) {
+      const existing = wrongMap.get(a.question_id);
+      wrongMap.set(a.question_id, {
+        lastAttemptAt: a.attempted_at > (existing?.lastAttemptAt || "") ? a.attempted_at : existing?.lastAttemptAt || a.attempted_at,
+        attemptCount: (existing?.attemptCount || 0) + 1,
+      });
+    }
+  }
+  return [...wrongMap.entries()].map(([questionId, data]) => ({ questionId, ...data }));
 }
 
 // 연속 학습일
