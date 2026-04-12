@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import type { Question, ServiceStats } from "@/lib/types";
+import { getAllServiceStats } from "@/lib/store";
+import { getDataServiceNames } from "@/lib/serviceMap";
 
 interface AWSService {
   name: string;
@@ -626,10 +630,27 @@ const AWS_SERVICES: AWSCategory[] = [
   ]},
 ];
 
+// 개념 페이지에 있는 모든 서비스명 추출
+const ALL_CONCEPT_NAMES = AWS_SERVICES.flatMap((cat) =>
+  cat.services.map((svc) => svc.name)
+);
+
 export default function ConceptsPage() {
   const [search, setSearch] = useState("");
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [expandedService, setExpandedService] = useState<string | null>(null);
+  const [statsMap, setStatsMap] = useState<Map<string, ServiceStats>>(new Map());
+
+  useEffect(() => {
+    fetch("/api/questions")
+      .then((res) => res.json())
+      .then((data) => {
+        const questions = data.questions as Question[];
+        const stats = getAllServiceStats(questions, getDataServiceNames, ALL_CONCEPT_NAMES);
+        setStatsMap(stats);
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredCategories = AWS_SERVICES.map((cat) => ({
     ...cat,
@@ -676,6 +697,8 @@ export default function ConceptsPage() {
                 {cat.services.map((svc) => {
                   const hasDetail = !!svc.description;
                   const isExpanded = expandedService === svc.name;
+                  const stats = statsMap.get(svc.name);
+                  const hasQuestions = stats && stats.totalQuestions > 0;
                   return (
                     <div key={svc.name} className="border-b border-border last:border-b-0">
                       {/* 서비스 헤더 */}
@@ -684,7 +707,7 @@ export default function ConceptsPage() {
                         className={`w-full px-4 py-3 text-left ${hasDetail ? "cursor-pointer" : "cursor-default"}`}
                       >
                         <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-sm text-primary">{svc.name}</p>
                             {svc.frequency && svc.frequency >= 30 && (
                               <span className="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-medium">
@@ -696,6 +719,11 @@ export default function ConceptsPage() {
                                 상세
                               </span>
                             )}
+                            {hasQuestions && stats.solvedCount > 0 && (
+                              <span className="text-[10px] bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-medium">
+                                {stats.solvedCount}/{stats.totalQuestions} ({stats.accuracy}%)
+                              </span>
+                            )}
                           </div>
                           {svc.compare && (
                             <span className="text-[10px] text-muted flex-shrink-0">vs {svc.compare}</span>
@@ -703,6 +731,17 @@ export default function ConceptsPage() {
                         </div>
                         <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">{svc.summary}</p>
                       </button>
+                      {/* 관련 문제 풀기 링크 */}
+                      {hasQuestions && (
+                        <div className="px-4 pb-2">
+                          <Link
+                            href={`/questions?service=${encodeURIComponent(svc.name)}`}
+                            className="inline-block text-[11px] text-primary font-medium hover:underline"
+                          >
+                            관련 문제 풀기 ({stats.totalQuestions}문제) &rarr;
+                          </Link>
+                        </div>
+                      )}
 
                       {/* 상세 정보 */}
                       {isExpanded && hasDetail && (

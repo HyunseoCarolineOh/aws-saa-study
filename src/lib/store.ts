@@ -3,7 +3,7 @@
  * Supabase 연동 전까지 로컬에서 학습 데이터 관리
  */
 
-import type { Attempt, ReviewSchedule, DailyStats } from "./types";
+import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats } from "./types";
 import { sm2, getQuality } from "./sm2";
 
 const STORAGE_KEYS = {
@@ -18,7 +18,8 @@ const STORAGE_KEYS = {
 export interface QuizProgress {
   questionIds: string[];
   currentIndex: number;
-  mode: "normal" | "review";
+  mode: "normal" | "review" | "service";
+  serviceName?: string;
 }
 
 function getFromStorage<T>(key: string, fallback: T): T {
@@ -187,4 +188,51 @@ export function getStreak(): number {
   }
 
   return streak;
+}
+
+// 서비스별 통계
+export function getAllServiceStats(
+  allQuestions: Question[],
+  getNames: (conceptName: string) => string[],
+  conceptServiceNames: string[]
+): Map<string, ServiceStats> {
+  const attempts = getAttempts();
+
+  // 문제 ID → 최신 시도 매핑
+  const latestAttempts = new Map<string, Attempt>();
+  for (const a of attempts) {
+    const existing = latestAttempts.get(a.question_id);
+    if (!existing || a.attempted_at > existing.attempted_at) {
+      latestAttempts.set(a.question_id, a);
+    }
+  }
+
+  const result = new Map<string, ServiceStats>();
+
+  for (const conceptName of conceptServiceNames) {
+    const dataNames = getNames(conceptName);
+    const serviceQuestions = allQuestions.filter((q) =>
+      q.related_services.some((s) => dataNames.includes(s))
+    );
+
+    let solvedCount = 0;
+    let correctCount = 0;
+    for (const q of serviceQuestions) {
+      const attempt = latestAttempts.get(q.id);
+      if (attempt) {
+        solvedCount++;
+        if (attempt.is_correct) correctCount++;
+      }
+    }
+
+    result.set(conceptName, {
+      serviceName: conceptName,
+      totalQuestions: serviceQuestions.length,
+      solvedCount,
+      correctCount,
+      accuracy: solvedCount > 0 ? Math.round((correctCount / solvedCount) * 100) : 0,
+    });
+  }
+
+  return result;
 }

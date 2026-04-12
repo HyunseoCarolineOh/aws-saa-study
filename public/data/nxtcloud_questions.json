@@ -1,7 +1,7 @@
 {
   "source": "nxtcloud_pacloud_tistory",
   "exam": "AWS SAA-C03",
-  "total_count": 469,
+  "total_count": 468,
   "crawled_at": "2026-04-08 19:13:03",
   "questions": [
     {
@@ -2452,16 +2452,27 @@
         },
         {
           "label": "E",
-          "text": "Amazon Translate를 사용하여 모든 언어의 텍스트를 영어로 번역합니다.\n\nF. Amazon Comprehend를 사용하여 감정 분석 보고서를 생성합니다."
+          "text": "Amazon Translate를 사용하여 모든 언어의 텍스트를 영어로 번역합니다."
+        },
+        {
+          "label": "F",
+          "text": "Amazon Comprehend를 사용하여 감정 분석 보고서를 생성합니다."
         }
       ],
       "correct_answers": [
         "D",
-        "E"
+        "E",
+        "F"
       ],
       "explanation": "이 문제는 음성 데이터(오디오)를 텍스트로 변환하고, 이를 다시 영어로 번역한 뒤, 최종적으로 텍스트의 감정을 분석하는 파이프라인을 구축하는 능력을 묻습니다. 핵심은 각 작업에 맞는 전용 AI 서비스를 선택하는 것입니다. Amazon Transcribe는 음성을 텍스트로 변환하고, Amazon Translate는 다국어 번역을 수행하며, Amazon Comprehend는 텍스트 내의 감정을 분석합니다. 이 서비스들은 모두 완전 관리형이므로 모델을 직접 유지 관리할 필요가 없습니다.",
       "detailed_explanation": "1.  문제의 요구사항 분석하기\n\n고객 서비스 통화 녹음(오디오)을 처리 가능한 데이터 형식으로 변환\n\n다국어(4개 이상) 통화 내용을 영어로 일관되게 번역\n\n번역된 텍스트에서 긍정/부정 등의 감정을 분석하여 보고서를 작성\n\nML 모델을 직접 유지 관리할 리소스가 없으므로 완전 관리형 AI 서비스를 사용\n\n2. 관련 AWS 서비스 생각하기\n\nAmazon Transcribe :\n음성 인식(ASR) 서비스로, 오디오 파일이나 실시간 음성을 텍스트로 변환합니다. 다양한 언어를 지원하며 화자 분리 기능을 제공하여 통화 분석에 최적입니다.\n\nAmazon Translate :\n신경망 기계 번역 서비스로, 빠르고 정확한 언어 번역을 제공합니다. 다국어 고객 지원 데이터를 영어로 통합하는 데 사용됩니다.\n\nAmazon Comprehend :\n자연어 처리(NLP) 서비스입니다. 텍스트에서 인사이트를 추출하며, 특히 감정 분석 기능을 통해 고객의 통화 태도가 어떠했는지 파악할 수 있습니다.\n\nAmazon Polly :\n텍스트를 자연스러운 음성으로 변환하는(TTS) 서비스입니다. 본 문제의 요구사항(음성 -> 텍스트)과는 반대의 기능을 수행합니다.\n\nAmazon Lex :\n대화형 인터페이스(챗봇)를 구축하는 서비스입니다. 음성이나 텍스트를 통해 사용자와 대화하는 로직을 만들 때 사용됩니다.\n\n3. 선택지 분석하기\n\nA. Amazon Comprehend를 사용하여 오디오 녹음을 영어로 번역하십시오.\n\n→\nComprehend는 텍스트 분석 서비스이며 번역 기능을 수행하지 않습니다.\n\nB. Amazon Lex를 사용하여 작성된 감정 분석 보고서를 생성합니다.\n\n→\nLex는 대화형 챗봇 구축용이며, 기존 녹음 파일의 사후 감정 분석 보고서 작성에는 적합하지 않습니다.\n\nC. Amazon Polly를 사용하여 오디오 녹음을 텍스트로 변환합니다.\n\n→\nPolly는 텍스트를 음성으로 바꾸는 도구입니다. 오디오를 텍스트로 바꾸는 것은 Transcribe의 역할입니다.\n\nD. Amazon Transcribe를 사용하여 모든 언어의 오디오 녹음을 텍스트로 변환합니다.\n\n→\n음성 기반 데이터를 텍스트 기반 분석이 가능하도록 만드는 필수적인 첫 번째 단계입니다.\n\nE. Amazon Translate를 사용하여 모든 언어의 텍스트를 영어로 번역합니다.\n\n→\n요구사항에 명시된 영어 번역을 수행하기 위한 가장 효율적인 방법입니다.\n\nF. Amazon Comprehend를 사용하여 감정 분석 보고서를 생성합니다.\n\n→\n번역된 텍스트에서 감정(Sentiment) 데이터를 추출하여 최종 보고서를 만드는 마지막 단계입니다.",
-      "related_services": [],
+      "related_services": [
+        "Comprehend",
+        "Lex",
+        "Polly",
+        "Transcribe",
+        "Translate"
+      ],
       "global_number": 66
     },
     {
@@ -8337,40 +8348,6 @@
         "EC2"
       ],
       "global_number": 226
-    },
-    {
-      "post_number": 93,
-      "question_number_in_post": 2,
-      "source_url": "https://pacloud.tistory.com/151",
-      "question_text": ". 관련 AWS 서비스 생각하기\n\nAmazon EC2 Auto Scaling은 실행 중인 EC2 인스턴스 수를 동적으로 조정하여 애플리케이션의 가용성을 유지하고 비용을 최적화할 수 있게 해주는 서비스입니다. 다양한 조건(CPU 사용량, 네트워크 트래픽 등)을 모니터링하여 인스턴스 수를 자동으로 늘리거나 줄일 수 있습니다. Auto Scaling은 여러 가지 조정 정책을 지원합니다.\n\n대상 추적 조정 정책은 특정 지표(예: CPU 사용량)를 지정된 대상 값(예: 60%)으로 유지하도록 인스턴스 수를 동적으로 조정합니다. 대상 추적은 실시간 지표에 따라 인스턴스를 빠르게 추가하거나 제거하므로 변화하는 부하에 효과적으로 대응할 수 있습니다. 또한, 휴지 기간을 짧게 설정하여 신속한 확장과 축소가 가능합니다.\n\n단계 조정 정책은 단계별로 정의된 임계값에 따라 인스턴스 수를 조정합니다. 예를 들어, CPU 사용량이 70%를 초과하면 2개의 인스턴스를 추가하고, 20% 미만이면 1개의 인스턴스를 제거하는 식입니다. 단계 조정은 부하 변화에 즉각적으로 대응하기 어려울 수 있습니다.\n\n3.",
-      "options": [
-        {
-          "label": "A",
-          "text": "사무실이 열리기 직전에 원하는 수용 인원을 20명으로 설정하는 예약 작업을 구현합니다.\n\n→ 예약 작업으로는 실시간 부하 변화에 유연하게 대응할 수 없어 비효율적입니다."
-        },
-        {
-          "label": "B",
-          "text": "더 낮은 CPU 임계값에서 트리거되는 단계 조정 작업을 구현하고 휴지 기간을 줄입니다.\n\n→ 단계 조정은 지표 변화에 따라 인스턴스 수를 점진적으로 늘리므로 부하 급증 시 즉각적인 대응이 어렵습니다."
-        },
-        {
-          "label": "C",
-          "text": "더 낮은 CPU 임계값에서 트리거되는 대상 추적 작업을 구현하고 휴지 기간을 줄입니다.\n\n→ 더 낮은 CPU 임계값에서 트리거되는 대상 추적 작업을 구현하고 휴지 기간을 줄이면 실시간 부하 변화에 따라 인스턴스 수를 신속하게 조정할 수 있어 애플리케이션 성능을 개선할 수 있습니다."
-        },
-        {
-          "label": "D",
-          "text": "사무실이 열리기 직전에 최소 및 최대 수용 인원을 20명으로 설정하는 예약 조치를 구현합니다.\n\n→ 예약 조치도 실시간 부하 변화에 유연하게 대응할 수 없어 비효율적입니다.\n\n\n\n이어서 다음 문제입니다."
-        }
-      ],
-      "correct_answers": [],
-      "explanation": "",
-      "detailed_explanation": "1.  문제의 요구사항 분석하기\n\n새로운 날씨 이벤트 기록 시 4개 내부 팀에 경고 전송\n\n기존 애플리케이션 성능에 영향 없어야 함\n\n2. 관련 AWS 서비스 생각하기\n\nAmazon DynamoDB는 완전 관리형 NoSQL 데이터베이스 서비스로, 높은 성능과 확장성을 제공합니다. DynamoDB 스트림을 활성화하면 테이블의 데이터 변경 사항(새 레코드 추가, 레코드 수정 또는 삭제)이 자동으로 캡처되어 다른 AWS 서비스와 통합할 수 있습니다.\n\n\n\nAmazon SNS(Simple Notification Service)는 메시지 전송 서비스로, 주제를 생성하고 여러 구독자에게 메시지를 동시에 배포할 수 있습니다. SNS 주제는 DynamoDB 스트림과 통합하여 데이터 변경 이벤트를 구독자에게 전달할 수 있습니다.\n\n\n\nAWS Lambda는 서버리스 컴퓨팅 서비스로, 이벤트 소스(예: DynamoDB 스트림)에 의해 트리거되어 실행됩니다. Lambda 함수를 구성하여 DynamoDB 스트림에서 데이터 변경 이벤트를 처리하고 SNS 주제에 메시지를 게시할 수 있습니다.\n\n3. 선택지 분석하기\n\nA. DynamoDB 트랜잭션을 사용하여 새 이벤트 데이터를 테이블에 씁니다. 내부 팀에 알리도록 트랜잭션을 구성합니다.\n\n→ DynamoDB 트랜잭션은 단일 파티션 키 값에서만 작동하므로 요구사항을 충족시키기에 적절하지 않습니다.\n\n\n\nB. 현재 애플리케이션이 4개의 Amazon Simple Notification Service(Amazon SNS) 주제에 메시지를 게시하도록 합니다. 각 팀이 하나의 주제를 구독하도록 합니다.\n\n→ 여러 개의 주제를 사용하면 관리 오버헤드가 증가합니다.\n\n\n\nC. 테이블에서 Amazon DynamoDB 스트림을 활성화합니다. 트리거를 사용하여 팀이 구독할 수 있는 단일 Amazon Simple Notification Service(Amazon SNS) 주제에 씁니다.\n\n→ DynamoDB 스트림을 활성화하고 트리거(예: Lambda 함수)를 사용하여 단일 SNS 주제에 메시지를 보내면 현재 애플리케이션에 영향을 주지 않으면서도 요구사항을 충족할 수 있습니다.\n\n\n\nD. 각 레코드에 사용자 정의 속성을 추가하여 새 항목에 플래그를 지정합니다. 새 항목이 있는지 매분 테이블을 스캔하고 팀이 구독할 수 있는 Amazon Simple Queue Service (Amazon SQS) 대기열에 알리는 cron 작업을 작성합니다.\n\n→ 테이블 스캔은 비효율적이며, 개별 항목 확인 및 cron 작업 유지로 인해 운영 오버헤드가 증가합니다.",
-      "related_services": [
-        "DynamoDB",
-        "Lambda",
-        "SNS",
-        "SQS"
-      ],
-      "global_number": 227
     },
     {
       "post_number": 93,
@@ -16968,7 +16945,7 @@
       "post_number": 14,
       "question_number_in_post": 2,
       "source_url": "https://pacloud.tistory.com/59",
-      "question_text": ".\n\nAmazon EC2 인스턴스에서 호스팅되는 애플리케이션은 Amazon S3 버킷에 엑세스해야 합니다. 트래픽이 인터넷을 통과하면 안됩니다.\n\n솔루션 설계자는 이러한 요구 사항을 충족하기 위해 엑세스를 어떻게 구성해야 합니까?",
+      "question_text": "Amazon EC2 인스턴스에서 호스팅되는 애플리케이션은 Amazon S3 버킷에 엑세스해야 합니다. 트래픽이 인터넷을 통과하면 안됩니다.\n\n솔루션 설계자는 이러한 요구 사항을 충족하기 위해 엑세스를 어떻게 구성해야 합니까?",
       "options": [
         {
           "label": "A",
@@ -17008,7 +16985,7 @@
       "post_number": 14,
       "question_number_in_post": 3,
       "source_url": "https://pacloud.tistory.com/59",
-      "question_text": ".\n\n회사는 ap-southeast-3 리전의 Amazon Aurora PostgreSQL 데이터베이스에 기밀 데이터를 저장합니다. 데이터베이스는 AWS Key Management Service(AWS KMS) 고객 관리형 키로 암호화합니다. 이 회사는 최근에 인수되었으며 ap-southeast-3에서 인수 회사의 AWS 계정과 데이터베이스 백업을 안전하게 공유해야 합니다.\n\n솔루션 설계자는 이러한 요구 사항을 충족하기 위해 무엇을 해야합니까?",
+      "question_text": "회사는 ap-southeast-3 리전의 Amazon Aurora PostgreSQL 데이터베이스에 기밀 데이터를 저장합니다. 데이터베이스는 AWS Key Management Service(AWS KMS) 고객 관리형 키로 암호화합니다. 이 회사는 최근에 인수되었으며 ap-southeast-3에서 인수 회사의 AWS 계정과 데이터베이스 백업을 안전하게 공유해야 합니다.\n\n솔루션 설계자는 이러한 요구 사항을 충족하기 위해 무엇을 해야합니까?",
       "options": [
         {
           "label": "A",
@@ -17032,7 +17009,10 @@
       ],
       "explanation": "고객 관리형 KMS 키로 암호화된 스냅샷을 안전하게 공유하기 위해서는, 대상 AWS 계정(여기서는 인수 회사)에 해당 KMS 키에 대한 접근 권한을 부여해야 하기 때문입니다. 이는 KMS 키 정책에 대상 계정을 추가함으로써 달성할 수 있습니다.",
       "detailed_explanation": "NAT 게이트웨이\n\n→ 프라이빗 서브넷의 리소스가 인터넷이나 다른 AWS 서비스에 안전하게 접속할 수 있도록 해주는 관리형 서비스\n\n\n\nAWS Site-to-Site VPN\n\n→ 회사의 네트워크와 AWS 클라우드 사이에 안전한 암호화 통신 터널을 만들어주는 서비스",
-      "related_services": [],
+      "related_services": [
+        "Aurora",
+        "KMS"
+      ],
       "global_number": 463
     },
     {
@@ -17075,7 +17055,7 @@
       "post_number": 12,
       "question_number_in_post": 2,
       "source_url": "https://pacloud.tistory.com/57",
-      "question_text": ".\n\n회사는 여러 가용 영역에 걸쳐 Amazon EC2 Linux 인스턴스에서 애플리케이션을 실행합니다.\n\n애플리케이션에는 고가용성 및 POSIX(Portable Operating System Interface)호환 스토리지 계층이 필요합니다.\n\n스토리지 계층은 최대 데이터 내구성을 제공해야 하며 EC2 인스턴스 간에 공유 가능해야 합니다. 저장소 계층의 데이터는 처음 30일 동안 자주 엑세스되고 그 이후에는 드물게 엑세스됩니다.\n\n이러한 요구 사항을 가장 비용 효율적으로 충족하는 솔루션은 무엇입니까?",
+      "question_text": "회사는 여러 가용 영역에 걸쳐 Amazon EC2 Linux 인스턴스에서 애플리케이션을 실행합니다.\n\n애플리케이션에는 고가용성 및 POSIX(Portable Operating System Interface)호환 스토리지 계층이 필요합니다.\n\n스토리지 계층은 최대 데이터 내구성을 제공해야 하며 EC2 인스턴스 간에 공유 가능해야 합니다. 저장소 계층의 데이터는 처음 30일 동안 자주 엑세스되고 그 이후에는 드물게 엑세스됩니다.\n\n이러한 요구 사항을 가장 비용 효율적으로 충족하는 솔루션은 무엇입니까?",
       "options": [
         {
           "label": "A",
@@ -17112,7 +17092,7 @@
       "post_number": 12,
       "question_number_in_post": 3,
       "source_url": "https://pacloud.tistory.com/57",
-      "question_text": ".\n\n솔루션 설계자는 소프트웨어 데모 환경을 위한 아키텍처를 설계하고 있습니다. 환경은 Applicaition Load Balancer(ALB) 뒤에 있는 Auto Scaling 그룹의 Amazon EC2 인스턴스에서 실행됩니다. 시스템은 근무 시간 동안 트래픽이 크게 증가하지만 주말에는 작동하지 않아도 됩니다.\n\n수요에 맞게 시스템을 확장할 수 있도록 하기 위해 솔루션 설계자는 어떤 조치 조합을 취해야 합니까? (두가지를 선택하세요.)",
+      "question_text": "솔루션 설계자는 소프트웨어 데모 환경을 위한 아키텍처를 설계하고 있습니다. 환경은 Applicaition Load Balancer(ALB) 뒤에 있는 Auto Scaling 그룹의 Amazon EC2 인스턴스에서 실행됩니다. 시스템은 근무 시간 동안 트래픽이 크게 증가하지만 주말에는 작동하지 않아도 됩니다.\n\n수요에 맞게 시스템을 확장할 수 있도록 하기 위해 솔루션 설계자는 어떤 조치 조합을 취해야 합니까? (두가지를 선택하세요.)",
       "options": [
         {
           "label": "A",
@@ -17186,7 +17166,7 @@
       "post_number": 11,
       "question_number_in_post": 2,
       "source_url": "https://pacloud.tistory.com/56",
-      "question_text": ".\n\n회사의 동적 웹 사이트는 미국의 온프레미스 서버를 사용하여 호스팅됩니다.\n\n이 회사는 유럽에서 제품을 출시하고 있으며 새로운 유럽 사용자를 위해 사이트 로드 시간을 최적화하려고 합니다.\n\n사이트의 백엔드는 미국에 남아 있어야 합니다. 이 제품은 며칠 안에 출시되며 즉각적인 솔루션이 필요합니다.\n\n솔루션 설계자는 무엇을 추천해야 합니까?",
+      "question_text": "회사의 동적 웹 사이트는 미국의 온프레미스 서버를 사용하여 호스팅됩니다.\n\n이 회사는 유럽에서 제품을 출시하고 있으며 새로운 유럽 사용자를 위해 사이트 로드 시간을 최적화하려고 합니다.\n\n사이트의 백엔드는 미국에 남아 있어야 합니다. 이 제품은 며칠 안에 출시되며 즉각적인 솔루션이 필요합니다.\n\n솔루션 설계자는 무엇을 추천해야 합니까?",
       "options": [
         {
           "label": "A",
@@ -17223,7 +17203,7 @@
       "post_number": 11,
       "question_number_in_post": 3,
       "source_url": "https://pacloud.tistory.com/56",
-      "question_text": ".\n\n회사에는 VPC의 Amazon EC2 인스턴스에서 실행되는 애플리케이션이 있습니다.\n\n애플리케이션 중 하나는 Amazon S3 API를 호출하여 객체를 저장하고 읽어야 합니다.\n\n회사의 보안 정책은 애플리케이션에서 인터넷에 연결된 모든 트래픽을 제한합니다.\n\n이러한 요구 사항을 충족하고 보안을 유지하는 조치는 무엇입니까?",
+      "question_text": "회사에는 VPC의 Amazon EC2 인스턴스에서 실행되는 애플리케이션이 있습니다.\n\n애플리케이션 중 하나는 Amazon S3 API를 호출하여 객체를 저장하고 읽어야 합니다.\n\n회사의 보안 정책은 애플리케이션에서 인터넷에 연결된 모든 트래픽을 제한합니다.\n\n이러한 요구 사항을 충족하고 보안을 유지하는 조치는 무엇입니까?",
       "options": [
         {
           "label": "A",

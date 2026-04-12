@@ -49,6 +49,14 @@ export interface DailyStats {
   correct_count: number;
 }
 
+export interface ServiceStats {
+  serviceName: string;
+  totalQuestions: number;
+  solvedCount: number;
+  correctCount: number;
+  accuracy: number;
+}
+
 export interface MockExam {
   id: string;
   started_at: string;

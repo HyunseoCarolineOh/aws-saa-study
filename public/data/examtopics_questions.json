@@ -54,7 +54,10 @@
       "correct_answers": [
         "A"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "S3"
+      ]
     },
     {
       "examtopics_number": 2,
@@ -101,7 +104,11 @@
       "correct_answers": [
         "C"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "Athena",
+        "S3"
+      ]
     },
     {
       "examtopics_number": 3,
@@ -153,7 +160,12 @@
       "correct_answers": [
         "A"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "IAM",
+        "Organizations",
+        "S3"
+      ]
     },
     {
       "examtopics_number": 4,
@@ -200,7 +212,12 @@
       "correct_answers": [
         "A"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "EC2",
+        "S3",
+        "VPC"
+      ]
     },
     {
       "examtopics_number": 5,
@@ -247,7 +264,13 @@
       "correct_answers": [
         "C"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "ALB",
+        "EBS",
+        "EC2",
+        "EFS"
+      ]
     },
     {
       "examtopics_number": 6,
@@ -299,7 +322,12 @@
       "correct_answers": [
         "B"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "S3",
+        "Snowball",
+        "Storage Gateway"
+      ]
     },
     {
       "examtopics_number": 7,
@@ -356,7 +384,11 @@
       "correct_answers": [
         "D"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "SNS",
+        "SQS"
+      ]
     },
     {
       "examtopics_number": 8,
@@ -413,7 +445,12 @@
       "correct_answers": [
         "B"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "Auto Scaling",
+        "EC2",
+        "SQS"
+      ]
     },
     {
       "examtopics_number": 9,
@@ -465,7 +502,11 @@
       "correct_answers": [
         "B"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "S3",
+        "Storage Gateway"
+      ]
     },
     {
       "examtopics_number": 10,
@@ -512,7 +553,12 @@
       "correct_answers": [
         "B"
       ],
-      "answer_source": "marked"
+      "answer_source": "marked",
+      "related_services": [
+        "API Gateway",
+        "Lambda",
+        "SQS"
+      ]
     }
   ]
 }

@@ -57,7 +57,7 @@ function loadQuestions() {
             options: q.options,
             correct_answers: q.correct_answers || q.marked_answer || [],
             explanation: "",
-            related_services: [],
+            related_services: q.related_services || [],
           });
         }
         break;

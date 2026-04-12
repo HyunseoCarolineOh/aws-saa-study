@@ -10,11 +10,13 @@ import {
   clearQuizProgress,
   getTodayReviewQuestionIds,
 } from "@/lib/store";
+import { getDataServiceNames } from "@/lib/serviceMap";
 import Link from "next/link";
 
 function QuestionsContent() {
   const searchParams = useSearchParams();
-  const mode = searchParams.get("mode") === "review" ? "review" : "normal";
+  const service = searchParams.get("service");
+  const mode = service ? "service" : searchParams.get("mode") === "review" ? "review" : "normal";
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,14 +25,23 @@ function QuestionsContent() {
   useEffect(() => {
     loadQuestions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, [mode, service]);
 
   async function loadQuestions() {
     try {
       const res = await fetch("/api/questions");
       const data = await res.json();
 
-      if (mode === "review") {
+      if (mode === "service" && service) {
+        // 서비스 모드: 특정 서비스 관련 문제만 필터링
+        const dataNames = getDataServiceNames(service);
+        const serviceQuestions = (data.questions as Question[]).filter((q) =>
+          q.related_services.some((s) => dataNames.includes(s))
+        );
+        const shuffled = [...serviceQuestions].sort(() => Math.random() - 0.5);
+        setQuestions(shuffled);
+        setCurrentIndex(0);
+      } else if (mode === "review") {
         // 복습 모드: 오늘 복습할 문제만 필터링
         const reviewIds = getTodayReviewQuestionIds();
         const reviewQuestions = (data.questions as Question[]).filter((q) =>
@@ -109,7 +120,15 @@ function QuestionsContent() {
   if (questions.length === 0) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        {mode === "review" ? (
+        {mode === "service" && service ? (
+          <>
+            <p className="text-lg mb-2">{service} 관련 문제가 없습니다</p>
+            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 아직 없습니다.</p>
+            <Link href="/concepts" className="text-primary font-medium text-sm">
+              서비스 사전으로 돌아가기 &rarr;
+            </Link>
+          </>
+        ) : mode === "review" ? (
           <>
             <p className="text-lg mb-2">복습할 문제가 없습니다</p>
             <p className="text-sm text-muted mb-4">오늘 복습 예정인 문제가 없거나, 아직 틀린 문제가 없습니다.</p>
@@ -126,6 +145,16 @@ function QuestionsContent() {
 
   return (
     <div>
+      {/* 서비스 모드 배너 */}
+      {mode === "service" && service && (
+        <div className="max-w-lg mx-auto px-4 pt-2">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 text-sm text-blue-800 flex justify-between items-center">
+            <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
+            <span>{questions.length}문제</span>
+          </div>
+        </div>
+      )}
+
       {/* 복습 모드 배너 */}
       {mode === "review" && (
         <div className="max-w-lg mx-auto px-4 pt-2">
