@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ServiceResumeCard from "@/components/ServiceResumeCard";
 
 const STUDY_START = new Date("2026-04-08");
 const STUDY_DAYS = 14;
@@ -65,6 +66,9 @@ export default function Dashboard() {
           <TodoItem label="오답 복습" count="5문제" done={false} />
         </div>
       </div>
+
+      {/* 서비스 문제 이어서 풀기 */}
+      <ServiceResumeCard />
 
       {/* 퀵 액션 */}
       <div className="grid grid-cols-2 gap-3 mb-4">
