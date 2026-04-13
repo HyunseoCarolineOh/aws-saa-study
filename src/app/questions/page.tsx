@@ -8,6 +8,9 @@ import {
   getQuizProgress,
   saveQuizProgress,
   clearQuizProgress,
+  getServiceQuizProgress,
+  saveServiceQuizProgress,
+  clearServiceQuizProgress,
   getTodayReviewQuestionIds,
 } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
@@ -38,9 +41,24 @@ function QuestionsContent() {
         const serviceQuestions = (data.questions as Question[]).filter((q) =>
           q.related_services.some((s) => dataNames.includes(s))
         );
-        const shuffled = [...serviceQuestions].sort(() => Math.random() - 0.5);
-        setQuestions(shuffled);
-        setCurrentIndex(0);
+
+        // 저장된 진행 상태 복원 시도
+        const saved = getServiceQuizProgress();
+        if (saved && saved.mode === "service" && saved.serviceName === service && saved.questionIds.length > 0) {
+          const questionMap = new Map(serviceQuestions.map((q) => [q.id, q]));
+          const restored = saved.questionIds
+            .map((id) => questionMap.get(id))
+            .filter((q): q is Question => !!q);
+
+          if (restored.length > 0) {
+            setQuestions(restored);
+            setCurrentIndex(Math.min(saved.currentIndex, restored.length - 1));
+          } else {
+            startServiceFresh(serviceQuestions, service);
+          }
+        } else {
+          startServiceFresh(serviceQuestions, service);
+        }
       } else if (mode === "review") {
         // 복습 모드: 오늘 복습할 문제만 필터링
         const reviewIds = getTodayReviewQuestionIds();
@@ -90,8 +108,24 @@ function QuestionsContent() {
     });
   }
 
+  function startServiceFresh(serviceQuestions: Question[], serviceName: string) {
+    const shuffled = [...serviceQuestions].sort(() => Math.random() - 0.5);
+    setQuestions(shuffled);
+    setCurrentIndex(0);
+    saveServiceQuizProgress({
+      questionIds: shuffled.map((q) => q.id),
+      currentIndex: 0,
+      mode: "service",
+      serviceName,
+    });
+  }
+
   function handleRestart() {
-    clearQuizProgress();
+    if (mode === "service") {
+      clearServiceQuizProgress();
+    } else {
+      clearQuizProgress();
+    }
     loadQuestions();
   }
 
@@ -105,9 +139,16 @@ function QuestionsContent() {
           currentIndex: nextIndex,
           mode: "normal",
         });
+      } else if (mode === "service" && service) {
+        saveServiceQuizProgress({
+          questionIds: questions.map((q) => q.id),
+          currentIndex: nextIndex,
+          mode: "service",
+          serviceName: service,
+        });
       }
     }
-  }, [currentIndex, questions, mode]);
+  }, [currentIndex, questions, mode, service]);
 
   if (loading) {
     return (
@@ -150,7 +191,7 @@ function QuestionsContent() {
         <div className="max-w-lg mx-auto px-4 pt-2">
           <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 text-sm text-blue-800 flex justify-between items-center">
             <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
-            <span>{questions.length}문제</span>
+            <span>{currentIndex + 1} / {questions.length}문제</span>
           </div>
         </div>
       )}
@@ -166,7 +207,7 @@ function QuestionsContent() {
       )}
 
       {/* 처음부터 버튼 (일반 모드에서만) */}
-      {mode === "normal" && currentIndex > 0 && (
+      {(mode === "normal" || mode === "service") && currentIndex > 0 && (
         <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end">
           <button
             onClick={handleRestart}

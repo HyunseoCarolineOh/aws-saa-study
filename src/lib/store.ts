@@ -12,6 +12,7 @@ const STORAGE_KEYS = {
   DAILY_STATS: "saa_daily_stats",
   STUDY_START: "saa_study_start",
   QUIZ_PROGRESS: "saa_quiz_progress",
+  SERVICE_QUIZ_PROGRESS: "saa_service_quiz_progress",
 } as const;
 
 // 퀴즈 진행 상태
@@ -148,6 +149,20 @@ export function saveQuizProgress(progress: QuizProgress) {
 export function clearQuizProgress() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
+}
+
+// 서비스 모드 퀴즈 진행 상태 관리
+export function getServiceQuizProgress(): QuizProgress | null {
+  return getFromStorage<QuizProgress | null>(STORAGE_KEYS.SERVICE_QUIZ_PROGRESS, null);
+}
+
+export function saveServiceQuizProgress(progress: QuizProgress) {
+  setToStorage(STORAGE_KEYS.SERVICE_QUIZ_PROGRESS, progress);
+}
+
+export function clearServiceQuizProgress() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STORAGE_KEYS.SERVICE_QUIZ_PROGRESS);
 }
 
 // 오답 요약 (문제별 틀린 횟수, 마지막 시도)
