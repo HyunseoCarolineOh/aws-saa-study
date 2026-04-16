@@ -3,7 +3,7 @@
  * Supabase 연동 전까지 로컬에서 학습 데이터 관리
  */
 
-import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats } from "./types";
+import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats, StudyNote } from "./types";
 import { sm2, getQuality } from "./sm2";
 
 const STORAGE_KEYS = {
@@ -13,6 +13,7 @@ const STORAGE_KEYS = {
   STUDY_START: "saa_study_start",
   QUIZ_PROGRESS: "saa_quiz_progress",
   SERVICE_QUIZ_PROGRESS: "saa_service_quiz_progress",
+  STUDY_NOTES: "saa_study_notes",
 } as const;
 
 // 퀴즈 진행 상태
@@ -250,4 +251,42 @@ export function getAllServiceStats(
   }
 
   return result;
+}
+
+// 오답노트
+export function getStudyNotes(): StudyNote[] {
+  return getFromStorage(STORAGE_KEYS.STUDY_NOTES, []);
+}
+
+export function getStudyNotesByQuestion(questionId: string): StudyNote[] {
+  return getStudyNotes().filter((n) => n.questionId === questionId);
+}
+
+export function addStudyNote(note: Omit<StudyNote, "id" | "createdAt">): StudyNote {
+  const notes = getStudyNotes();
+  const newNote: StudyNote = {
+    ...note,
+    id: crypto.randomUUID(),
+    createdAt: new Date().toISOString(),
+  };
+  notes.push(newNote);
+  setToStorage(STORAGE_KEYS.STUDY_NOTES, notes);
+  return newNote;
+}
+
+export function updateStudyNoteMemo(id: string, memo: string): boolean {
+  const notes = getStudyNotes();
+  const note = notes.find((n) => n.id === id);
+  if (!note) return false;
+  note.memo = memo;
+  setToStorage(STORAGE_KEYS.STUDY_NOTES, notes);
+  return true;
+}
+
+export function deleteStudyNote(id: string): boolean {
+  const notes = getStudyNotes();
+  const filtered = notes.filter((n) => n.id !== id);
+  if (filtered.length === notes.length) return false;
+  setToStorage(STORAGE_KEYS.STUDY_NOTES, filtered);
+  return true;
 }

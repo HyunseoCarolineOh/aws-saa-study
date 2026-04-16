@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import type { Question } from "@/lib/types";
 import { addAttempt } from "@/lib/store";
+import TextSelectionPopover from "./TextSelectionPopover";
+import StudyNoteMemoSheet from "./StudyNoteMemoSheet";
 
 interface QuestionCardProps {
   question: Question;
@@ -21,6 +23,11 @@ export default function QuestionCard({
   const [submitted, setSubmitted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [explanationTab, setExplanationTab] = useState<"explanation" | "detail" | "services">("explanation");
+  const [memoSheet, setMemoSheet] = useState<{
+    selectedText: string;
+    sourceContext: "question" | "explanation" | "detail";
+  } | null>(null);
+  const [showSaveToast, setShowSaveToast] = useState(false);
   const timerRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
 
@@ -30,6 +37,7 @@ export default function QuestionCard({
     setSubmitted(false);
     setShowExplanation(false);
     setExplanationTab("explanation");
+    setMemoSheet(null);
     startTimeRef.current = Date.now();
   }, [question.id]);
 
@@ -86,6 +94,16 @@ export default function QuestionCard({
     onNext();
   }
 
+  function handleSaveRequest(selectedText: string, sourceContext: "question" | "explanation" | "detail") {
+    setMemoSheet({ selectedText, sourceContext });
+  }
+
+  function handleNoteSaved() {
+    setMemoSheet(null);
+    setShowSaveToast(true);
+    setTimeout(() => setShowSaveToast(false), 2000);
+  }
+
   const isCorrect =
     submitted &&
     selectedAnswers.length === question.correct_answers.length &&
@@ -113,7 +131,9 @@ export default function QuestionCard({
             {selectCount}개 선택
           </span>
         )}
-        <p className="text-sm leading-relaxed whitespace-pre-line">{question.question_text}</p>
+        <TextSelectionPopover questionId={question.id} sourceContext="question" onSaveRequest={handleSaveRequest}>
+          <p className="text-sm leading-relaxed whitespace-pre-line">{question.question_text}</p>
+        </TextSelectionPopover>
       </div>
 
       {/* 선택지 */}
@@ -242,29 +262,33 @@ export default function QuestionCard({
                   {/* 탭 콘텐츠 */}
                   <div className="p-3">
                     {explanationTab === "explanation" && (
-                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                        {question.explanation || "해설이 없습니다."}
-                      </div>
+                      <TextSelectionPopover questionId={question.id} sourceContext="explanation" onSaveRequest={handleSaveRequest}>
+                        <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                          {question.explanation || "해설이 없습니다."}
+                        </div>
+                      </TextSelectionPopover>
                     )}
 
                     {explanationTab === "detail" && (
-                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                        {question.detailed_explanation || (
-                          <div className="text-center text-muted py-4">
-                            <p className="mb-2">상세 풀이가 아직 없습니다.</p>
-                            {question.source_url && (
-                              <a
-                                href={question.source_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary text-xs font-medium"
-                              >
-                                원본 블로그에서 확인 &rarr;
-                              </a>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                      <TextSelectionPopover questionId={question.id} sourceContext="detail" onSaveRequest={handleSaveRequest}>
+                        <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                          {question.detailed_explanation || (
+                            <div className="text-center text-muted py-4">
+                              <p className="mb-2">상세 풀이가 아직 없습니다.</p>
+                              {question.source_url && (
+                                <a
+                                  href={question.source_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary text-xs font-medium"
+                                >
+                                  원본 블로그에서 확인 &rarr;
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </TextSelectionPopover>
                     )}
 
                     {explanationTab === "services" && (
@@ -306,12 +330,31 @@ export default function QuestionCard({
           </button>
         </div>
       )}
+
+      {/* 오답노트 메모 시트 */}
+      {memoSheet && (
+        <StudyNoteMemoSheet
+          isOpen
+          selectedText={memoSheet.selectedText}
+          questionId={question.id}
+          sourceContext={memoSheet.sourceContext}
+          onClose={() => setMemoSheet(null)}
+          onSaved={handleNoteSaved}
+        />
+      )}
+
+      {/* 저장 완료 토스트 */}
+      {showSaveToast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-green-600 text-white text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+          오답노트에 저장되었습니다
+        </div>
+      )}
     </div>
   );
 }
 
 function detectMultiSelectCount(text: string): number {
-  if (/3개|세\s*가지|THREE|three|choose\s*3/i.test(text)) return 3;
-  if (/2개|두\s*개|두\s*가지|TWO|two|choose\s*2/i.test(text)) return 2;
+  if (/3개를?\s*선택|세\s*가지를?\s*선택|choose\s*3|select\s*3/i.test(text)) return 3;
+  if (/2개를?\s*선택|두\s*(?:개를?|가지를?)\s*선택|choose\s*2|select\s*2/i.test(text)) return 2;
   return 1;
 }

@@ -57,6 +57,15 @@ export interface ServiceStats {
   accuracy: number;
 }
 
+export interface StudyNote {
+  id: string;
+  questionId: string;
+  selectedText: string;
+  memo: string;
+  sourceContext: 'question' | 'explanation' | 'detail';
+  createdAt: string;
+}
+
 export interface MockExam {
   id: string;
   started_at: string;
