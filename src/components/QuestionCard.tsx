@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { Question } from "@/lib/types";
 import { addAttempt } from "@/lib/store";
+import { celebrateCorrect } from "@/lib/celebrate";
 import TextSelectionPopover from "./TextSelectionPopover";
 import StudyNoteMemoSheet from "./StudyNoteMemoSheet";
 
@@ -86,6 +87,10 @@ export default function QuestionCard({
       is_correct: isCorrect,
       time_spent_seconds: timeSpent,
     });
+
+    if (isCorrect) {
+      void celebrateCorrect();
+    }
 
     setSubmitted(true);
   }
