@@ -3,7 +3,7 @@
  * Supabase 연동 전까지 로컬에서 학습 데이터 관리
  */
 
-import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats, StudyNote } from "./types";
+import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats, StudyNote, MockExam } from "./types";
 import { sm2, getQuality } from "./sm2";
 
 const STORAGE_KEYS = {
@@ -14,6 +14,7 @@ const STORAGE_KEYS = {
   QUIZ_PROGRESS: "saa_quiz_progress",
   SERVICE_QUIZ_PROGRESS: "saa_service_quiz_progress",
   STUDY_NOTES: "saa_study_notes",
+  MOCK_EXAMS: "saa_mock_exams",
 } as const;
 
 // 퀴즈 진행 상태
@@ -289,4 +290,15 @@ export function deleteStudyNote(id: string): boolean {
   if (filtered.length === notes.length) return false;
   setToStorage(STORAGE_KEYS.STUDY_NOTES, filtered);
   return true;
+}
+
+// 모의고사 기록
+export function getMockExamResults(): MockExam[] {
+  return getFromStorage(STORAGE_KEYS.MOCK_EXAMS, []);
+}
+
+export function saveMockExamResult(result: MockExam): void {
+  const exams = getMockExamResults();
+  exams.push(result);
+  setToStorage(STORAGE_KEYS.MOCK_EXAMS, exams);
 }

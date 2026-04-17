@@ -69,8 +69,12 @@ export interface StudyNote {
 export interface MockExam {
   id: string;
   started_at: string;
-  finished_at?: string;
-  total_score?: number;
-  domain_scores?: Record<string, number>;
+  finished_at: string;
   question_ids: string[];
+  answers: Record<number, string[]>;
+  total_questions: number;
+  correct_count: number;
+  score: number;
+  passed: boolean;
+  domain_scores: Record<string, { correct: number; total: number }>;
 }
