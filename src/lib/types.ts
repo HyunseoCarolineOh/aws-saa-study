@@ -66,6 +66,13 @@ export interface StudyNote {
   createdAt: string;
 }
 
+export type {
+  CorrectionType,
+  CorrectionScope,
+  CorrectionRequest,
+  CorrectionRequestInput,
+} from "./corrections";
+
 export interface MockExam {
   id: string;
   started_at: string;

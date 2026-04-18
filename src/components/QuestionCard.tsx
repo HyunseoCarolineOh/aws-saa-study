@@ -6,6 +6,8 @@ import { addAttempt } from "@/lib/store";
 import { celebrateCorrect } from "@/lib/celebrate";
 import TextSelectionPopover from "./TextSelectionPopover";
 import StudyNoteMemoSheet from "./StudyNoteMemoSheet";
+import CorrectionReportSheet from "./CorrectionReportSheet";
+import { isCorrectionsEnabled, type CorrectionScope } from "@/lib/corrections";
 
 interface QuestionCardProps {
   question: Question;
@@ -28,7 +30,13 @@ export default function QuestionCard({
     selectedText: string;
     sourceContext: "question" | "explanation" | "detail";
   } | null>(null);
-  const [showSaveToast, setShowSaveToast] = useState(false);
+  const [reportSheet, setReportSheet] = useState<{
+    scope: CorrectionScope;
+    selectedText?: string;
+    defaultOptionLabel?: string;
+  } | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
   const timerRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
 
@@ -39,8 +47,21 @@ export default function QuestionCard({
     setShowExplanation(false);
     setExplanationTab("explanation");
     setMemoSheet(null);
+    setReportSheet(null);
     startTimeRef.current = Date.now();
   }, [question.id]);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  function showToast(msg: string) {
+    setToastMessage(msg);
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => setToastMessage(null), 2000);
+  }
 
   // 타이머 업데이트
   useEffect(() => {
@@ -105,9 +126,15 @@ export default function QuestionCard({
 
   function handleNoteSaved() {
     setMemoSheet(null);
-    setShowSaveToast(true);
-    setTimeout(() => setShowSaveToast(false), 2000);
+    showToast("오답노트에 저장되었습니다");
   }
+
+  function handleReportSubmitted(message: string) {
+    setReportSheet(null);
+    showToast(message);
+  }
+
+  const correctionsEnabled = isCorrectionsEnabled();
 
   const isCorrect =
     submitted &&
@@ -131,11 +158,25 @@ export default function QuestionCard({
 
       {/* 문제 */}
       <div className="bg-card rounded-xl border border-border p-4 mb-4">
-        {isMultiSelect && (
-          <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mb-2">
-            {selectCount}개 선택
-          </span>
-        )}
+        <div className="flex items-start justify-between gap-2 mb-2">
+          {isMultiSelect ? (
+            <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
+              {selectCount}개 선택
+            </span>
+          ) : (
+            <span />
+          )}
+          <button
+            type="button"
+            aria-label="문제 수정 요청"
+            title={correctionsEnabled ? "문제 수정 요청" : "Supabase 설정 필요"}
+            onClick={() => correctionsEnabled && setReportSheet({ scope: "question" })}
+            disabled={!correctionsEnabled}
+            className="text-gray-400 hover:text-red-500 disabled:opacity-30 text-base leading-none flex-shrink-0"
+          >
+            ⚠
+          </button>
+        </div>
         <TextSelectionPopover questionId={question.id} sourceContext="question" onSaveRequest={handleSaveRequest}>
           <p className="text-sm leading-relaxed whitespace-pre-line">{question.question_text}</p>
         </TextSelectionPopover>
@@ -163,29 +204,44 @@ export default function QuestionCard({
           }
 
           return (
-            <button
-              key={opt.label}
-              onClick={() => handleSelect(opt.label)}
-              disabled={submitted}
-              className={`w-full text-left ${bgColor} rounded-xl border-2 ${borderColor} p-3 transition-all active:scale-[0.99]`}
-            >
-              <div className="flex gap-3">
-                <span
-                  className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                    submitted && isCorrectOption
-                      ? "bg-green-500 text-white"
-                      : submitted && isSelected && !isCorrectOption
-                      ? "bg-red-500 text-white"
-                      : isSelected
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
+            <div key={opt.label} className="relative">
+              <button
+                onClick={() => handleSelect(opt.label)}
+                disabled={submitted}
+                className={`w-full text-left ${bgColor} rounded-xl border-2 ${borderColor} p-3 transition-all active:scale-[0.99]`}
+              >
+                <div className="flex gap-3 pr-6">
+                  <span
+                    className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
+                      submitted && isCorrectOption
+                        ? "bg-green-500 text-white"
+                        : submitted && isSelected && !isCorrectOption
+                        ? "bg-red-500 text-white"
+                        : isSelected
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {opt.label}
+                  </span>
+                  <span className="text-sm leading-relaxed">{opt.text}</span>
+                </div>
+              </button>
+              {submitted && correctionsEnabled && (
+                <button
+                  type="button"
+                  aria-label={`선지 ${opt.label} 수정 요청`}
+                  title="선지 수정 요청"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReportSheet({ scope: "option", defaultOptionLabel: opt.label });
+                  }}
+                  className="absolute top-1.5 right-2 text-gray-400 hover:text-red-500 text-sm leading-none"
                 >
-                  {opt.label}
-                </span>
-                <span className="text-sm leading-relaxed">{opt.text}</span>
-              </div>
-            </button>
+                  ⚠
+                </button>
+              )}
+            </div>
           );
         })}
       </div>
@@ -214,13 +270,31 @@ export default function QuestionCard({
           {(question.explanation || question.detailed_explanation) && (
             <div className="bg-gray-50 rounded-xl border border-border mb-3 overflow-hidden">
               {/* 토글 헤더 */}
-              <button
-                onClick={() => setShowExplanation(!showExplanation)}
-                className="w-full flex justify-between items-center p-3"
-              >
-                <span className="text-sm font-medium">풀이 보기</span>
-                <span className="text-xs text-muted">{showExplanation ? "접기" : "펼치기"}</span>
-              </button>
+              <div className="flex items-stretch">
+                <button
+                  onClick={() => setShowExplanation(!showExplanation)}
+                  className="flex-1 flex justify-between items-center p-3"
+                >
+                  <span className="text-sm font-medium">풀이 보기</span>
+                  <span className="text-xs text-muted">{showExplanation ? "접기" : "펼치기"}</span>
+                </button>
+                {correctionsEnabled && (
+                  <button
+                    type="button"
+                    aria-label="해설 수정 요청"
+                    title="해설 수정 요청"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const scope: CorrectionScope =
+                        explanationTab === "detail" ? "detail" : "explanation";
+                      setReportSheet({ scope });
+                    }}
+                    className="px-3 text-gray-400 hover:text-red-500 text-base leading-none border-l border-border"
+                  >
+                    ⚠
+                  </button>
+                )}
+              </div>
 
               {showExplanation && (
                 <div className="border-t border-border">
@@ -348,10 +422,23 @@ export default function QuestionCard({
         />
       )}
 
-      {/* 저장 완료 토스트 */}
-      {showSaveToast && (
+      {/* 문제 수정 요청 시트 */}
+      {reportSheet && (
+        <CorrectionReportSheet
+          isOpen
+          question={question}
+          scope={reportSheet.scope}
+          selectedText={reportSheet.selectedText}
+          defaultOptionLabel={reportSheet.defaultOptionLabel}
+          onClose={() => setReportSheet(null)}
+          onSubmitted={handleReportSubmitted}
+        />
+      )}
+
+      {/* 알림 토스트 */}
+      {toastMessage && (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-green-600 text-white text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
-          오답노트에 저장되었습니다
+          {toastMessage}
         </div>
       )}
     </div>

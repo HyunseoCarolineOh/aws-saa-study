@@ -1,12 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getTodayReviewQuestionIds, getWrongAttemptsSummary, getStudyNotes, updateStudyNoteMemo, deleteStudyNote } from "@/lib/store";
 import type { Question, StudyNote } from "@/lib/types";
+import {
+  CORRECTION_SCOPE_LABELS,
+  CORRECTION_TYPE_LABELS,
+  deleteCorrection,
+  isCorrectionsEnabled,
+  listPendingCorrections,
+  type CorrectionRequest,
+  type CorrectionType,
+} from "@/lib/corrections";
 import Link from "next/link";
 
+const TYPE_BADGE_CLASS: Record<CorrectionType, string> = {
+  translation_needed: "bg-blue-100 text-blue-700",
+  wrong_explanation: "bg-purple-100 text-purple-700",
+  invalid_choice: "bg-amber-100 text-amber-700",
+  wrong_answer: "bg-red-100 text-red-700",
+};
+
 export default function ReviewPage() {
-  const [activeTab, setActiveTab] = useState<"review" | "notes">("review");
+  const [activeTab, setActiveTab] = useState<"review" | "notes" | "corrections">("review");
   const [reviewIds, setReviewIds] = useState<string[]>([]);
   const [wrongSummary, setWrongSummary] = useState<{ questionId: string; lastAttemptAt: string; attemptCount: number }[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -14,6 +30,25 @@ export default function ReviewPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingNote, setEditingNote] = useState<{ id: string; memo: string } | null>(null);
+  const [corrections, setCorrections] = useState<CorrectionRequest[]>([]);
+  const [correctionsLoading, setCorrectionsLoading] = useState(false);
+  const [correctionsError, setCorrectionsError] = useState<string | null>(null);
+
+  const correctionsEnabled = isCorrectionsEnabled();
+
+  const refreshCorrections = useCallback(async () => {
+    if (!correctionsEnabled) return;
+    setCorrectionsLoading(true);
+    setCorrectionsError(null);
+    try {
+      const rows = await listPendingCorrections();
+      setCorrections(rows);
+    } catch (e) {
+      setCorrectionsError(e instanceof Error ? e.message : "로드 실패");
+    } finally {
+      setCorrectionsLoading(false);
+    }
+  }, [correctionsEnabled]);
 
   useEffect(() => {
     const ids = getTodayReviewQuestionIds();
@@ -28,6 +63,22 @@ export default function ReviewPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "corrections" && correctionsEnabled) {
+      void refreshCorrections();
+    }
+  }, [activeTab, correctionsEnabled, refreshCorrections]);
+
+  async function handleDeleteCorrection(id: number) {
+    if (!confirm("이 수정 요청을 삭제할까요?")) return;
+    try {
+      await deleteCorrection(id);
+      setCorrections((prev) => prev.filter((c) => c.id !== id));
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "삭제 실패");
+    }
+  }
 
   function refreshNotes() {
     setNotes(getStudyNotes());
@@ -79,6 +130,14 @@ export default function ReviewPage() {
           }`}
         >
           오답노트 ({notes.length})
+        </button>
+        <button
+          onClick={() => setActiveTab("corrections")}
+          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            activeTab === "corrections" ? "text-primary border-b-2 border-primary" : "text-muted"
+          }`}
+        >
+          수정 요청{correctionsEnabled && corrections.length > 0 ? ` (${corrections.length})` : ""}
         </button>
       </div>
 
@@ -265,6 +324,100 @@ export default function ReviewPage() {
                 );
               })}
             </div>
+          )}
+        </>
+      )}
+
+      {/* 수정 요청 탭 */}
+      {activeTab === "corrections" && (
+        <>
+          {!correctionsEnabled ? (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-xl p-4">
+              <p className="font-medium mb-1">Supabase 미설정</p>
+              <p className="text-xs leading-relaxed">
+                <code className="bg-white px-1 rounded">.env.local</code>에
+                <code className="bg-white px-1 rounded ml-1">NEXT_PUBLIC_SUPABASE_URL</code>,
+                <code className="bg-white px-1 rounded ml-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>를
+                설정한 뒤 다시 로드하세요.
+              </p>
+            </div>
+          ) : correctionsLoading ? (
+            <p className="text-sm text-muted text-center py-8">불러오는 중...</p>
+          ) : correctionsError ? (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3">
+              로드 실패: {correctionsError}
+              <button
+                onClick={() => void refreshCorrections()}
+                className="block mt-2 text-xs underline"
+              >
+                다시 시도
+              </button>
+            </div>
+          ) : corrections.length === 0 ? (
+            <div className="text-center py-12 text-muted">
+              <p className="text-lg mb-2">처리할 수정 요청이 없습니다</p>
+              <p className="text-sm">모바일에서 문제 풀이 중 ⚠ 버튼으로 신고할 수 있습니다</p>
+            </div>
+          ) : (
+            <>
+              <div className="bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-xl p-3 mb-3 leading-relaxed">
+                터미널에서 Claude Code에게 <span className="font-mono bg-white px-1 rounded">수정 요청 처리해줘</span>라고 말하면
+                아래 {corrections.length}건을 순서대로 처리합니다.
+              </div>
+              <div className="space-y-3">
+                {corrections.map((c) => {
+                  const q = questionMap.get(c.question_id);
+                  return (
+                    <div key={c.id} className="bg-card rounded-xl border border-border p-3 space-y-2">
+                      <div className="flex items-start gap-2 flex-wrap">
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${TYPE_BADGE_CLASS[c.report_type]}`}>
+                          {CORRECTION_TYPE_LABELS[c.report_type]}
+                        </span>
+                        <span className="text-[10px] text-muted bg-gray-100 px-1.5 py-0.5 rounded">
+                          {CORRECTION_SCOPE_LABELS[c.scope]}
+                          {c.option_label ? ` ${c.option_label}` : ""}
+                        </span>
+                        <span className="text-[10px] text-muted bg-gray-100 px-1.5 py-0.5 rounded font-mono">
+                          {c.question_id}
+                        </span>
+                      </div>
+                      {q ? (
+                        <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">
+                          {q.question_text.slice(0, 120)}
+                          {q.question_text.length > 120 ? "..." : ""}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted italic">문제 데이터를 찾을 수 없습니다</p>
+                      )}
+                      {c.selected_text && (
+                        <div className="bg-yellow-50 border-l-4 border-yellow-400 px-2 py-1 rounded-r">
+                          <p className="text-[11px] text-gray-700 leading-relaxed line-clamp-2">{c.selected_text}</p>
+                        </div>
+                      )}
+                      {c.description && (
+                        <p className="text-xs text-gray-600 leading-relaxed pl-1">{c.description}</p>
+                      )}
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-[10px] text-muted">
+                          {new Date(c.created_at).toLocaleString("ko-KR", {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                        <button
+                          onClick={() => void handleDeleteCorrection(c.id)}
+                          className="text-[10px] text-red-400 font-medium"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </>
       )}
