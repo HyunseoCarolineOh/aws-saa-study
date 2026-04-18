@@ -45,6 +45,14 @@ export function getAttempts(): Attempt[] {
   return getFromStorage(STORAGE_KEYS.ATTEMPTS, []);
 }
 
+// 한 번이라도 풀이 기록이 있는 문제 ID 집합
+export function getAttemptedQuestionIds(): Set<string> {
+  const attempts = getAttempts();
+  const ids = new Set<string>();
+  for (const a of attempts) ids.add(a.question_id);
+  return ids;
+}
+
 export function addAttempt(attempt: Omit<Attempt, "id" | "attempted_at">): Attempt {
   const attempts = getAttempts();
   const newAttempt: Attempt = {

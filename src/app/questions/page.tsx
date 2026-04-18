@@ -12,11 +12,23 @@ import {
   saveServiceQuizProgress,
   clearServiceQuizProgress,
   getTodayReviewQuestionIds,
+  getAttemptedQuestionIds,
 } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
 import CorrectionReportSheet from "@/components/CorrectionReportSheet";
 import { isCorrectionsEnabled } from "@/lib/corrections";
 import Link from "next/link";
+
+function buildPrioritizedOrder(questions: Question[]): Question[] {
+  const attempted = getAttemptedQuestionIds();
+  const unsolved: Question[] = [];
+  const solved: Question[] = [];
+  for (const q of questions) {
+    (attempted.has(q.id) ? solved : unsolved).push(q);
+  }
+  const shuffle = <T,>(arr: T[]) => [...arr].sort(() => Math.random() - 0.5);
+  return [...shuffle(unsolved), ...shuffle(solved)];
+}
 
 function QuestionsContent() {
   const searchParams = useSearchParams();
@@ -115,22 +127,22 @@ function QuestionsContent() {
   }
 
   function startFresh(allQuestions: Question[]) {
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    setQuestions(shuffled);
+    const ordered = buildPrioritizedOrder(allQuestions);
+    setQuestions(ordered);
     setCurrentIndex(0);
     saveQuizProgress({
-      questionIds: shuffled.map((q) => q.id),
+      questionIds: ordered.map((q) => q.id),
       currentIndex: 0,
       mode: "normal",
     });
   }
 
   function startServiceFresh(serviceQuestions: Question[], serviceName: string) {
-    const shuffled = [...serviceQuestions].sort(() => Math.random() - 0.5);
-    setQuestions(shuffled);
+    const ordered = buildPrioritizedOrder(serviceQuestions);
+    setQuestions(ordered);
     setCurrentIndex(0);
     saveServiceQuizProgress({
-      questionIds: shuffled.map((q) => q.id),
+      questionIds: ordered.map((q) => q.id),
       currentIndex: 0,
       mode: "service",
       serviceName,
