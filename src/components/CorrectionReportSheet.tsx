@@ -14,9 +14,6 @@ import {
 interface Props {
   isOpen: boolean;
   question: Question;
-  scope: CorrectionScope;
-  selectedText?: string;
-  defaultOptionLabel?: string;
   onClose: () => void;
   onSubmitted: (message: string) => void;
 }
@@ -28,30 +25,37 @@ const TYPE_ORDER: CorrectionType[] = [
   "wrong_answer",
 ];
 
+const SCOPE_ORDER: CorrectionScope[] = ["question", "option", "explanation", "detail"];
+
 export default function CorrectionReportSheet({
   isOpen,
   question,
-  scope,
-  selectedText,
-  defaultOptionLabel,
   onClose,
   onSubmitted,
 }: Props) {
+  const [scope, setScope] = useState<CorrectionScope>("question");
   const [reportType, setReportType] = useState<CorrectionType>(TYPE_ORDER[0]);
-  const [optionLabel, setOptionLabel] = useState<string>(defaultOptionLabel ?? question.options[0]?.label ?? "");
+  const [optionLabel, setOptionLabel] = useState<string>(question.options[0]?.label ?? "");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setReportType(scope === "option" ? "invalid_choice" : TYPE_ORDER[0]);
-      setOptionLabel(defaultOptionLabel ?? question.options[0]?.label ?? "");
+      setScope("question");
+      setReportType(TYPE_ORDER[0]);
+      setOptionLabel(question.options[0]?.label ?? "");
       setDescription("");
       setError(null);
       setSubmitting(false);
     }
-  }, [isOpen, scope, defaultOptionLabel, question.options]);
+  }, [isOpen, question.options]);
+
+  useEffect(() => {
+    if (scope === "option") {
+      setReportType("invalid_choice");
+    }
+  }, [scope]);
 
   if (!isOpen) return null;
 
@@ -68,7 +72,7 @@ export default function CorrectionReportSheet({
         report_type: reportType,
         scope,
         option_label: scope === "option" ? optionLabel : null,
-        selected_text: selectedText ?? null,
+        selected_text: null,
         description: description.trim() || null,
       });
       onSubmitted("수정 요청이 접수되었습니다");
@@ -91,9 +95,6 @@ export default function CorrectionReportSheet({
 
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold">문제 수정 요청</h3>
-            <span className="text-[10px] text-muted bg-gray-100 px-2 py-0.5 rounded">
-              {CORRECTION_SCOPE_LABELS[scope]}
-            </span>
           </div>
 
           {!enabled && (
@@ -102,11 +103,25 @@ export default function CorrectionReportSheet({
             </div>
           )}
 
-          {selectedText && (
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-2 rounded-r">
-              <p className="text-xs text-gray-700 leading-relaxed line-clamp-3">{selectedText}</p>
+          <div>
+            <label className="block text-xs text-muted mb-1">어디에 문제가 있나요?</label>
+            <div className="grid grid-cols-4 gap-1.5">
+              {SCOPE_ORDER.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setScope(s)}
+                  className={`py-2 rounded-lg text-xs font-medium border transition-colors ${
+                    scope === s
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-gray-600 border-border"
+                  }`}
+                >
+                  {CORRECTION_SCOPE_LABELS[s]}
+                </button>
+              ))}
             </div>
-          )}
+          </div>
 
           {scope === "option" && question.options.length > 0 && (
             <div>

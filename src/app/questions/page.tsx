@@ -14,6 +14,8 @@ import {
   getTodayReviewQuestionIds,
 } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
+import CorrectionReportSheet from "@/components/CorrectionReportSheet";
+import { isCorrectionsEnabled } from "@/lib/corrections";
 import Link from "next/link";
 
 function QuestionsContent() {
@@ -24,6 +26,21 @@ function QuestionsContent() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportToast, setReportToast] = useState<string | null>(null);
+
+  function showReportToast(msg: string) {
+    setReportToast(msg);
+    window.setTimeout(() => setReportToast(null), 2500);
+  }
+
+  function handleOpenReport() {
+    if (!isCorrectionsEnabled()) {
+      showReportToast("Supabase 설정이 필요합니다");
+      return;
+    }
+    setReportOpen(true);
+  }
 
   useEffect(() => {
     loadQuestions();
@@ -206,17 +223,25 @@ function QuestionsContent() {
         </div>
       )}
 
-      {/* 처음부터 버튼 (일반 모드에서만) */}
-      {(mode === "normal" || mode === "service") && currentIndex > 0 && (
-        <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end">
+      {/* 툴바: 처음부터 다시 풀기 + 수정 요청 */}
+      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-3">
+        {(mode === "normal" || mode === "service") && currentIndex > 0 && (
           <button
             onClick={handleRestart}
             className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
           >
             처음부터 다시 풀기
           </button>
-        </div>
-      )}
+        )}
+        <button
+          type="button"
+          onClick={handleOpenReport}
+          className="text-xs text-red-400 hover:text-red-600 transition-colors px-2 py-1 flex items-center gap-1"
+        >
+          <span aria-hidden>⚠</span>
+          <span>수정 요청</span>
+        </button>
+      </div>
 
       <QuestionCard
         question={questions[currentIndex]}
@@ -224,6 +249,24 @@ function QuestionsContent() {
         totalQuestions={questions.length}
         onNext={handleNext}
       />
+
+      {reportOpen && questions[currentIndex] && (
+        <CorrectionReportSheet
+          isOpen
+          question={questions[currentIndex]}
+          onClose={() => setReportOpen(false)}
+          onSubmitted={(msg) => {
+            setReportOpen(false);
+            showReportToast(msg);
+          }}
+        />
+      )}
+
+      {reportToast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+          {reportToast}
+        </div>
+      )}
     </div>
   );
 }
