@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { getTodayReviewQuestionIds, getWrongAttemptsSummary, getStudyNotes, updateStudyNoteMemo, deleteStudyNote } from "@/lib/store";
 import type { Question, StudyNote } from "@/lib/types";
 import {
-  CORRECTION_SCOPE_LABELS,
   CORRECTION_TYPE_LABELS,
   deleteCorrection,
   isCorrectionsEnabled,
@@ -15,10 +14,11 @@ import {
 import Link from "next/link";
 
 const TYPE_BADGE_CLASS: Record<CorrectionType, string> = {
-  translation_needed: "bg-blue-100 text-blue-700",
-  wrong_explanation: "bg-purple-100 text-purple-700",
-  invalid_choice: "bg-amber-100 text-amber-700",
-  wrong_answer: "bg-red-100 text-red-700",
+  translation_needed: "bg-info-bg text-info-fg border border-info-border",
+  wrong_explanation: "bg-accent-bg text-accent-fg border border-accent-border",
+  invalid_choice: "bg-warning-bg text-warning-fg border border-warning-border",
+  wrong_answer: "bg-danger-bg text-danger-fg border border-danger-border",
+  service_type_change: "bg-success-bg text-success-fg border border-success-border",
 };
 
 export default function ReviewPage() {
@@ -147,7 +147,7 @@ export default function ReviewPage() {
           <div className="bg-card rounded-xl border border-border p-4 mb-4">
             <div className="grid grid-cols-2 gap-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-red-500">{wrongCount}</p>
+                <p className="text-2xl font-bold text-danger">{wrongCount}</p>
                 <p className="text-xs text-muted">틀린 문제 수</p>
               </div>
               <div>
@@ -160,7 +160,7 @@ export default function ReviewPage() {
           {reviewIds.length > 0 ? (
             <Link
               href="/questions?mode=review"
-              className="block w-full bg-primary text-white text-center py-3 rounded-xl font-medium mb-6"
+              className="block w-full bg-primary text-on-primary text-center py-3 rounded-xl font-medium mb-6"
             >
               복습 시작 ({reviewIds.length}문제)
             </Link>
@@ -187,17 +187,17 @@ export default function ReviewPage() {
                       <div
                         key={item.questionId}
                         className={`bg-card rounded-xl border p-3 ${
-                          isReviewDue ? "border-orange-300 bg-orange-50" : "border-border"
+                          isReviewDue ? "border-accent bg-accent-bg" : "border-border"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-xs text-gray-700 leading-relaxed line-clamp-2 flex-1">
+                          <p className="text-xs text-foreground leading-relaxed line-clamp-2 flex-1">
                             {q ? q.question_text.slice(0, 100) + (q.question_text.length > 100 ? "..." : "") : item.questionId}
                           </p>
                           <div className="flex flex-col items-end flex-shrink-0">
-                            <span className="text-[10px] text-red-500 font-medium">{item.attemptCount}회 오답</span>
+                            <span className="text-[10px] text-danger font-medium">{item.attemptCount}회 오답</span>
                             {isReviewDue && (
-                              <span className="text-[10px] text-orange-600 font-medium mt-0.5">복습 예정</span>
+                              <span className="text-[10px] text-accent font-medium mt-0.5">복습 예정</span>
                             )}
                           </div>
                         </div>
@@ -251,8 +251,8 @@ export default function ReviewPage() {
                 return (
                   <div key={note.id} className="bg-card rounded-xl border border-border p-3 space-y-2">
                     {/* 선택된 텍스트 */}
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-2 rounded-r">
-                      <p className="text-xs text-gray-700 leading-relaxed">{note.selectedText}</p>
+                    <div className="bg-warning-bg border-l-4 border-warning px-3 py-2 rounded-r">
+                      <p className="text-xs text-warning-fg leading-relaxed">{note.selectedText}</p>
                     </div>
 
                     {/* 메모 */}
@@ -274,7 +274,7 @@ export default function ReviewPage() {
                           </button>
                           <button
                             onClick={handleSaveEdit}
-                            className="text-[10px] text-white bg-primary px-2 py-1 rounded"
+                            className="text-[10px] text-on-primary bg-primary px-2 py-1 rounded"
                           >
                             저장
                           </button>
@@ -282,14 +282,14 @@ export default function ReviewPage() {
                       </div>
                     ) : (
                       note.memo && (
-                        <p className="text-xs text-gray-600 leading-relaxed pl-1">{note.memo}</p>
+                        <p className="text-xs text-muted leading-relaxed pl-1">{note.memo}</p>
                       )
                     )}
 
                     {/* 메타 정보 */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className="text-[10px] text-muted bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
+                        <span className="text-[10px] text-muted bg-muted-bg px-1.5 py-0.5 rounded flex-shrink-0">
                           {sourceLabel}
                         </span>
                         {q && (
@@ -312,7 +312,7 @@ export default function ReviewPage() {
                             </button>
                             <button
                               onClick={() => handleDeleteNote(note.id)}
-                              className="text-[10px] text-red-400 font-medium"
+                              className="text-[10px] text-danger-fg font-medium"
                             >
                               삭제
                             </button>
@@ -332,19 +332,19 @@ export default function ReviewPage() {
       {activeTab === "corrections" && (
         <>
           {!correctionsEnabled ? (
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-xl p-4">
+            <div className="bg-warning-bg border border-warning-border text-warning-fg text-sm rounded-xl p-4">
               <p className="font-medium mb-1">Supabase 미설정</p>
               <p className="text-xs leading-relaxed">
-                <code className="bg-white px-1 rounded">.env.local</code>에
-                <code className="bg-white px-1 rounded ml-1">NEXT_PUBLIC_SUPABASE_URL</code>,
-                <code className="bg-white px-1 rounded ml-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>를
+                <code className="bg-card px-1 rounded">.env.local</code>에
+                <code className="bg-card px-1 rounded ml-1">NEXT_PUBLIC_SUPABASE_URL</code>,
+                <code className="bg-card px-1 rounded ml-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>를
                 설정한 뒤 다시 로드하세요.
               </p>
             </div>
           ) : correctionsLoading ? (
             <p className="text-sm text-muted text-center py-8">불러오는 중...</p>
           ) : correctionsError ? (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3">
+            <div className="bg-danger-bg border border-danger-border text-danger-fg text-sm rounded-xl p-3">
               로드 실패: {correctionsError}
               <button
                 onClick={() => void refreshCorrections()}
@@ -360,8 +360,8 @@ export default function ReviewPage() {
             </div>
           ) : (
             <>
-              <div className="bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-xl p-3 mb-3 leading-relaxed">
-                터미널에서 Claude Code에게 <span className="font-mono bg-white px-1 rounded">수정 요청 처리해줘</span>라고 말하면
+              <div className="bg-info-bg border border-info-border text-info-fg text-xs rounded-xl p-3 mb-3 leading-relaxed">
+                터미널에서 Claude Code에게 <span className="font-mono bg-card px-1 rounded">수정 요청 처리해줘</span>라고 말하면
                 아래 {corrections.length}건을 순서대로 처리합니다.
               </div>
               <div className="space-y-3">
@@ -373,16 +373,17 @@ export default function ReviewPage() {
                         <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${TYPE_BADGE_CLASS[c.report_type]}`}>
                           {CORRECTION_TYPE_LABELS[c.report_type]}
                         </span>
-                        <span className="text-[10px] text-muted bg-gray-100 px-1.5 py-0.5 rounded">
-                          {CORRECTION_SCOPE_LABELS[c.scope]}
-                          {c.option_label ? ` ${c.option_label}` : ""}
-                        </span>
-                        <span className="text-[10px] text-muted bg-gray-100 px-1.5 py-0.5 rounded font-mono">
+                        {c.option_label && (
+                          <span className="text-[10px] text-muted bg-muted-bg px-1.5 py-0.5 rounded">
+                            선지 {c.option_label}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-muted bg-muted-bg px-1.5 py-0.5 rounded font-mono">
                           {c.question_id}
                         </span>
                       </div>
                       {q ? (
-                        <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">
+                        <p className="text-xs text-foreground leading-relaxed line-clamp-2">
                           {q.question_text.slice(0, 120)}
                           {q.question_text.length > 120 ? "..." : ""}
                         </p>
@@ -390,12 +391,12 @@ export default function ReviewPage() {
                         <p className="text-xs text-muted italic">문제 데이터를 찾을 수 없습니다</p>
                       )}
                       {c.selected_text && (
-                        <div className="bg-yellow-50 border-l-4 border-yellow-400 px-2 py-1 rounded-r">
-                          <p className="text-[11px] text-gray-700 leading-relaxed line-clamp-2">{c.selected_text}</p>
+                        <div className="bg-warning-bg border-l-4 border-warning px-2 py-1 rounded-r">
+                          <p className="text-[11px] text-warning-fg leading-relaxed line-clamp-2">{c.selected_text}</p>
                         </div>
                       )}
                       {c.description && (
-                        <p className="text-xs text-gray-600 leading-relaxed pl-1">{c.description}</p>
+                        <p className="text-xs text-muted leading-relaxed pl-1">{c.description}</p>
                       )}
                       <div className="flex items-center justify-between pt-1">
                         <span className="text-[10px] text-muted">
@@ -408,7 +409,7 @@ export default function ReviewPage() {
                         </span>
                         <button
                           onClick={() => void handleDeleteCorrection(c.id)}
-                          className="text-[10px] text-red-400 font-medium"
+                          className="text-[10px] text-danger-fg font-medium"
                         >
                           삭제
                         </button>

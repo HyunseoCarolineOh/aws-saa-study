@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import type { Question } from "@/lib/types";
 import {
-  CORRECTION_SCOPE_LABELS,
   CORRECTION_TYPE_LABELS,
   isCorrectionsEnabled,
   submitCorrection,
-  type CorrectionScope,
   type CorrectionType,
 } from "@/lib/corrections";
 
@@ -23,9 +21,8 @@ const TYPE_ORDER: CorrectionType[] = [
   "wrong_explanation",
   "invalid_choice",
   "wrong_answer",
+  "service_type_change",
 ];
-
-const SCOPE_ORDER: CorrectionScope[] = ["question", "option", "explanation", "detail"];
 
 export default function CorrectionReportSheet({
   isOpen,
@@ -33,7 +30,6 @@ export default function CorrectionReportSheet({
   onClose,
   onSubmitted,
 }: Props) {
-  const [scope, setScope] = useState<CorrectionScope>("question");
   const [reportType, setReportType] = useState<CorrectionType>(TYPE_ORDER[0]);
   const [optionLabel, setOptionLabel] = useState<string>(question.options[0]?.label ?? "");
   const [description, setDescription] = useState("");
@@ -42,7 +38,6 @@ export default function CorrectionReportSheet({
 
   useEffect(() => {
     if (isOpen) {
-      setScope("question");
       setReportType(TYPE_ORDER[0]);
       setOptionLabel(question.options[0]?.label ?? "");
       setDescription("");
@@ -51,15 +46,10 @@ export default function CorrectionReportSheet({
     }
   }, [isOpen, question.options]);
 
-  useEffect(() => {
-    if (scope === "option") {
-      setReportType("invalid_choice");
-    }
-  }, [scope]);
-
   if (!isOpen) return null;
 
   const enabled = isCorrectionsEnabled();
+  const isChoiceReport = reportType === "invalid_choice";
 
   async function handleSave() {
     if (!enabled) return;
@@ -70,8 +60,8 @@ export default function CorrectionReportSheet({
         question_source: question.source,
         question_id: question.id,
         report_type: reportType,
-        scope,
-        option_label: scope === "option" ? optionLabel : null,
+        scope: isChoiceReport ? "option" : "question",
+        option_label: isChoiceReport ? optionLabel : null,
         selected_text: null,
         description: description.trim() || null,
       });
@@ -87,10 +77,10 @@ export default function CorrectionReportSheet({
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg bg-white rounded-t-2xl animate-slide-up" style={{ maxHeight: "85vh" }}>
+      <div className="relative w-full max-w-lg bg-card border-t border-border rounded-t-2xl animate-slide-up" style={{ maxHeight: "85vh" }}>
         <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: "85vh" }}>
           <div className="flex justify-center">
-            <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            <div className="w-10 h-1 bg-border rounded-full" />
           </div>
 
           <div className="flex items-center justify-between">
@@ -98,32 +88,12 @@ export default function CorrectionReportSheet({
           </div>
 
           {!enabled && (
-            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs rounded-lg p-2">
+            <div className="bg-warning-bg border border-warning-border text-warning-fg text-xs rounded-lg p-2">
               Supabase 환경변수가 설정되지 않아 신고를 보낼 수 없습니다.
             </div>
           )}
 
-          <div>
-            <label className="block text-xs text-muted mb-1">어디에 문제가 있나요?</label>
-            <div className="grid grid-cols-4 gap-1.5">
-              {SCOPE_ORDER.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setScope(s)}
-                  className={`py-2 rounded-lg text-xs font-medium border transition-colors ${
-                    scope === s
-                      ? "bg-primary text-white border-primary"
-                      : "bg-white text-gray-600 border-border"
-                  }`}
-                >
-                  {CORRECTION_SCOPE_LABELS[s]}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {scope === "option" && question.options.length > 0 && (
+          {isChoiceReport && question.options.length > 0 && (
             <div>
               <label className="block text-xs text-muted mb-1">어느 선지인가요?</label>
               <div className="flex gap-2">
@@ -134,8 +104,8 @@ export default function CorrectionReportSheet({
                     onClick={() => setOptionLabel(opt.label)}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
                       optionLabel === opt.label
-                        ? "bg-primary text-white border-primary"
-                        : "bg-white text-gray-600 border-border"
+                        ? "bg-primary text-on-primary border-primary"
+                        : "bg-card text-muted border-border"
                     }`}
                   >
                     {opt.label}
@@ -152,7 +122,7 @@ export default function CorrectionReportSheet({
                 <label
                   key={t}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer text-sm ${
-                    reportType === t ? "border-primary bg-blue-50" : "border-border"
+                    reportType === t ? "border-primary bg-info-bg" : "border-border"
                   }`}
                 >
                   <input
@@ -181,7 +151,7 @@ export default function CorrectionReportSheet({
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg p-2">
+            <div className="bg-danger-bg border border-danger-border text-danger-fg text-xs rounded-lg p-2">
               전송 실패: {error}
             </div>
           )}
@@ -198,7 +168,7 @@ export default function CorrectionReportSheet({
               type="button"
               onClick={handleSave}
               disabled={!enabled || submitting}
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-medium active:scale-[0.98] transition-transform disabled:opacity-40"
+              className="flex-1 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-medium active:scale-[0.98] transition-transform disabled:opacity-40"
             >
               {submitting ? "전송 중..." : "신고"}
             </button>

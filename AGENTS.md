@@ -19,11 +19,12 @@ This version has breaking changes — APIs, conventions, and file structure may 
    - `nxt-<global_number>` → 해당 파일에서 `global_number` 매칭
    - `et-<examtopics_number>` → 해당 파일에서 `examtopics_number` 매칭
    - 찾지 못하면 로그만 남기고 **삭제하지 말 것**.
-4. `report_type`별로 수정 지침:
-   - **translation_needed**: 한국어 번역을 추가/보강한다. 원문은 보존. `scope`가 `question`이면 `question_text`, `option`이면 `options[*].text`(단 `option_label`에 해당하는 옵션만), `explanation`이면 `explanation`, `detail`이면 `detailed_explanation`을 대상으로 한다.
-   - **wrong_explanation**: `correct_answers`를 기준으로 해설을 재작성한다. `scope`에 맞춰 `explanation` 또는 `detailed_explanation` 편집. AWS 공식 문서 근거를 인용한다.
+4. `report_type`별로 수정 지침 (신규 UI에서는 `scope`가 `invalid_choice`일 때만 `option`, 그 외엔 기본값 `question`으로 들어오므로 `description` 텍스트가 1차 단서다):
+   - **translation_needed**: 한국어 번역을 추가/보강한다. 원문은 보존. `description`에 구체적 위치가 적혀 있으면 그에 따르고, 없으면 `question_text` · `options[*].text` · `explanation` · `detailed_explanation` 중 번역이 비어 있거나 부자연스러운 부분을 찾아 보강한다.
+   - **wrong_explanation**: `correct_answers`를 기준으로 `explanation` 및 `detailed_explanation`을 재검토해 틀린 해설을 재작성한다. AWS 공식 문서 근거를 인용한다.
    - **invalid_choice**: `option_label`에 해당하는 선지 텍스트를 수정한다. 선지 블록에 섞여 있던 비(非)선지 콘텐츠는 해설 쪽으로 옮기거나 제거. 정답 변경이 필요한지 재검증.
    - **wrong_answer**: `source_url`과 문제 본문을 대조해 `correct_answers`를 업데이트. 판단이 불확실하면 중단하고 사용자에게 확인.
+   - **service_type_change**: 문제의 `related_services` 배열을 수정한다. `description`에 적힌 사용자 요청을 참고하되, `question_text` · `explanation` · `detailed_explanation`을 교차 검증해 실제로 어떤 AWS 서비스가 핵심인지 확인한 뒤 반영. 확실하지 않으면 중단하고 사용자에게 확인.
 5. 수정이 반영되면 해당 레코드를 삭제한다:
    ```sql
    delete from saa_correction_requests where id = <id>;
