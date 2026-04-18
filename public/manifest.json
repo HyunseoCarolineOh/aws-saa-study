@@ -4,8 +4,8 @@
   "description": "AWS Solutions Architect Associate 2주 완성 학습 도구",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#2563eb",
+  "background_color": "#0b1220",
+  "theme_color": "#141d2e",
   "orientation": "portrait",
   "icons": [
     {

@@ -27,7 +27,7 @@ export default function MockExamPage() {
 
         <Link
           href="/mock-exam/start"
-          className="block w-full bg-primary text-white text-center py-3 rounded-xl font-medium"
+          className="block w-full bg-primary text-on-primary text-center py-3 rounded-xl font-medium"
         >
           모의고사 시작
         </Link>
@@ -46,7 +46,7 @@ export default function MockExamPage() {
                 <div key={exam.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2 py-0.5 rounded font-medium ${exam.passed ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded font-medium ${exam.passed ? "bg-success-bg text-success-fg border border-success-border" : "bg-danger-bg text-danger-fg border border-danger-border"}`}>
                         {exam.passed ? "합격" : "불합격"}
                       </span>
                       <span className="text-sm font-bold">{exam.score}점</span>

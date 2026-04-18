@@ -97,10 +97,10 @@ function TodoItem({ label, count, done }: { label: string; count: string; done: 
       <div className="flex items-center gap-2">
         <div
           className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-            done ? "bg-green-600 border-green-600" : "border-gray-400"
+            done ? "bg-success border-success" : "border-muted"
           }`}
         >
-          {done && <span className="text-white text-xs">&#x2713;</span>}
+          {done && <span className="text-on-primary text-xs">&#x2713;</span>}
         </div>
         <span className={`text-sm ${done ? "line-through" : ""}`}>{label}</span>
       </div>

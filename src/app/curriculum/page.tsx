@@ -98,7 +98,7 @@ export default function CurriculumPage() {
                   <div className="flex items-start gap-3">
                     {/* Day 번호 */}
                     <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                      isDone ? "bg-green-500" : isPast ? "bg-gray-400" : getTypeColor(item.type)
+                      isDone ? "bg-success" : isPast ? "bg-muted" : getTypeColor(item.type)
                     }`}>
                       {isDone ? "\u2713" : item.day}
                     </div>
@@ -106,15 +106,15 @@ export default function CurriculumPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="font-medium text-sm">{item.title}</span>
-                        {isToday && <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded">TODAY</span>}
+                        {isToday && <span className="text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded">TODAY</span>}
                       </div>
                       <p className="text-xs text-muted">{item.desc}</p>
 
                       {/* 진도 바 */}
                       <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 bg-gray-100 rounded-full h-1.5">
+                        <div className="flex-1 bg-border rounded-full h-1.5">
                           <div
-                            className={`rounded-full h-1.5 ${isDone ? "bg-green-500" : "bg-primary"}`}
+                            className={`rounded-full h-1.5 ${isDone ? "bg-success" : "bg-primary"}`}
                             style={{ width: `${Math.min(100, (solved / item.target) * 100)}%` }}
                           />
                         </div>

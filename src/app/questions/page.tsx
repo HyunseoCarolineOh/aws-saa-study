@@ -206,7 +206,7 @@ function QuestionsContent() {
       {/* 서비스 모드 배너 */}
       {mode === "service" && service && (
         <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 text-sm text-blue-800 flex justify-between items-center">
+          <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
             <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
             <span>{currentIndex + 1} / {questions.length}문제</span>
           </div>
@@ -216,7 +216,7 @@ function QuestionsContent() {
       {/* 복습 모드 배너 */}
       {mode === "review" && (
         <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-orange-50 border border-orange-200 rounded-xl px-4 py-2 text-sm text-orange-800 flex justify-between items-center">
+          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
             <span>복습 모드</span>
             <span>{questions.length}문제</span>
           </div>
@@ -236,7 +236,7 @@ function QuestionsContent() {
         <button
           type="button"
           onClick={handleOpenReport}
-          className="text-xs text-red-400 hover:text-red-600 transition-colors px-2 py-1 flex items-center gap-1"
+          className="text-xs text-danger-fg hover:text-danger transition-colors px-2 py-1 flex items-center gap-1"
         >
           <span aria-hidden>⚠</span>
           <span>수정 요청</span>
@@ -263,7 +263,7 @@ function QuestionsContent() {
       )}
 
       {reportToast && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
           {reportToast}
         </div>
       )}

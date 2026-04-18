@@ -55,24 +55,24 @@ export default function StudyNoteMemoSheet({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* 바텀시트 */}
-      <div className="relative w-full max-w-lg bg-white rounded-t-2xl animate-slide-up" style={{ maxHeight: "85vh" }}>
+      <div className="relative w-full max-w-lg bg-card border-t border-border rounded-t-2xl animate-slide-up" style={{ maxHeight: "85vh" }}>
         <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: "85vh" }}>
           {/* 핸들 */}
           <div className="flex justify-center">
-            <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            <div className="w-10 h-1 bg-border rounded-full" />
           </div>
 
           {/* 헤더 */}
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold">오답노트 저장</h3>
-            <span className="text-[10px] text-muted bg-gray-100 px-2 py-0.5 rounded">
+            <span className="text-[10px] text-muted bg-muted-bg px-2 py-0.5 rounded">
               {sourceLabel}에서 선택
             </span>
           </div>
 
           {/* 선택된 텍스트 미리보기 */}
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-2 rounded-r">
-            <p className="text-xs text-gray-700 leading-relaxed line-clamp-3">
+          <div className="bg-warning-bg border-l-4 border-warning px-3 py-2 rounded-r">
+            <p className="text-xs text-warning-fg leading-relaxed line-clamp-3">
               {selectedText}
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function StudyNoteMemoSheet({
             </button>
             <button
               onClick={handleSave}
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-medium active:scale-[0.98] transition-transform"
+              className="flex-1 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-medium active:scale-[0.98] transition-transform"
             >
               저장
             </button>

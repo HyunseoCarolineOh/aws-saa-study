@@ -194,7 +194,7 @@ export default function MockExamStartPage() {
       <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
         <h1 className="text-xl font-bold mb-4">모의고사 결과</h1>
 
-        <div className={`rounded-2xl p-6 mb-4 text-white text-center ${passed ? "bg-green-600" : "bg-red-500"}`}>
+        <div className={`rounded-2xl p-6 mb-4 text-on-primary text-center ${passed ? "bg-success" : "bg-danger"}`}>
           <p className="text-sm opacity-80 mb-1">{passed ? "합격!" : "불합격"}</p>
           <p className="text-4xl font-bold mb-1">{score} / 1000</p>
           <p className="text-sm opacity-80">정답 {results.correct} / {results.total}문제 (합격 기준: 720점)</p>
@@ -212,9 +212,9 @@ export default function MockExamStartPage() {
                     <span>{domain}</span>
                     <span className="text-muted">{s.correct}/{s.total} ({pct}%)</span>
                   </div>
-                  <div className="bg-gray-200 rounded-full h-2">
+                  <div className="bg-border rounded-full h-2">
                     <div
-                      className={`rounded-full h-2 ${pct >= 70 ? "bg-green-500" : "bg-red-400"}`}
+                      className={`rounded-full h-2 ${pct >= 70 ? "bg-success" : "bg-danger"}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -238,9 +238,9 @@ export default function MockExamStartPage() {
                     {question.options.map((opt) => {
                       const isSelected = selected.includes(opt.label);
                       const isCorrect = question.correct_answers.includes(opt.label);
-                      let style = "text-gray-600";
-                      if (isCorrect) style = "text-green-700 font-medium";
-                      if (isSelected && !isCorrect) style = "text-red-500 line-through";
+                      let style = "text-muted";
+                      if (isCorrect) style = "text-success-fg font-medium";
+                      if (isSelected && !isCorrect) style = "text-danger-fg line-through";
                       return (
                         <p key={opt.label} className={`text-xs ${style}`}>
                           {opt.label}. {opt.text}
@@ -252,8 +252,8 @@ export default function MockExamStartPage() {
                   </div>
 
                   {question.explanation && (
-                    <div className="bg-blue-50 rounded-lg p-3 mt-2">
-                      <p className="text-xs text-blue-800 leading-relaxed">{question.explanation}</p>
+                    <div className="bg-info-bg border border-info-border rounded-lg p-3 mt-2">
+                      <p className="text-xs text-info-fg leading-relaxed">{question.explanation}</p>
                     </div>
                   )}
                 </div>
@@ -266,7 +266,7 @@ export default function MockExamStartPage() {
           <Link href="/mock-exam" className="flex-1 block bg-card border border-border text-center py-3 rounded-xl font-medium text-sm">
             시험 기록 보기
           </Link>
-          <Link href="/" className="flex-1 block bg-primary text-white text-center py-3 rounded-xl font-medium text-sm">
+          <Link href="/" className="flex-1 block bg-primary text-on-primary text-center py-3 rounded-xl font-medium text-sm">
             홈으로
           </Link>
         </div>
@@ -290,11 +290,11 @@ export default function MockExamStartPage() {
       <div className="sticky top-0 bg-background z-10 pb-2 pt-2">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium">{currentIndex + 1} / {questions.length}</span>
-          <span className={`text-sm font-mono font-bold ${isTimeWarning ? "text-red-500" : "text-muted"}`}>
+          <span className={`text-sm font-mono font-bold ${isTimeWarning ? "text-danger" : "text-muted"}`}>
             {formatTime(timeLeft)}
           </span>
         </div>
-        <div className="bg-gray-200 rounded-full h-1.5">
+        <div className="bg-border rounded-full h-1.5">
           <div
             className="bg-primary rounded-full h-1.5 transition-all"
             style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
@@ -305,7 +305,7 @@ export default function MockExamStartPage() {
       {/* 문제 */}
       <div className="bg-card rounded-xl border border-border p-4 mb-3 mt-2">
         {isMulti && (
-          <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mb-2">{selectCount}개 선택</span>
+          <span className="inline-block text-xs bg-warning-bg text-warning-fg border border-warning-border px-2 py-0.5 rounded mb-2">{selectCount}개 선택</span>
         )}
         <p className="text-sm leading-relaxed whitespace-pre-line">{q.question_text}</p>
       </div>
@@ -319,12 +319,12 @@ export default function MockExamStartPage() {
               key={opt.label}
               onClick={() => handleSelect(opt.label)}
               className={`w-full text-left rounded-xl border-2 p-3 transition-all active:scale-[0.99] ${
-                isSelected ? "border-primary bg-blue-50" : "border-border bg-card"
+                isSelected ? "border-primary bg-info-bg" : "border-border bg-card"
               }`}
             >
               <div className="flex gap-3">
                 <span className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                  isSelected ? "bg-primary text-white" : "bg-gray-100 text-gray-600"
+                  isSelected ? "bg-primary text-on-primary" : "bg-muted-bg text-muted"
                 }`}>
                   {opt.label}
                 </span>
@@ -347,14 +347,14 @@ export default function MockExamStartPage() {
         {currentIndex < questions.length - 1 ? (
           <button
             onClick={() => setCurrentIndex((p) => p + 1)}
-            className="flex-1 py-3 rounded-xl bg-primary text-white text-sm font-medium"
+            className="flex-1 py-3 rounded-xl bg-primary text-on-primary text-sm font-medium"
           >
             다음
           </button>
         ) : (
           <button
             onClick={handleFinish}
-            className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm font-medium"
+            className="flex-1 py-3 rounded-xl bg-danger text-on-primary text-sm font-medium"
           >
             시험 종료
           </button>
@@ -371,10 +371,10 @@ export default function MockExamStartPage() {
               onClick={() => setCurrentIndex(i)}
               className={`w-8 h-8 rounded text-xs font-medium ${
                 i === currentIndex
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-on-primary"
                   : answers[i]
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-500"
+                  ? "bg-info-bg text-info-fg"
+                  : "bg-muted-bg text-muted"
               }`}
             >
               {i + 1}
@@ -387,8 +387,8 @@ export default function MockExamStartPage() {
 }
 
 function detectMultiSelectCount(text: string): number {
-  if (/3개|세\s*가지|THREE|three|choose\s*3/i.test(text)) return 3;
-  if (/2개|두\s*개|두\s*가지|TWO|two|choose\s*2/i.test(text)) return 2;
+  if (/3개를?\s*선택|세\s*가지를?\s*선택|choose\s*3|select\s*3/i.test(text)) return 3;
+  if (/2개를?\s*선택|두\s*(?:개를?|가지를?)\s*선택|choose\s*2|select\s*2/i.test(text)) return 2;
   return 1;
 }
 

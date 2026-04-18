@@ -31,9 +31,9 @@ export default function StatsPage() {
       {/* 요약 카드 */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <StatCard label="총 풀이 수" value={`${totalQuestions}문제`} color="text-primary" />
-        <StatCard label="정답률" value={`${accuracy}%`} color={accuracy >= 70 ? "text-green-600" : "text-red-500"} />
-        <StatCard label="연속 학습일" value={`${streak}일`} color="text-purple-600" />
-        <StatCard label="평균 풀이 시간" value={`${avgTimePerQuestion}초`} color="text-orange-500" />
+        <StatCard label="정답률" value={`${accuracy}%`} color={accuracy >= 70 ? "text-success" : "text-danger"} />
+        <StatCard label="연속 학습일" value={`${streak}일`} color="text-info" />
+        <StatCard label="평균 풀이 시간" value={`${avgTimePerQuestion}초`} color="text-accent" />
       </div>
 
       {/* 일별 학습 기록 */}

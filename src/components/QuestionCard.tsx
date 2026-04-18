@@ -133,7 +133,7 @@ export default function QuestionCard({
         <span className="text-sm text-muted font-medium">
           {questionIndex + 1} / {totalQuestions}
         </span>
-        <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+        <div className="flex-1 bg-border rounded-full h-1.5">
           <div
             className="bg-primary rounded-full h-1.5 transition-all"
             style={{ width: `${((questionIndex + 1) / totalQuestions) * 100}%` }}
@@ -144,7 +144,7 @@ export default function QuestionCard({
       {/* 문제 */}
       <div className="bg-card rounded-xl border border-border p-4 mb-4">
         {isMultiSelect && (
-          <span className="inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mb-2">
+          <span className="inline-block text-xs bg-warning-bg text-warning-fg border border-warning-border px-2 py-0.5 rounded mb-2">
             {selectCount}개 선택
           </span>
         )}
@@ -163,15 +163,15 @@ export default function QuestionCard({
 
           if (submitted) {
             if (isCorrectOption) {
-              borderColor = "border-green-500";
-              bgColor = "bg-green-50";
+              borderColor = "border-success";
+              bgColor = "bg-success-bg";
             } else if (isSelected && !isCorrectOption) {
-              borderColor = "border-red-500";
-              bgColor = "bg-red-50";
+              borderColor = "border-danger";
+              bgColor = "bg-danger-bg";
             }
           } else if (isSelected) {
             borderColor = "border-primary";
-            bgColor = "bg-blue-50";
+            bgColor = "bg-info-bg";
           }
 
           return (
@@ -185,12 +185,12 @@ export default function QuestionCard({
                 <span
                   className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
                     submitted && isCorrectOption
-                      ? "bg-green-500 text-white"
+                      ? "bg-success text-on-primary"
                       : submitted && isSelected && !isCorrectOption
-                      ? "bg-red-500 text-white"
+                      ? "bg-danger text-on-primary"
                       : isSelected
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-600"
+                      ? "bg-primary text-on-primary"
+                      : "bg-muted-bg text-muted"
                   }`}
                 >
                   {opt.label}
@@ -207,7 +207,7 @@ export default function QuestionCard({
         <button
           onClick={handleSubmit}
           disabled={selectedAnswers.length === 0}
-          className="w-full bg-primary text-white py-3 rounded-xl font-medium disabled:opacity-40 active:scale-[0.98] transition-all"
+          className="w-full bg-primary text-on-primary py-3 rounded-xl font-medium disabled:opacity-40 active:scale-[0.98] transition-all"
         >
           정답 확인
         </button>
@@ -216,7 +216,7 @@ export default function QuestionCard({
           {/* 결과 */}
           <div
             className={`text-center py-3 rounded-xl mb-3 font-medium ${
-              isCorrect ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+              isCorrect ? "bg-success-bg text-success-fg border border-success-border" : "bg-danger-bg text-danger-fg border border-danger-border"
             }`}
           >
             {isCorrect ? "정답입니다!" : `오답입니다. 정답: ${question.correct_answers.join(", ")}`}
@@ -224,7 +224,7 @@ export default function QuestionCard({
 
           {/* 풀이 해설 */}
           {(question.explanation || question.detailed_explanation) && (
-            <div className="bg-gray-50 rounded-xl border border-border mb-3 overflow-hidden">
+            <div className="bg-card-elevated rounded-xl border border-border mb-3 overflow-hidden">
               {/* 토글 헤더 */}
               <button
                 onClick={() => setShowExplanation(!showExplanation)}
@@ -255,7 +255,7 @@ export default function QuestionCard({
                         explanationTab === "detail"
                           ? "text-primary border-b-2 border-primary"
                           : !question.detailed_explanation
-                          ? "text-gray-300"
+                          ? "text-muted opacity-50"
                           : "text-muted"
                       }`}
                     >
@@ -268,7 +268,7 @@ export default function QuestionCard({
                         explanationTab === "services"
                           ? "text-primary border-b-2 border-primary"
                           : question.related_services.length === 0
-                          ? "text-gray-300"
+                          ? "text-muted opacity-50"
                           : "text-muted"
                       }`}
                     >
@@ -280,7 +280,7 @@ export default function QuestionCard({
                   <div className="p-3">
                     {explanationTab === "explanation" && (
                       <TextSelectionPopover questionId={question.id} sourceContext="explanation" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
                           {question.explanation || "해설이 없습니다."}
                         </div>
                       </TextSelectionPopover>
@@ -288,7 +288,7 @@ export default function QuestionCard({
 
                     {explanationTab === "detail" && (
                       <TextSelectionPopover questionId={question.id} sourceContext="detail" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
                           {question.detailed_explanation || (
                             <div className="text-center text-muted py-4">
                               <p className="mb-2">상세 풀이가 아직 없습니다.</p>
@@ -312,7 +312,7 @@ export default function QuestionCard({
                       <div className="space-y-2">
                         {question.related_services.map((svc) => (
                           <div key={svc} className="flex items-center gap-2">
-                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
+                            <span className="text-xs bg-info-bg text-info-fg border border-info-border px-2 py-0.5 rounded font-medium">
                               {svc}
                             </span>
                           </div>
@@ -341,7 +341,7 @@ export default function QuestionCard({
 
           <button
             onClick={handleNext}
-            className="w-full bg-primary text-white py-3 rounded-xl font-medium active:scale-[0.98] transition-all"
+            className="w-full bg-primary text-on-primary py-3 rounded-xl font-medium active:scale-[0.98] transition-all"
           >
             다음 문제
           </button>
@@ -362,7 +362,7 @@ export default function QuestionCard({
 
       {/* 알림 토스트 */}
       {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-green-600 text-white text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-success text-on-primary text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
           {toastMessage}
         </div>
       )}

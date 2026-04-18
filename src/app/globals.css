@@ -1,29 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --primary: #2563eb;
-  --primary-light: #3b82f6;
-  --success: #16a34a;
-  --danger: #dc2626;
-  --warning: #f59e0b;
-  --muted: #64748b;
-  --card: #ffffff;
-  --border: #e2e8f0;
+  color-scheme: dark;
+
+  /* 서피스 / 텍스트 */
+  --background: #0b1220;
+  --foreground: #e2e8f0;
+  --card: #141d2e;
+  --card-elevated: #1b2540;
+  --border: #2a3548;
+  --muted: #94a3b8;
+  --muted-bg: #1b2540;
+
+  /* 브랜드 */
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --on-primary: #ffffff;
+
+  /* info (blue) */
+  --info: #60a5fa;
+  --info-bg: rgba(59, 130, 246, 0.15);
+  --info-fg: #93c5fd;
+  --info-border: rgba(59, 130, 246, 0.35);
+
+  /* success (green) */
+  --success: #22c55e;
+  --success-bg: rgba(34, 197, 94, 0.15);
+  --success-fg: #86efac;
+  --success-border: rgba(34, 197, 94, 0.35);
+
+  /* danger (red) */
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --danger-fg: #fca5a5;
+  --danger-border: rgba(239, 68, 68, 0.35);
+
+  /* warning (yellow/amber) */
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --warning-fg: #fcd34d;
+  --warning-border: rgba(251, 191, 36, 0.35);
+
+  /* accent (orange) */
+  --accent: #fb923c;
+  --accent-bg: rgba(251, 146, 60, 0.15);
+  --accent-fg: #fdba74;
+  --accent-border: rgba(251, 146, 60, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-elevated: var(--card-elevated);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-bg: var(--muted-bg);
+
   --color-primary: var(--primary);
   --color-primary-light: var(--primary-light);
+  --color-on-primary: var(--on-primary);
+
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-info-fg: var(--info-fg);
+  --color-info-border: var(--info-border);
+
   --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-fg: var(--success-fg);
+  --color-success-border: var(--success-border);
+
   --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-border: var(--danger-border);
+
   --color-warning: var(--warning);
-  --color-muted: var(--muted);
-  --color-card: var(--card);
-  --color-border: var(--border);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-border: var(--warning-border);
+
+  --color-accent: var(--accent);
+  --color-accent-bg: var(--accent-bg);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-border: var(--accent-border);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -35,18 +97,15 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 모바일 스크롤 최적화 */
 html {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 하단 네비게이션 여백 */
 main {
   padding-bottom: 6rem;
 }
 
-/* 오답노트 애니메이션 */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }

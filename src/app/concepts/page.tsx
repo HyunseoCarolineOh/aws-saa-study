@@ -710,7 +710,7 @@ export default function ConceptsPage() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-sm text-primary">{svc.name}</p>
                             {svc.frequency && svc.frequency >= 30 && (
-                              <span className="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-medium">
+                              <span className="text-[10px] bg-danger-bg text-danger-fg border border-danger-border px-1.5 py-0.5 rounded font-medium">
                                 빈출 {svc.frequency}문제
                               </span>
                             )}
@@ -720,7 +720,7 @@ export default function ConceptsPage() {
                               </span>
                             )}
                             {hasQuestions && stats.solvedCount > 0 && (
-                              <span className="text-[10px] bg-green-50 text-green-700 px-1.5 py-0.5 rounded font-medium">
+                              <span className="text-[10px] bg-success-bg text-success-fg border border-success-border px-1.5 py-0.5 rounded font-medium">
                                 {stats.solvedCount}/{stats.totalQuestions} ({stats.accuracy}%)
                               </span>
                             )}
@@ -729,7 +729,7 @@ export default function ConceptsPage() {
                             <span className="text-[10px] text-muted flex-shrink-0">vs {svc.compare}</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">{svc.summary}</p>
+                        <p className="text-xs text-muted mt-0.5 leading-relaxed">{svc.summary}</p>
                       </button>
                       {/* 관련 문제 풀기 링크 */}
                       {hasQuestions && (
@@ -747,17 +747,17 @@ export default function ConceptsPage() {
                       {isExpanded && hasDetail && (
                         <div className="px-4 pb-4 space-y-3">
                           {/* 설명 */}
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <p className="text-xs text-gray-700 leading-relaxed">{svc.description}</p>
+                          <div className="bg-card-elevated rounded-lg p-3">
+                            <p className="text-xs text-foreground leading-relaxed">{svc.description}</p>
                           </div>
 
                           {/* 핵심 특징 */}
                           {svc.keyFeatures && (
                             <div>
-                              <p className="text-xs font-bold text-gray-800 mb-1.5">핵심 특징</p>
+                              <p className="text-xs font-bold text-foreground mb-1.5">핵심 특징</p>
                               <ul className="space-y-1">
                                 {svc.keyFeatures.map((f, i) => (
-                                  <li key={i} className="text-xs text-gray-600 leading-relaxed flex gap-1.5">
+                                  <li key={i} className="text-xs text-muted leading-relaxed flex gap-1.5">
                                     <span className="text-primary mt-0.5 flex-shrink-0">•</span>
                                     <span>{f}</span>
                                   </li>
@@ -768,11 +768,11 @@ export default function ConceptsPage() {
 
                           {/* 시험 팁 */}
                           {svc.examTips && (
-                            <div className="bg-yellow-50 rounded-lg p-3">
-                              <p className="text-xs font-bold text-yellow-800 mb-1.5">SAA 시험 팁</p>
+                            <div className="bg-warning-bg border border-warning-border rounded-lg p-3">
+                              <p className="text-xs font-bold text-warning-fg mb-1.5">SAA 시험 팁</p>
                               <ul className="space-y-1">
                                 {svc.examTips.map((tip, i) => (
-                                  <li key={i} className="text-xs text-yellow-900 leading-relaxed flex gap-1.5">
+                                  <li key={i} className="text-xs text-warning-fg leading-relaxed flex gap-1.5">
                                     <span className="flex-shrink-0">💡</span>
                                     <span>{tip}</span>
                                   </li>
@@ -784,11 +784,11 @@ export default function ConceptsPage() {
                           {/* 사용 사례 */}
                           {svc.useCases && (
                             <div>
-                              <p className="text-xs font-bold text-gray-800 mb-1.5">주요 사용 사례</p>
+                              <p className="text-xs font-bold text-foreground mb-1.5">주요 사용 사례</p>
                               <ul className="space-y-1">
                                 {svc.useCases.map((uc, i) => (
-                                  <li key={i} className="text-xs text-gray-600 leading-relaxed flex gap-1.5">
-                                    <span className="text-green-600 flex-shrink-0">▸</span>
+                                  <li key={i} className="text-xs text-muted leading-relaxed flex gap-1.5">
+                                    <span className="text-success flex-shrink-0">▸</span>
                                     <span>{uc}</span>
                                   </li>
                                 ))}
@@ -798,7 +798,7 @@ export default function ConceptsPage() {
 
                           {/* 비용 */}
                           {svc.pricing && (
-                            <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-muted bg-card-elevated rounded-lg p-2">
                               <span className="font-medium">비용: </span>{svc.pricing}
                             </div>
                           )}

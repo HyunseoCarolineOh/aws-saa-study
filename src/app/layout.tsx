@@ -28,7 +28,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#2563eb",
+  themeColor: "#141d2e",
 };
 
 export default function RootLayout({
@@ -40,6 +40,7 @@ export default function RootLayout({
     <html
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full flex flex-col">
         <main className="flex-1">{children}</main>

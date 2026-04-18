@@ -100,7 +100,7 @@ export default function TextSelectionPopover({
         >
           <button
             onClick={handleSave}
-            className="flex items-center gap-1.5 bg-gray-800 text-white text-xs font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
+            className="flex items-center gap-1.5 bg-primary text-on-primary text-xs font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
             style={{ touchAction: "manipulation", minHeight: 44 }}
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
