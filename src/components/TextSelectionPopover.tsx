@@ -100,13 +100,15 @@ export default function TextSelectionPopover({
         >
           <button
             onClick={handleSave}
-            className="flex items-center gap-1.5 bg-primary text-on-primary text-xs font-medium px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
-            style={{ touchAction: "manipulation", minHeight: 44 }}
+            className="flex items-center gap-1.5 text-xs font-display font-bold px-3 py-2 rounded-full whitespace-nowrap text-on-primary animate-pop-in"
+            style={{
+              touchAction: "manipulation",
+              minHeight: 44,
+              background: "linear-gradient(135deg, #ffb4c6, #c8b4ff)",
+              boxShadow: "0 8px 20px rgba(255,180,198,0.4), 0 0 0 1px rgba(255,255,255,0.15) inset",
+            }}
           >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            오답노트 저장
+            📝 노트 저장
           </button>
         </div>
       )}

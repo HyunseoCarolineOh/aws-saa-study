@@ -3,49 +3,68 @@
 :root {
   color-scheme: dark;
 
-  /* 서피스 / 텍스트 */
-  --background: #0b1220;
-  --foreground: #e2e8f0;
-  --card: #141d2e;
-  --card-elevated: #1b2540;
-  --border: #2a3548;
-  --muted: #94a3b8;
-  --muted-bg: #1b2540;
+  /* 서피스 / 텍스트 — 따뜻한 다크 (블루그레이 대신 보라빛 머금은 차콜) */
+  --background: #1a1625;
+  --foreground: #f3ecff;
+  --card: #25203a;
+  --card-elevated: #2e2849;
+  --border: #3d3560;
+  --muted: #b5aad4;
+  --muted-bg: #2a243f;
 
-  /* 브랜드 */
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --on-primary: #ffffff;
+  /* 브랜드 — 체리핑크 */
+  --primary: #ffb4c6;
+  --primary-light: #ffd4de;
+  --on-primary: #2b1a20;
 
-  /* info (blue) */
-  --info: #60a5fa;
-  --info-bg: rgba(59, 130, 246, 0.15);
-  --info-fg: #93c5fd;
-  --info-border: rgba(59, 130, 246, 0.35);
+  /* 파스텔 팔레트 */
+  --pastel-mint: #b4f2e1;
+  --pastel-lavender: #c8b4ff;
+  --pastel-lemon: #ffe27a;
+  --pastel-peach: #ffcba8;
+  --pastel-sky: #a8dcff;
+  --pastel-rose: #ffb4c6;
 
-  /* success (green) */
-  --success: #22c55e;
-  --success-bg: rgba(34, 197, 94, 0.15);
-  --success-fg: #86efac;
-  --success-border: rgba(34, 197, 94, 0.35);
+  /* info (sky blue) */
+  --info: #a8dcff;
+  --info-bg: rgba(168, 220, 255, 0.14);
+  --info-fg: #cce7ff;
+  --info-border: rgba(168, 220, 255, 0.4);
 
-  /* danger (red) */
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.15);
-  --danger-fg: #fca5a5;
-  --danger-border: rgba(239, 68, 68, 0.35);
+  /* success (mint) */
+  --success: #b4f2e1;
+  --success-bg: rgba(180, 242, 225, 0.14);
+  --success-fg: #d4f9ee;
+  --success-border: rgba(180, 242, 225, 0.4);
 
-  /* warning (yellow/amber) */
-  --warning: #fbbf24;
-  --warning-bg: rgba(251, 191, 36, 0.15);
-  --warning-fg: #fcd34d;
-  --warning-border: rgba(251, 191, 36, 0.35);
+  /* danger (soft rose) */
+  --danger: #ff9fb5;
+  --danger-bg: rgba(255, 159, 181, 0.14);
+  --danger-fg: #ffc7d3;
+  --danger-border: rgba(255, 159, 181, 0.4);
 
-  /* accent (orange) */
-  --accent: #fb923c;
-  --accent-bg: rgba(251, 146, 60, 0.15);
-  --accent-fg: #fdba74;
-  --accent-border: rgba(251, 146, 60, 0.35);
+  /* warning (lemon) */
+  --warning: #ffe27a;
+  --warning-bg: rgba(255, 226, 122, 0.14);
+  --warning-fg: #fff0b0;
+  --warning-border: rgba(255, 226, 122, 0.4);
+
+  /* accent (peach) */
+  --accent: #ffcba8;
+  --accent-bg: rgba(255, 203, 168, 0.14);
+  --accent-fg: #ffe0cc;
+  --accent-border: rgba(255, 203, 168, 0.4);
+
+  /* 소프트 글로우 */
+  --glow-rose: 0 0 24px rgba(255, 180, 198, 0.25);
+  --glow-mint: 0 0 24px rgba(180, 242, 225, 0.25);
+  --glow-lavender: 0 0 24px rgba(200, 180, 255, 0.25);
+
+  /* 라운딩 */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
 }
 
 @theme inline {
@@ -86,12 +105,25 @@
   --color-accent-fg: var(--accent-fg);
   --color-accent-border: var(--accent-border);
 
+  --color-mint: var(--pastel-mint);
+  --color-lavender: var(--pastel-lavender);
+  --color-lemon: var(--pastel-lemon);
+  --color-peach: var(--pastel-peach);
+  --color-sky: var(--pastel-sky);
+  --color-rose: var(--pastel-rose);
+
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-quicksand), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(255, 180, 198, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 110% 20%, rgba(200, 180, 255, 0.08), transparent 60%),
+    radial-gradient(700px 500px at 50% 110%, rgba(180, 242, 225, 0.06), transparent 60%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-tap-highlight-color: transparent;
@@ -106,12 +138,37 @@ main {
   padding-bottom: 6rem;
 }
 
+.font-display {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* 귀여움 유틸리티 */
+.bubble-shadow {
+  box-shadow:
+    0 8px 24px rgba(255, 180, 198, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.pill {
+  border-radius: 999px;
+}
+
+.wobble-hover {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.wobble-hover:hover {
+  transform: translateY(-2px) rotate(-0.5deg);
+}
+
+/* 애니메이션 */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {
-  animation: fade-in 0.2s ease-out;
+  animation: fade-in 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes slide-up {
@@ -119,5 +176,64 @@ main {
   to { transform: translateY(0); }
 }
 .animate-slide-up {
-  animation: slide-up 0.25s ease-out;
+  animation: slide-up 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.animate-pop-in {
+  animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.animate-bounce-soft {
+  animation: bounce-soft 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(255, 180, 198, 0); }
+  50% { box-shadow: 0 0 24px rgba(255, 180, 198, 0.5); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.4s ease-in-out;
+}
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.6)); }
+  50% { transform: scale(1.1) rotate(2deg); filter: drop-shadow(0 0 14px rgba(255, 140, 80, 0.8)); }
+}
+.animate-flame {
+  animation: flame-flicker 0.9s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.6) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+.animate-sparkle {
+  animation: sparkle 1.4s ease-in-out infinite;
+}
+
+@keyframes shake-soft {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+.animate-shake {
+  animation: shake-soft 0.35s ease-in-out;
 }

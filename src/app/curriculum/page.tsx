@@ -29,6 +29,13 @@ function getCurrentDay() {
   return Math.max(1, Math.min(14, Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1));
 }
 
+const TYPE_META = {
+  concept: { emoji: "🌱", label: "개념", tint: "#b4f2e1" },
+  practice: { emoji: "🧩", label: "훈련", tint: "#c8b4ff" },
+  drill: { emoji: "⚔️", label: "실전", tint: "#ffb4c6" },
+  exam: { emoji: "👑", label: "보스", tint: "#ffe27a" },
+} as const;
+
 export default function CurriculumPage() {
   const [currentDay] = useState(getCurrentDay());
   const [dailyStats, setDailyStats] = useState<Record<string, number>>({});
@@ -48,80 +55,102 @@ export default function CurriculumPage() {
     return d.toISOString().split("T")[0];
   }
 
-  function getTypeColor(type: string) {
-    switch (type) {
-      case "concept": return "bg-blue-500";
-      case "practice": return "bg-indigo-500";
-      case "drill": return "bg-purple-500";
-      case "exam": return "bg-red-500";
-      default: return "bg-gray-500";
-    }
-  }
-
-  function getTypeLabel(type: string) {
-    switch (type) {
-      case "concept": return "개념";
-      case "practice": return "훈련";
-      case "drill": return "실전";
-      case "exam": return "시험";
-      default: return "";
-    }
-  }
-
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold mb-1">2주 커리큘럼</h1>
-      <p className="text-sm text-muted mb-4">블로그 학습 전략 기반 체계적 일정</p>
+      <div className="mb-5">
+        <p className="text-xs text-muted font-semibold tracking-wider">QUEST MAP</p>
+        <h1 className="text-2xl font-display font-black text-rose">14일 모험 지도 🗺️</h1>
+        <p className="text-xs text-muted mt-1">매일 하나씩 깨면서 전진!</p>
+      </div>
 
-      {/* 주차 구분 */}
       {[1, 2].map((week) => (
         <div key={week} className="mb-6">
-          <h2 className="text-sm font-bold text-muted uppercase mb-3">
-            {week}주차 {week === 1 ? "(개념 + 사고력)" : "(실전 + 모의시험)"}
-          </h2>
-          <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="text-xs font-display font-bold px-3 py-1 rounded-full"
+              style={{
+                background: week === 1 ? "rgba(180,242,225,0.15)" : "rgba(255,226,122,0.15)",
+                color: week === 1 ? "var(--pastel-mint)" : "var(--pastel-lemon)",
+                border: `1px solid ${week === 1 ? "rgba(180,242,225,0.4)" : "rgba(255,226,122,0.4)"}`,
+              }}
+            >
+              Chapter {week}
+            </span>
+            <span className="text-xs text-muted font-semibold">
+              {week === 1 ? "기초 + 사고력" : "실전 + 보스전"}
+            </span>
+          </div>
+          <div className="space-y-2.5">
             {CURRICULUM.filter((c) => (week === 1 ? c.day <= 7 : c.day > 7)).map((item) => {
               const dateStr = getDayDate(item.day);
               const solved = dailyStats[dateStr] || 0;
               const isToday = item.day === currentDay;
               const isPast = item.day < currentDay;
               const isDone = solved >= item.target;
+              const meta = TYPE_META[item.type as keyof typeof TYPE_META];
+              const pct = Math.min(100, (solved / item.target) * 100);
 
               return (
                 <Link
                   key={item.day}
                   href={item.type === "exam" ? "/mock-exam" : "/questions"}
-                  className={`block bg-card rounded-xl border p-4 transition-all ${
-                    isToday ? "border-primary shadow-md" : "border-border"
-                  } ${isPast && !isToday ? "opacity-70" : ""}`}
+                  className={`block rounded-3xl p-4 transition-all active:scale-[0.99] ${isToday ? "animate-pulse-glow" : ""}`}
+                  style={{
+                    background: isToday
+                      ? "linear-gradient(135deg, rgba(255,180,198,0.18), rgba(200,180,255,0.12))"
+                      : "rgba(37,32,58,0.6)",
+                    border: isToday
+                      ? "1.5px solid rgba(255,180,198,0.55)"
+                      : "1px solid var(--border)",
+                    opacity: isPast && !isToday ? 0.65 : 1,
+                    boxShadow: isToday ? "0 8px 24px rgba(255,180,198,0.2)" : undefined,
+                  }}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Day 번호 */}
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                      isDone ? "bg-success" : isPast ? "bg-muted" : getTypeColor(item.type)
-                    }`}>
-                      {isDone ? "\u2713" : item.day}
+                    <div
+                      className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-display font-black"
+                      style={{
+                        background: isDone
+                          ? "linear-gradient(135deg, #b4f2e1, #a8dcff)"
+                          : `linear-gradient(135deg, ${meta.tint}40, ${meta.tint}20)`,
+                        border: `1.5px solid ${isDone ? "rgba(180,242,225,0.6)" : `${meta.tint}66`}`,
+                        color: isDone ? "#1a2e26" : meta.tint,
+                      }}
+                    >
+                      {isDone ? "✓" : item.day}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-medium text-sm">{item.title}</span>
-                        {isToday && <span className="text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded">TODAY</span>}
+                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                        <span className="text-xs">{meta.emoji}</span>
+                        <span className="font-display font-bold text-sm">{item.title}</span>
+                        {isToday && (
+                          <span
+                            className="text-[9px] px-2 py-0.5 rounded-full font-display font-black animate-bounce-soft"
+                            style={{
+                              background: "linear-gradient(135deg, #ffb4c6, #c8b4ff)",
+                              color: "#2b1a20",
+                            }}
+                          >
+                            NOW PLAYING
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-muted">{item.desc}</p>
+                      <p className="text-[11px] text-muted leading-snug">{item.desc}</p>
 
-                      {/* 진도 바 */}
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 bg-border rounded-full h-1.5">
+                      <div className="flex items-center gap-2 mt-2.5">
+                        <div className="flex-1 bg-muted-bg rounded-full h-1.5 overflow-hidden">
                           <div
-                            className={`rounded-full h-1.5 ${isDone ? "bg-success" : "bg-primary"}`}
-                            style={{ width: `${Math.min(100, (solved / item.target) * 100)}%` }}
+                            className="h-full rounded-full transition-[width] duration-500"
+                            style={{
+                              width: `${pct}%`,
+                              background: isDone
+                                ? "linear-gradient(90deg, #b4f2e1, #a8dcff)"
+                                : `linear-gradient(90deg, ${meta.tint}, ${meta.tint}aa)`,
+                            }}
                           />
                         </div>
-                        <span className="text-[10px] text-muted">{solved}/{item.target}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${getTypeColor(item.type)} text-white`}>
-                          {getTypeLabel(item.type)}
-                        </span>
+                        <span className="text-[10px] text-muted font-semibold">{solved}/{item.target}</span>
                       </div>
                     </div>
                   </div>

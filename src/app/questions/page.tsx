@@ -182,7 +182,7 @@ function QuestionsContent() {
   if (loading) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">문제 로딩 중...</p>
+        <p className="text-muted font-display font-semibold animate-bounce-soft">🍡 문제 모으는 중...</p>
       </div>
     );
   }
@@ -192,22 +192,24 @@ function QuestionsContent() {
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
         {mode === "service" && service ? (
           <>
-            <p className="text-lg mb-2">{service} 관련 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 아직 없습니다.</p>
-            <Link href="/concepts" className="text-primary font-medium text-sm">
-              서비스 사전으로 돌아가기 &rarr;
+            <p className="text-5xl mb-4">🗺️</p>
+            <p className="text-lg font-display font-bold text-rose mb-2">{service} 퀘스트 품절!</p>
+            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 아직 없어요.</p>
+            <Link href="/concepts" className="text-rose font-display font-bold text-sm">
+              📖 서비스 도감으로 돌아가기 →
             </Link>
           </>
         ) : mode === "review" ? (
           <>
-            <p className="text-lg mb-2">복습할 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">오늘 복습 예정인 문제가 없거나, 아직 틀린 문제가 없습니다.</p>
-            <Link href="/review" className="text-primary font-medium text-sm">
-              오답노트로 돌아가기 &rarr;
+            <p className="text-5xl mb-4">🌟</p>
+            <p className="text-lg font-display font-bold text-mint mb-2">오늘은 재도전할 문제가 없어요!</p>
+            <p className="text-sm text-muted mb-4">오늘 복습 예정이거나 틀린 문제가 없네요.</p>
+            <Link href="/review" className="text-rose font-display font-bold text-sm">
+              🔄 수련장으로 돌아가기 →
             </Link>
           </>
         ) : (
-          <p className="text-muted">문제가 없습니다.</p>
+          <p className="text-muted">문제가 없어요.</p>
         )}
       </div>
     );
@@ -217,38 +219,53 @@ function QuestionsContent() {
     <div>
       {/* 서비스 모드 배너 */}
       {mode === "service" && service && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
-            <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
-            <span>{currentIndex + 1} / {questions.length}문제</span>
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="rounded-full px-4 py-2 text-xs flex justify-between items-center font-display font-bold"
+            style={{
+              background: "linear-gradient(135deg, rgba(168,220,255,0.15), rgba(200,180,255,0.15))",
+              border: "1px solid rgba(168,220,255,0.4)",
+              color: "var(--info-fg)",
+            }}
+          >
+            <Link href="/concepts" className="hover:underline">← {service} 📖</Link>
+            <span>{currentIndex + 1} / {questions.length}</span>
           </div>
         </div>
       )}
 
       {/* 복습 모드 배너 */}
       {mode === "review" && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
-            <span>복습 모드</span>
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="rounded-full px-4 py-2 text-xs flex justify-between items-center font-display font-bold"
+            style={{
+              background: "linear-gradient(135deg, rgba(255,203,168,0.18), rgba(255,180,198,0.18))",
+              border: "1px solid rgba(255,203,168,0.4)",
+              color: "var(--accent-fg)",
+            }}
+          >
+            <span>🔄 수련장 모드</span>
             <span>{questions.length}문제</span>
           </div>
         </div>
       )}
 
-      {/* 툴바: 처음부터 다시 풀기 + 수정 요청 */}
-      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-3">
+      {/* 툴바 */}
+      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-2">
         {(mode === "normal" || mode === "service") && currentIndex > 0 && (
           <button
             onClick={handleRestart}
-            className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
+            className="text-[11px] text-muted hover:text-rose transition-colors px-2.5 py-1 rounded-full font-display font-bold"
           >
-            처음부터 다시 풀기
+            🔁 처음부터
           </button>
         )}
         <button
           type="button"
           onClick={handleOpenReport}
-          className="text-xs text-danger-fg hover:text-danger transition-colors px-2 py-1 flex items-center gap-1"
+          className="text-[11px] transition-colors px-2.5 py-1 rounded-full font-display font-bold flex items-center gap-1"
+          style={{ color: "var(--danger-fg)" }}
         >
           <span aria-hidden>⚠</span>
           <span>수정 요청</span>
@@ -275,7 +292,15 @@ function QuestionsContent() {
       )}
 
       {reportToast && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 text-sm px-4 py-2 rounded-full z-50 animate-fade-in whitespace-nowrap font-display font-bold"
+          style={{
+            background: "linear-gradient(135deg, rgba(46,40,73,0.95), rgba(37,32,58,0.95))",
+            border: "1px solid rgba(200,180,255,0.35)",
+            color: "var(--foreground)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
           {reportToast}
         </div>
       )}
@@ -288,7 +313,7 @@ export default function QuestionsPage() {
     <Suspense
       fallback={
         <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-          <p className="text-muted">문제 로딩 중...</p>
+          <p className="text-muted font-display font-semibold animate-bounce-soft">🍡 문제 모으는 중...</p>
         </div>
       }
     >
