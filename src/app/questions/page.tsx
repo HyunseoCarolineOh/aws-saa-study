@@ -182,7 +182,7 @@ function QuestionsContent() {
   if (loading) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted font-display animate-blink">&gt; LOADING...</p>
+        <p className="pixel-label text-muted animate-blink">&gt; LOADING...</p>
       </div>
     );
   }
@@ -192,24 +192,25 @@ function QuestionsContent() {
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
         {mode === "service" && service ? (
           <>
-            <p className="text-4xl mb-4 animate-pixel-bounce">📭</p>
-            <p className="text-xs font-display text-blood mb-2">&gt; {service} EMPTY</p>
-            <p className="text-sm text-parchment mb-4 font-retro">관련 퀘스트 없음</p>
-            <Link href="/concepts" className="text-gb-green font-display text-xs">
-              &gt; BACK TO BOOK ►
+            <p className="text-5xl mb-4">📭</p>
+            <p className="pixel-label text-blood mb-2">&gt; EMPTY</p>
+            <p className="body-text mb-1">{service}</p>
+            <p className="body-sub mb-4">관련 문제가 없어요</p>
+            <Link href="/concepts" className="pixel-label text-gb-green">
+              &gt; 도감으로 돌아가기 ►
             </Link>
           </>
         ) : mode === "review" ? (
           <>
-            <p className="text-4xl mb-4 animate-pixel-bounce">★</p>
-            <p className="text-xs font-display text-gb-green mb-2">&gt; ALL CLEAR!</p>
-            <p className="text-sm text-parchment mb-4 font-retro">재도전 퀘스트 없음</p>
-            <Link href="/review" className="text-gold font-display text-xs">
-              &gt; BACK TO REDO ►
+            <p className="text-5xl mb-4 animate-pixel-bounce">★</p>
+            <p className="pixel-label text-gb-green mb-2">&gt; ALL CLEAR!</p>
+            <p className="body-sub mb-4">오늘 재도전할 문제가 없어요</p>
+            <Link href="/review" className="pixel-label text-gold">
+              &gt; 복습으로 돌아가기 ►
             </Link>
           </>
         ) : (
-          <p className="text-muted font-display">&gt; NO DATA</p>
+          <p className="pixel-label text-muted">&gt; NO DATA</p>
         )}
       </div>
     );
@@ -220,15 +221,14 @@ function QuestionsContent() {
       {mode === "service" && service && (
         <div className="max-w-lg mx-auto px-4 pt-3">
           <div
-            className="px-3 py-2 text-xs font-display flex justify-between items-center"
+            className="flex justify-between items-center px-3 py-2.5"
             style={{
               background: "rgba(91, 156, 216, 0.1)",
-              border: "2px solid #5b9cd8",
-              color: "#8fc0e8",
+              border: "2px solid var(--mana)",
             }}
           >
-            <Link href="/concepts">◄ {service}</Link>
-            <span>{currentIndex + 1}/{questions.length}</span>
+            <Link href="/concepts" className="body-text text-mana">◄ {service}</Link>
+            <span className="pixel-label text-mana">{currentIndex + 1} / {questions.length}</span>
           </div>
         </div>
       )}
@@ -236,33 +236,35 @@ function QuestionsContent() {
       {mode === "review" && (
         <div className="max-w-lg mx-auto px-4 pt-3">
           <div
-            className="px-3 py-2 text-xs font-display flex justify-between items-center"
+            className="flex justify-between items-center px-3 py-2.5"
             style={{
               background: "rgba(139, 95, 184, 0.12)",
-              border: "2px solid #8b5fb8",
-              color: "#c4a4e0",
+              border: "2px solid var(--accent-fg)",
             }}
           >
-            <span>&gt; REVENGE MODE</span>
-            <span>{questions.length}Q</span>
+            <span className="body-text text-accent-fg">🔄 오답 복습</span>
+            <span className="pixel-label text-accent-fg">{questions.length}문제</span>
           </div>
         </div>
       )}
 
-      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-2">
+      <div className="max-w-lg mx-auto px-4 pt-3 flex justify-end items-center gap-3">
         {(mode === "normal" || mode === "service") && currentIndex > 0 && (
-          <button onClick={handleRestart} className="text-[10px] font-display text-muted hover:text-gb-green px-2 py-1">
-            [RESET]
+          <button
+            onClick={handleRestart}
+            className="pixel-label text-muted px-2 py-1 hover:text-gb-green transition-colors"
+          >
+            [ RESET ]
           </button>
         )}
         <button
           type="button"
           onClick={handleOpenReport}
-          className="text-[10px] font-display px-2 py-1 flex items-center gap-1"
+          className="pixel-label px-2 py-1 flex items-center gap-1"
           style={{ color: "var(--danger-fg)" }}
         >
           <span aria-hidden>⚠</span>
-          <span>REPORT</span>
+          <span>수정 요청</span>
         </button>
       </div>
 
@@ -287,12 +289,13 @@ function QuestionsContent() {
 
       {reportToast && (
         <div
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 text-xs px-3 py-2 z-50 animate-fade-in whitespace-nowrap font-display"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 px-4 py-2.5 z-50 animate-fade-in whitespace-nowrap"
           style={{
-            background: "#0f380f",
-            color: "#8fc0e8",
-            border: "2px solid #5b9cd8",
+            background: "var(--gb-dark)",
+            color: "var(--info-fg)",
+            border: "2px solid var(--mana)",
             boxShadow: "2px 2px 0 rgba(0,0,0,0.6)",
+            fontSize: 13,
           }}
         >
           {reportToast}
@@ -307,7 +310,7 @@ export default function QuestionsPage() {
     <Suspense
       fallback={
         <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-          <p className="text-muted font-display animate-blink">&gt; LOADING...</p>
+          <p className="pixel-label text-muted animate-blink">&gt; LOADING...</p>
         </div>
       }
     >

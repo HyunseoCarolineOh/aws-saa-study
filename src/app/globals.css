@@ -3,13 +3,13 @@
 :root {
   color-scheme: dark;
 
-  /* 서피스 / 텍스트 — 딥 브라운 RPG 기본 */
+  /* 서피스 / 텍스트 — 딥 브라운 RPG */
   --background: #1a1410;
   --foreground: #e6d3a3;
   --card: #2a1f17;
   --card-elevated: #3a2a1e;
   --border: #5a4530;
-  --muted: #8a7050;
+  --muted: #a08868;
   --muted-bg: #231a13;
 
   /* 픽셀 RPG 팔레트 */
@@ -19,40 +19,33 @@
   --blood: #b83232;
   --gold: #e8b923;
   --mana: #5b9cd8;
-  --forest: #4a7a3c;
 
-  /* 브랜드 — 게임보이 그린 */
   --primary: #9bbc0f;
   --primary-light: #d4e27a;
   --on-primary: #0f380f;
 
-  /* info (mana blue) */
   --info: #5b9cd8;
-  --info-bg: rgba(91, 156, 216, 0.15);
+  --info-bg: rgba(91, 156, 216, 0.14);
   --info-fg: #8fc0e8;
   --info-border: rgba(91, 156, 216, 0.5);
 
-  /* success (forest) */
   --success: #9bbc0f;
-  --success-bg: rgba(155, 188, 15, 0.15);
+  --success-bg: rgba(155, 188, 15, 0.14);
   --success-fg: #d4e27a;
   --success-border: rgba(155, 188, 15, 0.5);
 
-  /* danger (blood red) */
   --danger: #b83232;
-  --danger-bg: rgba(184, 50, 50, 0.15);
+  --danger-bg: rgba(184, 50, 50, 0.14);
   --danger-fg: #e86060;
   --danger-border: rgba(184, 50, 50, 0.5);
 
-  /* warning (gold) */
   --warning: #e8b923;
-  --warning-bg: rgba(232, 185, 35, 0.15);
+  --warning-bg: rgba(232, 185, 35, 0.14);
   --warning-fg: #f5d472;
   --warning-border: rgba(232, 185, 35, 0.5);
 
-  /* accent (royal purple) */
   --accent: #8b5fb8;
-  --accent-bg: rgba(139, 95, 184, 0.15);
+  --accent-bg: rgba(139, 95, 184, 0.14);
   --accent-fg: #c4a4e0;
   --accent-border: rgba(139, 95, 184, 0.5);
 }
@@ -103,27 +96,26 @@
   --color-mana: var(--mana);
 
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-press-start), var(--font-geist-sans);
-  --font-retro: var(--font-vt323), var(--font-geist-sans);
+  --font-pixel: var(--font-press-start), var(--font-geist-sans);
+  --font-retro: var(--font-vt323), var(--font-geist-mono);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background-color: var(--background);
   background-image:
-    radial-gradient(circle at 50% 50%, rgba(155, 188, 15, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 40%, rgba(155, 188, 15, 0.025) 0%, transparent 60%),
     repeating-linear-gradient(
-      45deg,
-      rgba(138, 112, 80, 0.02) 0px,
-      rgba(138, 112, 80, 0.02) 2px,
-      transparent 2px,
-      transparent 4px
+      0deg,
+      rgba(138, 112, 80, 0.015) 0px,
+      rgba(138, 112, 80, 0.015) 1px,
+      transparent 1px,
+      transparent 3px
     );
   background-attachment: fixed;
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   -webkit-tap-highlight-color: transparent;
-  image-rendering: pixelated;
 }
 
 html {
@@ -135,54 +127,216 @@ main {
   padding-bottom: 6rem;
 }
 
-.font-display {
-  font-family: var(--font-display), monospace;
+/* ============================================
+   타이포그래피 시스템
+   - .pixel : 영문/숫자 전용 (Press Start 2P)
+   - .retro : 숫자/ASCII 전용 (VT323)
+   - 한글은 기본 body font 사용 (Geist + 한글 fallback)
+   ============================================ */
+
+.pixel {
+  font-family: var(--font-pixel), sans-serif;
   letter-spacing: 0;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-.font-retro {
+.retro {
   font-family: var(--font-retro), monospace;
-  font-size: 1.15em;
   letter-spacing: 0.02em;
 }
 
-/* 픽셀 윈도우 (9-slice 느낌) */
-.pixel-window {
-  background: var(--card);
-  border: 4px solid var(--parchment);
-  border-radius: 0;
-  box-shadow:
-    inset 0 0 0 2px var(--background),
-    inset 0 0 0 4px var(--border),
-    4px 4px 0 rgba(0, 0, 0, 0.5);
-  position: relative;
+/* 페이지 헤더: eyebrow + h1 + sub */
+.eyebrow {
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  line-height: 1;
+}
+.page-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--foreground);
+  margin-top: 6px;
+}
+.page-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.5;
 }
 
+/* 섹션 헤더 */
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--parchment);
+  line-height: 1.2;
+}
+.section-tag {
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+/* 본문 / 캡션 */
+.body-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--foreground);
+}
+.body-sub {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.caption {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* 수치 디스플레이 */
+.stat-value-lg {
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.stat-value-md {
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 16px;
+  line-height: 1;
+}
+.pixel-label {
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  line-height: 1;
+}
+
+/* ============================================
+   카드 / 박스 시스템
+   ============================================ */
+
+/* HUD/히어로 강조 윈도우 — 페이지당 1개만 사용 */
+.pixel-window {
+  background: var(--card);
+  border: 3px solid var(--parchment);
+  border-radius: 0;
+  box-shadow:
+    inset 0 0 0 2px var(--gb-dark),
+    4px 4px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* 일반 패널 — 기본 컨테이너 */
 .pixel-panel {
   background: var(--card);
   border: 2px solid var(--border);
   border-radius: 0;
-  box-shadow:
-    2px 2px 0 rgba(0, 0, 0, 0.4),
-    inset 1px 1px 0 rgba(230, 211, 163, 0.1);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 
-.pixel-button {
-  background: var(--primary);
-  color: var(--on-primary);
+/* 강조 변형 (필요시 accent prop으로) */
+.pixel-panel-accent {
+  background: var(--card);
+  border-radius: 0;
+  border: 2px solid var(--accent-fg);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* 버튼 — 눌리면 2px 내려감 */
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
   border: 2px solid var(--gb-dark);
   border-radius: 0;
   box-shadow:
     2px 2px 0 var(--gb-dark),
-    inset 1px 1px 0 rgba(255, 255, 255, 0.2);
-  transition: transform 0.05s ease;
+    inset 1px 1px 0 rgba(255, 255, 255, 0.18);
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
 }
-.pixel-button:active:not(:disabled) {
+.pixel-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pixel-btn:active:not(:disabled) {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 var(--gb-dark);
 }
 
-/* 애니메이션 */
+.pixel-btn-primary {
+  background: var(--gb-green);
+  color: var(--gb-dark);
+}
+.pixel-btn-gold {
+  background: var(--gold);
+  color: var(--gb-dark);
+}
+.pixel-btn-mana {
+  background: var(--mana);
+  color: var(--gb-dark);
+}
+.pixel-btn-danger {
+  background: var(--blood);
+  color: var(--parchment);
+}
+.pixel-btn-ghost {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+  box-shadow: 2px 2px 0 var(--border), inset 1px 1px 0 rgba(230, 211, 163, 0.08);
+}
+.pixel-btn-ghost:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--border);
+}
+
+/* 뱃지 (작은 라벨) */
+.pixel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-family: var(--font-pixel), sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  border: 1.5px solid;
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+/* 입력 필드 */
+.pixel-input {
+  width: 100%;
+  background: var(--muted-bg);
+  border: 2px solid var(--border);
+  border-radius: 0;
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  transition: border-color 0.1s;
+}
+.pixel-input:focus {
+  outline: none;
+  border-color: var(--mana);
+}
+
+/* ============================================
+   애니메이션 (스텝 이징으로 픽셀 느낌 유지)
+   ============================================ */
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -196,24 +350,24 @@ main {
   to { transform: translateY(0); }
 }
 .animate-slide-up {
-  animation: slide-up 0.2s steps(6, end);
+  animation: slide-up 0.22s steps(6, end);
 }
 
 @keyframes pop-in {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.1); }
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
   100% { transform: scale(1); }
 }
 .animate-pop-in {
-  animation: pop-in 0.25s steps(4, end);
+  animation: pop-in 0.24s steps(4, end);
 }
 
 @keyframes blink {
   0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+  50%, 100% { opacity: 0.25; }
 }
 .animate-blink {
-  animation: blink 1s steps(2) infinite;
+  animation: blink 1.1s steps(2) infinite;
 }
 
 @keyframes pixel-bounce {
@@ -221,16 +375,16 @@ main {
   50% { transform: translateY(-3px); }
 }
 .animate-pixel-bounce {
-  animation: pixel-bounce 0.6s steps(4, end) infinite;
+  animation: pixel-bounce 0.8s steps(4, end) infinite;
 }
 
 @keyframes flame-flicker {
   0%, 100% { transform: scaleY(1); filter: brightness(1); }
-  25% { transform: scaleY(1.1); filter: brightness(1.2); }
+  25% { transform: scaleY(1.08); filter: brightness(1.15); }
   75% { transform: scaleY(0.95); filter: brightness(0.9); }
 }
 .animate-flame {
-  animation: flame-flicker 0.5s steps(2) infinite;
+  animation: flame-flicker 0.6s steps(2) infinite;
 }
 
 @keyframes shake-pixel {
@@ -239,5 +393,5 @@ main {
   75% { transform: translateX(3px); }
 }
 .animate-shake {
-  animation: shake-pixel 0.25s steps(2) 2;
+  animation: shake-pixel 0.24s steps(2) 2;
 }

@@ -26,16 +26,20 @@ export default function QuestComplete({ show, title = "QUEST CLEAR!", subtitle, 
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] pointer-events-none flex items-center justify-center animate-fade-in">
-      <div
-        className="relative px-6 py-5 text-center animate-pop-in font-display pixel-window"
-        style={{
-          background: "#2a1f17",
-          color: "#e6d3a3",
-        }}
-      >
-        <p className="text-lg font-black text-gb-green mb-1 animate-blink">★ {title} ★</p>
-        {subtitle && <p className="text-[10px] text-parchment font-retro">{subtitle}</p>}
+    <div className="fixed inset-0 z-[60] pointer-events-none flex items-center justify-center animate-fade-in px-6">
+      <div className="pixel-window px-6 py-5 text-center animate-pop-in">
+        <p
+          className="animate-blink"
+          style={{
+            fontFamily: "var(--font-pixel)",
+            fontSize: 16,
+            color: "var(--gb-green)",
+            letterSpacing: "0.05em",
+          }}
+        >
+          ★ {title} ★
+        </p>
+        {subtitle && <p className="body-sub mt-2">{subtitle}</p>}
       </div>
     </div>
   );

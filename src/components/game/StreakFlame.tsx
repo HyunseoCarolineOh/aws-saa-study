@@ -7,18 +7,28 @@ export default function StreakFlame({ days, className = "" }: StreakFlameProps) 
   const isActive = days > 0;
   return (
     <div
-      className={`${className} inline-flex items-center gap-1.5 px-2 py-1 font-retro`}
+      className={`${className} inline-flex items-center gap-1.5 px-2.5 py-1.5 flex-shrink-0`}
       style={{
-        background: isActive ? "rgba(232, 185, 35, 0.15)" : "rgba(138, 112, 80, 0.1)",
-        border: `2px solid ${isActive ? "#e8b923" : "#5a4530"}`,
+        background: isActive ? "rgba(232, 185, 35, 0.14)" : "rgba(90, 69, 48, 0.25)",
+        border: `2px solid ${isActive ? "var(--gold)" : "var(--border)"}`,
       }}
     >
-      <span className={`text-base leading-none ${isActive ? "animate-flame" : "opacity-40 grayscale"}`} aria-hidden>
+      <span
+        className={`text-base leading-none ${isActive ? "animate-flame" : "opacity-45 grayscale"}`}
+        aria-hidden
+      >
         🔥
       </span>
-      <span className="text-sm font-bold text-gold tracking-wider leading-none">
+      <span
+        className="leading-none"
+        style={{
+          fontFamily: "var(--font-pixel)",
+          fontSize: 11,
+          color: isActive ? "var(--gold)" : "var(--muted)",
+        }}
+      >
         {days}
-        <span className="opacity-70 text-xs ml-0.5">DAY</span>
+        <span style={{ marginLeft: 4, fontSize: 9, opacity: 0.75 }}>DAY</span>
       </span>
     </div>
   );

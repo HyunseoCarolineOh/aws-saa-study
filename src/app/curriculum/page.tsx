@@ -31,7 +31,7 @@ function getCurrentDay() {
 
 const TYPE_META = {
   concept: { label: "STUDY", color: "#9bbc0f" },
-  practice: { label: "TRAIN", color: "#8fc0e8" },
+  practice: { label: "TRAIN", color: "#5b9cd8" },
   drill: { label: "DRILL", color: "#c4a4e0" },
   exam: { label: "BOSS", color: "#e86060" },
 } as const;
@@ -56,31 +56,31 @@ export default function CurriculumPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <div className="mb-5">
-        <p className="text-[9px] font-display text-gold mb-1">&gt; WORLD MAP</p>
-        <h1 className="text-sm font-display font-black text-gb-green">STAGE SELECT</h1>
-        <p className="text-xs font-retro text-parchment mt-1">클리어할 스테이지를 선택하라</p>
-      </div>
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-6">
+      <header className="mb-6">
+        <p className="eyebrow">World Map</p>
+        <h1 className="page-title">14일 커리큘럼</h1>
+        <p className="page-sub">스테이지를 클리어하며 전진해요</p>
+      </header>
 
       {[1, 2].map((week) => (
-        <div key={week} className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
+        <section key={week} className="mb-6">
+          <div className="flex items-center gap-2.5 mb-3">
             <span
-              className="text-[10px] font-display px-2 py-0.5"
+              className="pixel-badge"
               style={{
-                background: week === 1 ? "#9bbc0f" : "#e8b923",
-                color: "#0f380f",
-                border: "2px solid #1a1410",
+                background: week === 1 ? "var(--gb-green)" : "var(--gold)",
+                color: "var(--gb-dark)",
+                borderColor: "var(--gb-dark)",
               }}
             >
               WORLD {week}
             </span>
-            <span className="text-xs font-retro text-parchment">
-              {week === 1 ? "BASICS + TRAINING" : "DRILL + BOSS"}
+            <span className="body-sub">
+              {week === 1 ? "기초 + 훈련" : "실전 + 보스"}
             </span>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {CURRICULUM.filter((c) => (week === 1 ? c.day <= 7 : c.day > 7)).map((item) => {
               const dateStr = getDayDate(item.day);
               const solved = dailyStats[dateStr] || 0;
@@ -94,65 +94,78 @@ export default function CurriculumPage() {
                 <Link
                   key={item.day}
                   href={item.type === "exam" ? "/mock-exam" : "/questions"}
-                  className="block p-3 pixel-panel transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+                  className="block p-3.5 pixel-panel transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                   style={{
-                    borderColor: isToday ? "#e8b923" : meta.color,
-                    background: isToday ? "rgba(232, 185, 35, 0.1)" : "#2a1f17",
+                    borderColor: isToday ? "var(--gold)" : "var(--border)",
+                    background: isToday ? "rgba(232, 185, 35, 0.08)" : "var(--card)",
                     opacity: isPast && !isToday ? 0.6 : 1,
-                    boxShadow: isToday ? "2px 2px 0 #e8b923" : "2px 2px 0 rgba(0,0,0,0.4)",
+                    boxShadow: isToday ? "2px 2px 0 var(--gold)" : "2px 2px 0 rgba(0,0,0,0.35)",
                   }}
                 >
                   <div className="flex items-start gap-3">
                     <div
-                      className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-sm font-display font-black"
+                      className="flex-shrink-0 w-11 h-11 flex items-center justify-center"
                       style={{
-                        background: isDone ? "#9bbc0f" : meta.color,
-                        color: "#0f380f",
-                        border: "2px solid #0f380f",
-                        boxShadow: "2px 2px 0 #0f380f",
+                        background: isDone ? "var(--gb-green)" : meta.color,
+                        color: "var(--gb-dark)",
+                        border: "2px solid var(--gb-dark)",
+                        boxShadow: "2px 2px 0 var(--gb-dark)",
+                        fontFamily: "var(--font-pixel)",
+                        fontSize: 14,
+                        fontWeight: 700,
                       }}
                     >
                       {isDone ? "✓" : item.day.toString().padStart(2, "0")}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                      <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                         <span
-                          className="text-[9px] font-display px-1.5 py-0.5"
+                          className="pixel-badge"
                           style={{
-                            background: meta.color,
-                            color: "#0f380f",
-                            border: "1px solid #0f380f",
+                            background: `${meta.color}22`,
+                            color: meta.color,
+                            borderColor: meta.color,
+                            padding: "2px 6px",
+                            fontSize: 8,
                           }}
                         >
                           {meta.label}
                         </span>
-                        <span className="font-retro font-bold text-sm">{item.title}</span>
+                        <span className="section-title">{item.title}</span>
                         {isToday && (
                           <span
-                            className="text-[9px] font-display px-1.5 py-0.5 animate-blink"
+                            className="pixel-badge animate-blink"
                             style={{
-                              background: "#e8b923",
-                              color: "#1a1410",
+                              background: "var(--gold)",
+                              color: "var(--gb-dark)",
+                              borderColor: "var(--gb-dark)",
+                              padding: "2px 6px",
+                              fontSize: 8,
                             }}
                           >
                             ★ NOW
                           </span>
                         )}
                       </div>
-                      <p className="text-xs font-retro text-parchment leading-snug">{item.desc}</p>
+                      <p className="body-sub leading-snug">{item.desc}</p>
 
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 h-1.5" style={{ background: "#0f380f", border: "1px solid #5a4530" }}>
+                      <div className="flex items-center gap-2 mt-2.5">
+                        <div
+                          className="flex-1 h-1.5"
+                          style={{ background: "var(--gb-dark)", border: "1.5px solid var(--border)" }}
+                        >
                           <div
                             className="h-full transition-[width] duration-300"
                             style={{
                               width: `${pct}%`,
-                              background: isDone ? "#9bbc0f" : meta.color,
+                              background: isDone ? "var(--gb-green)" : meta.color,
                             }}
                           />
                         </div>
-                        <span className="text-[10px] font-display text-muted">{solved}/{item.target}</span>
+                        <span className="pixel-label text-muted">
+                          {solved}/{item.target}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -160,7 +173,7 @@ export default function CurriculumPage() {
               );
             })}
           </div>
-        </div>
+        </section>
       ))}
     </div>
   );

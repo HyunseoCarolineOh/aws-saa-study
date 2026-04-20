@@ -119,7 +119,7 @@ export default function QuestionCard({
 
   function handleNoteSaved() {
     setMemoSheet(null);
-    showToast("> SAVED!");
+    showToast("오답노트에 저장했어요");
   }
 
   const isCorrect =
@@ -130,19 +130,23 @@ export default function QuestionCard({
   const progressPct = ((questionIndex + 1) / totalQuestions) * 100;
 
   return (
-    <div className={`max-w-lg mx-auto px-4 pt-4 pb-4 ${shakeOnWrong ? "animate-shake" : ""}`}>
-      <div className="flex items-center gap-2 mb-4">
+    <div className={`max-w-lg mx-auto px-4 pt-4 pb-6 ${shakeOnWrong ? "animate-shake" : ""}`}>
+      {/* HUD */}
+      <div className="flex items-center gap-2.5 mb-4">
         <span
-          className="text-[10px] font-display px-2 py-1"
+          className="pixel-badge"
           style={{
-            background: "#0f380f",
-            color: "#9bbc0f",
-            border: "2px solid #9bbc0f",
+            background: "rgba(155, 188, 15, 0.16)",
+            color: "var(--gb-green)",
+            borderColor: "var(--gb-green)",
           }}
         >
-          Q{questionIndex + 1}/{totalQuestions}
+          Q {questionIndex + 1} / {totalQuestions}
         </span>
-        <div className="flex-1 h-2" style={{ background: "#0f380f", border: "2px solid #5a4530" }}>
+        <div
+          className="flex-1 h-2.5"
+          style={{ background: "var(--gb-dark)", border: "2px solid var(--border)" }}
+        >
           <div
             className="h-full transition-[width] duration-300"
             style={{
@@ -154,65 +158,61 @@ export default function QuestionCard({
         <ComboCounter combo={combo} />
       </div>
 
-      <div className="p-4 mb-4 pixel-window">
+      {/* 문제 윈도우 */}
+      <article className="pixel-window p-5 mb-4">
         {isMultiSelect && (
           <span
-            className="inline-block text-[10px] px-2 py-0.5 font-display mb-3"
+            className="pixel-badge mb-3"
             style={{
-              background: "#e8b923",
-              color: "#1a1410",
-              border: "2px solid #1a1410",
+              background: "var(--gold)",
+              color: "var(--gb-dark)",
+              borderColor: "var(--gb-dark)",
             }}
           >
-            ⚡ PICK {selectCount}
+            ⚡ {selectCount}개 선택
           </span>
         )}
-        <TextSelectionPopover questionId={question.id} sourceContext="question" onSaveRequest={handleSaveRequest}>
-          <p className="text-sm leading-relaxed whitespace-pre-line font-retro text-parchment">
-            {question.question_text}
-          </p>
+        <TextSelectionPopover
+          questionId={question.id}
+          sourceContext="question"
+          onSaveRequest={handleSaveRequest}
+        >
+          <p className="body-text whitespace-pre-line">{question.question_text}</p>
         </TextSelectionPopover>
-      </div>
+      </article>
 
-      <div className="space-y-2 mb-4">
+      {/* 선택지 */}
+      <div className="space-y-2.5 mb-5">
         {question.options.map((opt) => {
           const isSelected = selectedAnswers.includes(opt.label);
           const isCorrectOption = question.correct_answers.includes(opt.label);
 
-          let btnStyle: React.CSSProperties = {
-            background: "#2a1f17",
-            border: "2px solid #5a4530",
-            boxShadow: "2px 2px 0 rgba(0,0,0,0.4)",
-          };
-          let labelBg = "#0f380f";
-          let labelColor = "#8a7050";
+          let border = "2px solid var(--border)";
+          let bg = "var(--card)";
+          let shadow = "2px 2px 0 rgba(0, 0, 0, 0.35)";
+          let labelBg = "var(--gb-dark)";
+          let labelColor = "var(--muted)";
 
           if (submitted) {
             if (isCorrectOption) {
-              btnStyle = {
-                background: "rgba(155, 188, 15, 0.15)",
-                border: "2px solid #9bbc0f",
-                boxShadow: "2px 2px 0 #9bbc0f",
-              };
-              labelBg = "#9bbc0f";
-              labelColor = "#0f380f";
+              border = "2px solid var(--gb-green)";
+              bg = "rgba(155, 188, 15, 0.14)";
+              shadow = "2px 2px 0 var(--gb-green)";
+              labelBg = "var(--gb-green)";
+              labelColor = "var(--gb-dark)";
             } else if (isSelected && !isCorrectOption) {
-              btnStyle = {
-                background: "rgba(184, 50, 50, 0.15)",
-                border: "2px solid #b83232",
-                boxShadow: "2px 2px 0 #b83232",
-              };
-              labelBg = "#b83232";
-              labelColor = "#e6d3a3";
+              border = "2px solid var(--blood)";
+              bg = "rgba(184, 50, 50, 0.14)";
+              shadow = "2px 2px 0 var(--blood)";
+              labelBg = "var(--blood)";
+              labelColor = "var(--parchment)";
             }
           } else if (isSelected) {
-            btnStyle = {
-              background: "rgba(91, 156, 216, 0.15)",
-              border: "2px solid #5b9cd8",
-              boxShadow: "2px 2px 0 #5b9cd8",
-            };
-            labelBg = "#5b9cd8";
-            labelColor = "#1a1410";
+            border = "2px solid var(--mana)";
+            bg = "rgba(91, 156, 216, 0.14)";
+            shadow = "2px 2px 0 var(--mana)";
+            labelBg = "var(--mana)";
+            labelColor = "var(--gb-dark)";
           }
 
           return (
@@ -220,105 +220,135 @@ export default function QuestionCard({
               key={opt.label}
               onClick={() => handleSelect(opt.label)}
               disabled={submitted}
-              className="w-full text-left p-3 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
-              style={btnStyle}
+              className="w-full text-left p-3.5 transition-transform active:translate-x-[1px] active:translate-y-[1px] disabled:cursor-default"
+              style={{ background: bg, border, boxShadow: shadow, borderRadius: 0 }}
             >
               <div className="flex gap-3">
                 <span
-                  className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-sm font-display font-bold"
-                  style={{ background: labelBg, color: labelColor, border: "2px solid #1a1410" }}
+                  className="flex-shrink-0 w-8 h-8 flex items-center justify-center"
+                  style={{
+                    background: labelBg,
+                    color: labelColor,
+                    border: "2px solid var(--gb-dark)",
+                    fontFamily: "var(--font-pixel)",
+                    fontSize: 13,
+                  }}
                 >
                   {opt.label}
                 </span>
-                <span className="text-sm leading-relaxed font-retro pt-0.5">{opt.text}</span>
+                <span className="body-text flex-1 pt-0.5">{opt.text}</span>
               </div>
             </button>
           );
         })}
       </div>
 
+      {/* 액션 */}
       {!submitted ? (
         <button
           onClick={handleSubmit}
           disabled={selectedAnswers.length === 0}
-          className="w-full py-3 font-display font-bold text-sm disabled:opacity-40 transition-transform pixel-button disabled:cursor-not-allowed"
-          style={{ letterSpacing: "0.1em" }}
+          className="pixel-btn pixel-btn-primary w-full py-3.5"
         >
-          &gt; ATTACK!
+          &gt; 정답 확인
         </button>
       ) : (
         <div>
+          {/* 결과 배너 */}
           <div
-            className="text-center py-3 mb-3 font-display font-bold animate-pop-in"
-            style={
-              isCorrect
-                ? {
-                    background: "rgba(155, 188, 15, 0.15)",
-                    border: "2px solid #9bbc0f",
-                    color: "#d4e27a",
-                    boxShadow: "2px 2px 0 #9bbc0f",
-                  }
-                : {
-                    background: "rgba(184, 50, 50, 0.15)",
-                    border: "2px solid #b83232",
-                    color: "#e86060",
-                    boxShadow: "2px 2px 0 #b83232",
-                  }
-            }
+            className="p-4 mb-3 text-center animate-pop-in"
+            style={{
+              background: isCorrect ? "rgba(155, 188, 15, 0.14)" : "rgba(184, 50, 50, 0.14)",
+              border: `2px solid ${isCorrect ? "var(--gb-green)" : "var(--blood)"}`,
+              boxShadow: `2px 2px 0 ${isCorrect ? "var(--gb-green)" : "var(--blood)"}`,
+            }}
           >
-            {isCorrect ? `★ HIT! +1 EXP ★` : `× MISS! ANS: ${question.correct_answers.join(",")}`}
+            <p
+              className="pixel-label mb-1"
+              style={{ color: isCorrect ? "var(--gb-green)" : "var(--blood)" }}
+            >
+              {isCorrect ? "★ HIT! +1 EXP ★" : "× MISS ×"}
+            </p>
+            <p className="body-text" style={{ color: isCorrect ? "var(--success-fg)" : "var(--danger-fg)" }}>
+              {isCorrect
+                ? "정답이에요!"
+                : `정답: ${question.correct_answers.join(", ")}`}
+            </p>
           </div>
 
+          {/* 풀이 */}
           {(question.explanation || question.detailed_explanation) && (
-            <div className="mb-3 pixel-panel overflow-hidden" style={{ borderColor: "#c4a4e0" }}>
+            <div className="pixel-panel mb-3 overflow-hidden" style={{ borderColor: "var(--accent-fg)" }}>
               <button
                 onClick={() => setShowExplanation(!showExplanation)}
-                className="w-full flex justify-between items-center p-3"
+                className="w-full flex justify-between items-center p-3.5"
               >
-                <span className="text-[11px] font-display text-accent-fg">▼ INTEL BOOK</span>
-                <span className="text-[10px] text-muted font-display">{showExplanation ? "[-]" : "[+]"}</span>
+                <span className="section-title" style={{ color: "var(--accent-fg)" }}>
+                  📖 풀이 보기
+                </span>
+                <span className="pixel-label text-muted">
+                  {showExplanation ? "[ — ]" : "[ + ]"}
+                </span>
               </button>
 
               {showExplanation && (
                 <div style={{ borderTop: "2px solid var(--border)" }}>
+                  {/* 탭 */}
                   <div className="flex" style={{ borderBottom: "2px solid var(--border)" }}>
-                    <TabButton active={explanationTab === "explanation"} onClick={() => setExplanationTab("explanation")}>
-                      ANS
+                    <TabButton
+                      active={explanationTab === "explanation"}
+                      onClick={() => setExplanationTab("explanation")}
+                    >
+                      정답 해설
                     </TabButton>
                     <TabButton
                       active={explanationTab === "detail"}
                       onClick={() => setExplanationTab("detail")}
                       disabled={!question.detailed_explanation}
                     >
-                      MORE
+                      상세 풀이
                     </TabButton>
                     <TabButton
                       active={explanationTab === "services"}
                       onClick={() => setExplanationTab("services")}
                       disabled={question.related_services.length === 0}
                     >
-                      ITEMS
+                      관련 서비스
                     </TabButton>
                   </div>
 
-                  <div className="p-3">
+                  {/* 탭 콘텐츠 */}
+                  <div className="p-4">
                     {explanationTab === "explanation" && (
-                      <TextSelectionPopover questionId={question.id} sourceContext="explanation" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm leading-relaxed whitespace-pre-line font-retro">
-                          {question.explanation || "NO DATA"}
+                      <TextSelectionPopover
+                        questionId={question.id}
+                        sourceContext="explanation"
+                        onSaveRequest={handleSaveRequest}
+                      >
+                        <div className="body-text whitespace-pre-line">
+                          {question.explanation || "해설이 없어요."}
                         </div>
                       </TextSelectionPopover>
                     )}
 
                     {explanationTab === "detail" && (
-                      <TextSelectionPopover questionId={question.id} sourceContext="detail" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm leading-relaxed whitespace-pre-line font-retro">
+                      <TextSelectionPopover
+                        questionId={question.id}
+                        sourceContext="detail"
+                        onSaveRequest={handleSaveRequest}
+                      >
+                        <div className="body-text whitespace-pre-line">
                           {question.detailed_explanation || (
-                            <div className="text-center text-muted py-4 font-display text-xs">
-                              <p className="mb-2">&gt; NO DATA</p>
+                            <div className="text-center body-sub py-4">
+                              <p className="mb-2">상세 풀이가 아직 없어요</p>
                               {question.source_url && (
-                                <a href={question.source_url} target="_blank" rel="noopener noreferrer" className="text-gb-green">
-                                  SOURCE ►
+                                <a
+                                  href={question.source_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="pixel-label text-gb-green"
+                                >
+                                  원본 확인 ►
                                 </a>
                               )}
                             </div>
@@ -328,15 +358,16 @@ export default function QuestionCard({
                     )}
 
                     {explanationTab === "services" && (
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {question.related_services.map((svc) => (
                           <span
                             key={svc}
-                            className="text-[10px] px-2 py-0.5 font-display"
+                            className="pixel-badge"
                             style={{
-                              background: "#0f380f",
-                              color: "#8fc0e8",
-                              border: "2px solid #5b9cd8",
+                              background: "rgba(91, 156, 216, 0.14)",
+                              color: "var(--mana)",
+                              borderColor: "var(--mana)",
+                              letterSpacing: "0.05em",
                             }}
                           >
                             {svc}
@@ -347,34 +378,23 @@ export default function QuestionCard({
                   </div>
 
                   {question.source_url && (
-                    <div style={{ borderTop: "2px dashed var(--border)" }}>
-                      <a
-                        href={question.source_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-center text-[11px] text-gb-green font-display py-2"
-                      >
-                        &gt; SOURCE (TISTORY) ►
-                      </a>
-                    </div>
+                    <a
+                      href={question.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-center py-2.5 pixel-label text-gb-green"
+                      style={{ borderTop: "2px dashed var(--border)" }}
+                    >
+                      &gt; 원본 풀이 보기 (TISTORY) ►
+                    </a>
                   )}
                 </div>
               )}
             </div>
           )}
 
-          <button
-            onClick={handleNext}
-            className="w-full py-3 font-display font-bold text-sm pixel-button"
-            style={{
-              letterSpacing: "0.1em",
-              background: "#5b9cd8",
-              borderColor: "#1a1410",
-              color: "#e6d3a3",
-              boxShadow: "2px 2px 0 #1a1410",
-            }}
-          >
-            &gt; NEXT ►
+          <button onClick={handleNext} className="pixel-btn pixel-btn-mana w-full py-3.5">
+            &gt; 다음 문제 ►
           </button>
         </div>
       )}
@@ -392,12 +412,13 @@ export default function QuestionCard({
 
       {toastMessage && (
         <div
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 text-xs px-3 py-2 z-50 animate-fade-in whitespace-nowrap font-display"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 px-4 py-2.5 z-50 animate-fade-in whitespace-nowrap"
           style={{
-            background: "#0f380f",
-            color: "#9bbc0f",
-            border: "2px solid #9bbc0f",
-            boxShadow: "2px 2px 0 rgba(0,0,0,0.6)",
+            background: "var(--gb-dark)",
+            color: "var(--gb-green)",
+            border: "2px solid var(--gb-green)",
+            boxShadow: "2px 2px 0 rgba(0, 0, 0, 0.6)",
+            fontSize: 13,
           }}
         >
           {toastMessage}
@@ -422,11 +443,13 @@ function TabButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex-1 py-2 text-[10px] font-display transition-colors"
+      className="flex-1 py-3 text-center transition-colors"
       style={{
-        color: active ? "#9bbc0f" : disabled ? "rgba(138, 112, 80, 0.4)" : "var(--muted)",
-        background: active ? "rgba(155, 188, 15, 0.15)" : "transparent",
+        background: active ? "rgba(155, 188, 15, 0.1)" : "transparent",
+        color: active ? "var(--gb-green)" : disabled ? "rgba(160, 136, 104, 0.45)" : "var(--muted)",
         borderRight: "2px solid var(--border)",
+        fontSize: 12.5,
+        fontWeight: 600,
       }}
     >
       {children}

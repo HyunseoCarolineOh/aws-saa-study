@@ -29,27 +29,33 @@ export default function ServiceResumeCard() {
   return (
     <Link
       href={`/questions?service=${encodeURIComponent(progress.serviceName)}`}
-      className="block p-3 mb-4 pixel-panel transition-transform active:translate-x-[2px] active:translate-y-[2px]"
-      style={{ borderColor: "#8fc0e8" }}
+      className="block pixel-panel p-4 mb-6 transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+      style={{ borderColor: "var(--mana)" }}
     >
-      <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xl animate-pixel-bounce" style={{ imageRendering: "pixelated" }}>▶</span>
-          <div>
-            <p className="text-[10px] font-display text-mana">&gt; CONTINUE</p>
-            <p className="text-xs text-parchment font-retro mt-0.5">
-              {progress.serviceName} · {progress.currentIndex + 1}/{progress.total}
-            </p>
+      <div className="flex items-center gap-3 mb-3">
+        <span className="text-2xl leading-none animate-pixel-bounce" aria-hidden>
+          ▶
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="pixel-label text-mana">CONTINUE</span>
+            <span className="caption">{progress.currentIndex + 1} / {progress.total}</span>
           </div>
+          <p className="section-title text-parchment mt-1 truncate">{progress.serviceName}</p>
         </div>
-        <span className="text-gold font-display text-xs animate-blink">▶▶</span>
+        <span className="pixel-label text-gold animate-blink flex-shrink-0" aria-hidden>
+          ►
+        </span>
       </div>
-      <div className="h-2" style={{ background: "#0f380f", border: "1px solid #5a4530" }}>
+      <div
+        className="h-2"
+        style={{ background: "var(--gb-dark)", border: "1.5px solid var(--border)" }}
+      >
         <div
           className="h-full transition-[width] duration-300"
           style={{
             width: `${pct}%`,
-            background: "linear-gradient(90deg, #8fc0e8, #5b9cd8)",
+            background: "linear-gradient(90deg, #5b9cd8, #8fc0e8)",
           }}
         />
       </div>

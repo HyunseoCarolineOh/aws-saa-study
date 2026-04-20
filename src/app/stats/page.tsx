@@ -24,64 +24,89 @@ export default function StatsPage() {
       : 0;
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6">
-      <div className="mb-5">
-        <p className="text-[9px] font-display text-gold mb-1">&gt; STATUS SCREEN</p>
-        <h1 className="text-sm font-display font-black text-gb-green">PARAMETERS</h1>
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-6">
+      <header className="mb-6">
+        <p className="eyebrow">Status Screen</p>
+        <h1 className="page-title">학습 스탯</h1>
+        <p className="page-sub">지금까지 쌓은 경험치</p>
+      </header>
+
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <StatCard label="SOLVED" value={totalQuestions} suffix="Q" color="#9bbc0f" />
+        <StatCard
+          label="ACC"
+          value={accuracy}
+          suffix="%"
+          color={accuracy >= 70 ? "#9bbc0f" : "#b83232"}
+        />
+        <StatCard label="STREAK" value={streak} suffix="D" color="#e8b923" />
+        <StatCard label="SPEED" value={avgTimePerQuestion} suffix="S" color="#5b9cd8" />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <StatCard label="SOLVED" value={`${totalQuestions}`} suffix="Q" color="#9bbc0f" />
-        <StatCard label="HIT" value={`${accuracy}`} suffix="%" color={accuracy >= 70 ? "#9bbc0f" : "#b83232"} />
-        <StatCard label="STREAK" value={`${streak}`} suffix="D" color="#e8b923" />
-        <StatCard label="SPEED" value={`${avgTimePerQuestion}`} suffix="S" color="#8fc0e8" />
-      </div>
-
-      <div className="pixel-panel p-4">
-        <h2 className="font-display text-xs text-gold mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
-          ★ BATTLE LOG
-        </h2>
+      <section className="pixel-panel p-4">
+        <div
+          className="flex items-center justify-between mb-3 pb-2.5"
+          style={{ borderBottom: "2px dashed var(--border)" }}
+        >
+          <h2 className="section-title text-gold">★ 일별 기록</h2>
+          <span className="section-tag">LOG</span>
+        </div>
         {stats.length === 0 ? (
-          <p className="text-xs font-display text-muted text-center py-6">
-            &gt; NO DATA<br />
-            <span className="text-[10px] font-retro">모험을 시작하세요</span>
-          </p>
+          <div className="text-center py-8">
+            <p className="pixel-label text-muted mb-2">&gt; NO DATA</p>
+            <p className="body-sub">첫 문제를 풀면 기록이 쌓여요</p>
+          </div>
         ) : (
-          <div className="space-y-1">
+          <ul className="space-y-1.5">
             {[...stats].reverse().map((s) => {
               const acc = s.questions_solved > 0 ? Math.round((s.correct_count / s.questions_solved) * 100) : 0;
               return (
-                <div
+                <li
                   key={s.study_date}
-                  className="flex justify-between items-center py-2 px-2"
-                  style={{ background: "rgba(0, 0, 0, 0.2)", border: "1px solid var(--border)" }}
+                  className="flex justify-between items-center py-2 px-3"
+                  style={{
+                    background: "rgba(15, 56, 15, 0.35)",
+                    border: "1.5px solid var(--border)",
+                  }}
                 >
-                  <span className="text-xs font-retro text-parchment">{s.study_date}</span>
-                  <div className="flex gap-3 text-xs font-display">
-                    <span className="text-mana">{s.questions_solved}Q</span>
-                    <span style={{ color: acc >= 70 ? "#9bbc0f" : "#b83232" }}>{acc}%</span>
+                  <span className="body-text text-parchment">{s.study_date}</span>
+                  <div className="flex gap-3 items-center">
+                    <span className="stat-value-md text-mana">{s.questions_solved}<span className="pixel-label opacity-70 ml-0.5">Q</span></span>
+                    <span
+                      className="stat-value-md"
+                      style={{ color: acc >= 70 ? "var(--gb-green)" : "var(--blood)" }}
+                    >
+                      {acc}<span className="pixel-label opacity-70 ml-0.5">%</span>
+                    </span>
                   </div>
-                </div>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
-      </div>
+      </section>
     </div>
   );
 }
 
-function StatCard({ label, value, suffix, color }: { label: string; value: string; suffix: string; color: string }) {
+function StatCard({
+  label,
+  value,
+  suffix,
+  color,
+}: {
+  label: string;
+  value: number | string;
+  suffix: string;
+  color: string;
+}) {
   return (
-    <div
-      className="p-3 text-center pixel-panel"
-      style={{ borderColor: color }}
-    >
-      <p className="text-2xl font-display font-black leading-none" style={{ color }}>
+    <div className="pixel-panel p-4 text-center" style={{ borderColor: color, boxShadow: `2px 2px 0 ${color}44` }}>
+      <p className="stat-value-lg" style={{ color, fontSize: 26 }}>
         {value}
-        <span className="text-sm opacity-80 ml-0.5">{suffix}</span>
+        <span className="pixel-label ml-1 opacity-75">{suffix}</span>
       </p>
-      <p className="text-[9px] font-display text-muted mt-1">{label}</p>
+      <p className="pixel-label text-muted mt-2">{label}</p>
     </div>
   );
 }

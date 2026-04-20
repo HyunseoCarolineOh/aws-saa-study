@@ -110,43 +110,48 @@ export default function ReviewPage() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const tabMeta = [
-    { key: "review" as const, label: "REDO", color: "#9bbc0f" },
-    { key: "notes" as const, label: "NOTES", color: "#8fc0e8", count: notes.length },
-    { key: "corrections" as const, label: "REPORT", color: "#e8b923", count: correctionsEnabled ? corrections.length : 0 },
+    { key: "review" as const, label: "복습", color: "var(--gb-green)" },
+    { key: "notes" as const, label: "노트", color: "var(--mana)", count: notes.length },
+    { key: "corrections" as const, label: "수정요청", color: "var(--gold)", count: correctionsEnabled ? corrections.length : 0 },
   ];
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-      <div className="mb-5">
-        <p className="text-[9px] font-display text-gold mb-1">&gt; TRAINING HALL</p>
-        <h1 className="text-sm font-display font-black text-gb-green">REVENGE ROOM</h1>
-      </div>
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-6">
+      <header className="mb-6">
+        <p className="eyebrow">Training Hall</p>
+        <h1 className="page-title">복습 공간</h1>
+        <p className="page-sub">오답을 다시 풀고 메모도 확인해요</p>
+      </header>
 
-      <div className="flex gap-1.5 mb-5">
+      <div className="flex gap-2 mb-6">
         {tabMeta.map((tab) => {
           const active = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className="flex-1 py-2 text-[10px] font-display transition-all flex items-center justify-center gap-1"
+              className="flex-1 py-2.5 flex items-center justify-center gap-1.5 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
               style={
                 active
                   ? {
                       background: tab.color,
-                      color: "#0f380f",
-                      border: "2px solid #1a1410",
-                      boxShadow: "2px 2px 0 #1a1410",
+                      color: "var(--gb-dark)",
+                      border: "2px solid var(--gb-dark)",
+                      boxShadow: "2px 2px 0 var(--gb-dark)",
+                      fontSize: 13,
+                      fontWeight: 700,
                     }
                   : {
-                      background: "#2a1f17",
+                      background: "var(--card)",
                       color: "var(--muted)",
-                      border: "2px solid #5a4530",
+                      border: "2px solid var(--border)",
+                      fontSize: 13,
+                      fontWeight: 600,
                     }
               }
             >
               <span>{tab.label}</span>
-              {tab.count && tab.count > 0 ? <span className="opacity-80">({tab.count})</span> : null}
+              {tab.count && tab.count > 0 ? <span className="pixel-label opacity-80">({tab.count})</span> : null}
             </button>
           );
         })}
@@ -154,72 +159,80 @@ export default function ReviewPage() {
 
       {activeTab === "review" && (
         <>
-          <div className="pixel-panel p-3 mb-4">
-            <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="py-2" style={{ background: "rgba(184, 50, 50, 0.1)", border: "2px solid #b83232" }}>
-                <p className="text-2xl font-display font-black text-blood">{wrongCount}</p>
-                <p className="text-[10px] font-display text-muted mt-0.5">× MISSES</p>
-              </div>
-              <div className="py-2" style={{ background: "rgba(232, 185, 35, 0.1)", border: "2px solid #e8b923" }}>
-                <p className="text-2xl font-display font-black text-gold">{reviewIds.length}</p>
-                <p className="text-[10px] font-display text-muted mt-0.5">&gt; TODAY</p>
-              </div>
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <div
+              className="pixel-panel p-4 text-center"
+              style={{ borderColor: "var(--blood)", boxShadow: "2px 2px 0 rgba(184, 50, 50, 0.3)" }}
+            >
+              <p className="stat-value-lg text-blood" style={{ fontSize: 26 }}>
+                {wrongCount}
+              </p>
+              <p className="pixel-label text-muted mt-2">MISSES</p>
+            </div>
+            <div
+              className="pixel-panel p-4 text-center"
+              style={{ borderColor: "var(--gold)", boxShadow: "2px 2px 0 rgba(232, 185, 35, 0.3)" }}
+            >
+              <p className="stat-value-lg text-gold" style={{ fontSize: 26 }}>
+                {reviewIds.length}
+              </p>
+              <p className="pixel-label text-muted mt-2">TODAY</p>
             </div>
           </div>
 
           {reviewIds.length > 0 ? (
             <Link
               href="/questions?mode=review"
-              className="block w-full text-center py-3 font-display font-bold text-sm mb-6 pixel-button"
-              style={{
-                background: "#e8b923",
-                color: "#1a1410",
-                borderColor: "#1a1410",
-                boxShadow: "2px 2px 0 #1a1410",
-              }}
+              className="pixel-btn pixel-btn-gold w-full py-3.5 mb-6"
             >
-              &gt; REVENGE! ({reviewIds.length}Q)
+              🔄 오답 복습 시작 ({reviewIds.length}문제)
             </Link>
           ) : (
             <div className="text-center py-10 mb-6">
               <p className="text-4xl mb-3 animate-pixel-bounce">★</p>
-              <p className="text-xs font-display text-gb-green mb-2">&gt; ALL CLEAR!</p>
-              <p className="text-sm text-parchment font-retro">재도전할 퀘스트 없음</p>
-              <Link href="/questions" className="inline-block mt-4 text-gold font-display text-xs">
-                &gt; GO BATTLE ►
+              <p className="pixel-label text-gb-green mb-2">&gt; ALL CLEAR!</p>
+              <p className="body-sub">재도전할 문제가 없어요</p>
+              <Link href="/questions" className="inline-block mt-4 pixel-label text-gold">
+                &gt; 문제 풀러 가기 ►
               </Link>
             </div>
           )}
 
           {!loading && wrongSummary.length > 0 && (
-            <div>
-              <h2 className="text-[11px] font-display text-accent-fg mb-3">&gt; MISS LIST</h2>
-              <div className="space-y-2">
+            <section>
+              <h2 className="section-title text-accent-fg mb-3">× 틀린 문제 목록</h2>
+              <ul className="space-y-2">
                 {wrongSummary
                   .sort((a, b) => b.lastAttemptAt.localeCompare(a.lastAttemptAt))
                   .map((item) => {
                     const q = questionMap.get(item.questionId);
                     const isReviewDue = reviewIds.includes(item.questionId);
                     return (
-                      <div
+                      <li
                         key={item.questionId}
                         className="p-3 pixel-panel"
-                        style={isReviewDue ? { borderColor: "#e8b923", background: "rgba(232, 185, 35, 0.08)" } : undefined}
+                        style={
+                          isReviewDue
+                            ? { borderColor: "var(--gold)", background: "rgba(232, 185, 35, 0.06)" }
+                            : undefined
+                        }
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-xs leading-relaxed line-clamp-2 flex-1 font-retro">
-                            {q ? q.question_text.slice(0, 100) + (q.question_text.length > 100 ? "..." : "") : item.questionId}
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="body-sub leading-relaxed line-clamp-2 flex-1">
+                            {q
+                              ? q.question_text.slice(0, 100) + (q.question_text.length > 100 ? "..." : "")
+                              : item.questionId}
                           </p>
-                          <div className="flex flex-col items-end flex-shrink-0">
-                            <span className="text-[10px] text-blood font-display">×{item.attemptCount}</span>
-                            {isReviewDue && <span className="text-[10px] text-gold font-display mt-0.5">&gt; TODAY</span>}
+                          <div className="flex flex-col items-end flex-shrink-0 gap-1">
+                            <span className="pixel-label text-blood">×{item.attemptCount}</span>
+                            {isReviewDue && <span className="pixel-label text-gold">TODAY</span>}
                           </div>
                         </div>
-                      </div>
+                      </li>
                     );
                   })}
-              </div>
-            </div>
+              </ul>
+            </section>
           )}
         </>
       )}
@@ -232,50 +245,49 @@ export default function ReviewPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="> SEARCH..."
-                className="w-full px-3 py-2.5 text-sm focus:outline-none font-retro"
-                style={{
-                  background: "#0f380f",
-                  border: "2px solid #5b9cd8",
-                  color: "var(--foreground)",
-                }}
+                placeholder="🔍 노트 검색..."
+                className="pixel-input"
               />
             </div>
           )}
 
           {filteredNotes.length === 0 ? (
-            <div className="text-center py-12 text-muted">
+            <div className="text-center py-12">
               {notes.length === 0 ? (
                 <>
-                  <div className="text-4xl mb-3 animate-pixel-bounce">📝</div>
-                  <p className="text-xs font-display text-mana mb-2">&gt; NO NOTES</p>
-                  <p className="text-sm font-retro">텍스트 드래그로 저장</p>
-                  <Link href="/questions" className="inline-block mt-4 text-gb-green font-display text-xs">
-                    &gt; GO BATTLE ►
+                  <div className="text-5xl mb-3">📝</div>
+                  <p className="pixel-label text-mana mb-2">&gt; NO NOTES</p>
+                  <p className="body-sub">문제 풀이 중 텍스트 드래그로 저장돼요</p>
+                  <Link href="/questions" className="inline-block mt-4 pixel-label text-gb-green">
+                    &gt; 문제 풀러 가기 ►
                   </Link>
                 </>
               ) : (
-                <p className="text-sm font-display">&gt; NO MATCH</p>
+                <p className="pixel-label text-muted">&gt; NO MATCH</p>
               )}
             </div>
           ) : (
-            <div className="space-y-3">
+            <ul className="space-y-3">
               {filteredNotes.map((note) => {
                 const q = questionMap.get(note.questionId);
                 const isEditing = editingNote?.id === note.id;
                 const sourceLabel =
-                  note.sourceContext === "question" ? "Q" : note.sourceContext === "explanation" ? "ANS" : "DET";
+                  note.sourceContext === "question"
+                    ? "문제"
+                    : note.sourceContext === "explanation"
+                    ? "해설"
+                    : "상세";
 
                 return (
-                  <div key={note.id} className="p-3 space-y-2 pixel-panel">
+                  <li key={note.id} className="pixel-panel p-3 space-y-2.5">
                     <div
                       className="px-3 py-2"
                       style={{
                         background: "rgba(232, 185, 35, 0.1)",
-                        borderLeft: "4px solid #e8b923",
+                        borderLeft: "3px solid var(--gold)",
                       }}
                     >
-                      <p className="text-xs leading-relaxed font-retro" style={{ color: "var(--warning-fg)" }}>
+                      <p className="body-sub leading-relaxed" style={{ color: "var(--warning-fg)" }}>
                         {note.selectedText}
                       </p>
                     </div>
@@ -285,76 +297,72 @@ export default function ReviewPage() {
                         <textarea
                           value={editingNote.memo}
                           onChange={(e) => setEditingNote({ ...editingNote, memo: e.target.value })}
-                          className="w-full px-3 py-2 text-xs leading-relaxed resize-none focus:outline-none font-retro"
-                          style={{
-                            background: "#0f380f",
-                            border: "2px solid #5b9cd8",
-                            color: "var(--foreground)",
-                          }}
+                          className="pixel-input"
                           rows={3}
                           autoFocus
                         />
                         <div className="flex gap-2">
-                          <button onClick={() => setEditingNote(null)} className="text-[10px] font-display text-muted px-3 py-1" style={{ border: "2px solid var(--border)" }}>
-                            CANCEL
+                          <button onClick={() => setEditingNote(null)} className="pixel-btn pixel-btn-ghost py-2 px-4 text-xs">
+                            취소
                           </button>
-                          <button
-                            onClick={handleSaveEdit}
-                            className="text-[10px] font-display px-3 py-1"
-                            style={{ background: "#9bbc0f", color: "#0f380f", border: "2px solid #0f380f" }}
-                          >
-                            &gt; SAVE
+                          <button onClick={handleSaveEdit} className="pixel-btn pixel-btn-primary py-2 px-4 text-xs">
+                            &gt; 저장
                           </button>
                         </div>
                       </div>
                     ) : (
-                      note.memo && <p className="text-xs text-parchment leading-relaxed pl-1 font-retro">{note.memo}</p>
+                      note.memo && <p className="body-text pl-1">{note.memo}</p>
                     )}
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <span
-                          className="text-[9px] px-1.5 py-0.5 font-display flex-shrink-0"
+                          className="pixel-badge"
                           style={{
-                            background: "#c4a4e0",
-                            color: "#0f380f",
-                            border: "1px solid #0f380f",
+                            background: "var(--accent-fg)",
+                            color: "var(--gb-dark)",
+                            borderColor: "var(--gb-dark)",
+                            padding: "2px 6px",
+                            fontSize: 9,
                           }}
                         >
                           {sourceLabel}
                         </span>
                         {q && (
-                          <span className="text-[10px] text-muted truncate font-retro">
+                          <span className="caption truncate">
                             {q.question_text.slice(0, 40)}...
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                        <span className="text-[10px] text-muted font-retro">
-                          {new Date(note.createdAt).toLocaleDateString("ko-KR", { month: "short", day: "numeric" })}
+                      <div className="flex items-center gap-2.5 flex-shrink-0">
+                        <span className="caption">
+                          {new Date(note.createdAt).toLocaleDateString("ko-KR", {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </span>
                         {!isEditing && (
                           <>
                             <button
                               onClick={() => setEditingNote({ id: note.id, memo: note.memo })}
-                              className="text-[10px] text-mana font-display"
+                              className="pixel-label text-mana"
                             >
-                              EDIT
+                              수정
                             </button>
                             <button
                               onClick={() => handleDeleteNote(note.id)}
-                              className="text-[10px] text-blood font-display"
+                              className="pixel-label text-blood"
                             >
-                              DEL
+                              삭제
                             </button>
                           </>
                         )}
                       </div>
                     </div>
-                  </div>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           )}
         </>
       )}
@@ -363,93 +371,107 @@ export default function ReviewPage() {
         <>
           {!correctionsEnabled ? (
             <div
-              className="p-4 text-sm"
+              className="pixel-panel p-4"
               style={{
                 background: "rgba(232, 185, 35, 0.08)",
-                border: "2px solid #e8b923",
+                borderColor: "var(--gold)",
                 color: "var(--warning-fg)",
               }}
             >
-              <p className="font-display text-xs mb-1">&gt; SUPABASE NOT SET</p>
-              <p className="text-xs leading-relaxed font-retro">.env.local 설정 후 재로드</p>
+              <p className="pixel-label mb-2">&gt; SUPABASE NOT SET</p>
+              <p className="body-sub leading-relaxed">.env.local 환경변수 설정 후 재로드 해주세요</p>
             </div>
           ) : correctionsLoading ? (
-            <p className="text-sm text-muted text-center py-8 font-display animate-blink">&gt; LOADING...</p>
+            <p className="pixel-label text-muted text-center py-8 animate-blink">&gt; LOADING...</p>
           ) : correctionsError ? (
             <div
-              className="p-3 text-sm font-retro"
+              className="pixel-panel p-3"
               style={{
                 background: "rgba(184, 50, 50, 0.1)",
-                border: "2px solid #b83232",
+                borderColor: "var(--blood)",
                 color: "var(--danger-fg)",
               }}
             >
-              &gt; ERROR: {correctionsError}
-              <button onClick={() => void refreshCorrections()} className="block mt-2 text-xs underline font-display">
-                RETRY
+              <p className="body-sub">&gt; ERROR: {correctionsError}</p>
+              <button onClick={() => void refreshCorrections()} className="block mt-2 pixel-label underline">
+                다시 시도
               </button>
             </div>
           ) : corrections.length === 0 ? (
-            <div className="text-center py-12 text-muted">
-              <p className="text-4xl mb-3 animate-pixel-bounce">★</p>
-              <p className="text-xs font-display text-gb-green mb-2">&gt; NO REPORTS</p>
-              <p className="text-sm font-retro">⚠ 버튼으로 신고</p>
+            <div className="text-center py-12">
+              <p className="text-4xl mb-3">★</p>
+              <p className="pixel-label text-gb-green mb-2">&gt; NO REPORTS</p>
+              <p className="body-sub">⚠ 버튼으로 문제 오류를 신고할 수 있어요</p>
             </div>
           ) : (
             <>
               <div
-                className="p-3 mb-3 text-xs leading-relaxed font-retro"
+                className="pixel-panel p-3 mb-3 body-sub leading-relaxed"
                 style={{
                   background: "rgba(91, 156, 216, 0.08)",
-                  border: "2px solid #5b9cd8",
+                  borderColor: "var(--mana)",
                   color: "var(--info-fg)",
                 }}
               >
-                &gt; 터미널에서 <span className="font-mono bg-card px-1">수정 요청 처리해줘</span> 입력 시
-                {corrections.length}건 순서대로 처리
+                💡 터미널에서 <code className="font-mono bg-card px-1.5 py-0.5">수정 요청 처리해줘</code> 입력 시
+                {corrections.length}건 순서대로 처리됩니다
               </div>
-              <div className="space-y-3">
+              <ul className="space-y-3">
                 {corrections.map((c) => {
                   const q = questionMap.get(c.question_id);
                   return (
-                    <div key={c.id} className="p-3 space-y-2 pixel-panel">
+                    <li key={c.id} className="pixel-panel p-3 space-y-2">
                       <div className="flex items-start gap-2 flex-wrap">
-                        <span className={`text-[10px] px-2 py-0.5 font-display ${TYPE_BADGE_CLASS[c.report_type]}`}>
+                        <span className={`pixel-badge ${TYPE_BADGE_CLASS[c.report_type]}`}>
                           {CORRECTION_TYPE_LABELS[c.report_type]}
                         </span>
                         {c.option_label && (
-                          <span className="text-[10px] text-muted px-1.5 py-0.5 font-display" style={{ background: "#0f380f", border: "1px solid var(--border)" }}>
+                          <span
+                            className="pixel-badge"
+                            style={{
+                              background: "var(--gb-dark)",
+                              color: "var(--muted)",
+                              borderColor: "var(--border)",
+                            }}
+                          >
                             OPT {c.option_label}
                           </span>
                         )}
-                        <span className="text-[10px] text-muted px-1.5 py-0.5 font-mono" style={{ background: "#0f380f", border: "1px solid var(--border)" }}>
+                        <span
+                          className="caption px-1.5 py-0.5"
+                          style={{
+                            background: "var(--gb-dark)",
+                            border: "1.5px solid var(--border)",
+                            fontFamily: "var(--font-mono)",
+                          }}
+                        >
                           {c.question_id}
                         </span>
                       </div>
                       {q ? (
-                        <p className="text-xs leading-relaxed line-clamp-2 font-retro">
+                        <p className="body-sub leading-relaxed line-clamp-2">
                           {q.question_text.slice(0, 120)}
                           {q.question_text.length > 120 ? "..." : ""}
                         </p>
                       ) : (
-                        <p className="text-xs text-muted italic font-retro">NO DATA</p>
+                        <p className="body-sub italic">문제 데이터를 찾을 수 없어요</p>
                       )}
                       {c.selected_text && (
                         <div
-                          className="px-2 py-1"
+                          className="px-3 py-2"
                           style={{
                             background: "rgba(232, 185, 35, 0.1)",
-                            borderLeft: "3px solid #e8b923",
+                            borderLeft: "3px solid var(--gold)",
                           }}
                         >
-                          <p className="text-[11px] leading-relaxed line-clamp-2 font-retro" style={{ color: "var(--warning-fg)" }}>
+                          <p className="body-sub leading-relaxed line-clamp-2" style={{ color: "var(--warning-fg)" }}>
                             {c.selected_text}
                           </p>
                         </div>
                       )}
-                      {c.description && <p className="text-xs text-muted leading-relaxed pl-1 font-retro">{c.description}</p>}
+                      {c.description && <p className="body-sub leading-relaxed pl-1">{c.description}</p>}
                       <div className="flex items-center justify-between pt-1">
-                        <span className="text-[10px] text-muted font-retro">
+                        <span className="caption">
                           {new Date(c.created_at).toLocaleString("ko-KR", {
                             month: "short",
                             day: "numeric",
@@ -459,16 +481,16 @@ export default function ReviewPage() {
                         </span>
                         <button
                           onClick={() => void handleDeleteCorrection(c.id)}
-                          className="text-[10px] font-display"
+                          className="pixel-label"
                           style={{ color: "var(--danger-fg)" }}
                         >
-                          DEL
+                          삭제
                         </button>
                       </div>
-                    </div>
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             </>
           )}
         </>

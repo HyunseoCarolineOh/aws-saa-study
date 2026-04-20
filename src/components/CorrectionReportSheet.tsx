@@ -75,58 +75,58 @@ export default function CorrectionReportSheet({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       <div
-        className="relative w-full max-w-lg animate-slide-up"
-        style={{
-          maxHeight: "85vh",
-          background: "#2a1f17",
-          border: "4px solid #b83232",
-          borderBottom: "none",
-          boxShadow: "inset 0 0 0 2px #1a1410, inset 0 0 0 4px #5a4530",
-        }}
+        className="relative w-full max-w-lg animate-slide-up pixel-window"
+        style={{ maxHeight: "85vh", borderColor: "var(--blood)", borderBottom: "none" }}
       >
-        <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: "85vh" }}>
+        <div className="p-5 space-y-4 overflow-y-auto" style={{ maxHeight: "85vh" }}>
           <div className="flex justify-center">
-            <div className="w-10 h-1" style={{ background: "#b83232" }} />
+            <div className="w-12 h-1.5" style={{ background: "var(--blood)" }} />
           </div>
 
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-display text-blood">⚠ REPORT BUG</h3>
-          </div>
+          <h3 className="section-title text-blood">⚠️ 문제 수정 요청</h3>
 
           {!enabled && (
             <div
-              className="text-xs p-3 font-retro"
-              style={{ background: "rgba(232, 185, 35, 0.08)", border: "2px solid #e8b923", color: "var(--warning-fg)" }}
+              className="p-3 body-sub"
+              style={{
+                background: "rgba(232, 185, 35, 0.08)",
+                border: "2px solid var(--gold)",
+                color: "var(--warning-fg)",
+              }}
             >
-              &gt; SUPABASE NOT SET
+              Supabase 환경변수가 설정되지 않아 신고할 수 없어요
             </div>
           )}
 
           {isChoiceReport && question.options.length > 0 && (
             <div>
-              <label className="block text-[10px] text-muted mb-1.5 font-display">&gt; WHICH OPT?</label>
+              <label className="block pixel-label text-muted mb-2">어느 선지인가요?</label>
               <div className="flex gap-2">
                 {question.options.map((opt) => (
                   <button
                     key={opt.label}
                     type="button"
                     onClick={() => setOptionLabel(opt.label)}
-                    className="flex-1 py-2 text-sm font-display font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                    className="flex-1 py-2.5 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                     style={
                       optionLabel === opt.label
                         ? {
-                            background: "#b83232",
-                            color: "#e6d3a3",
-                            border: "2px solid #1a1410",
-                            boxShadow: "2px 2px 0 #1a1410",
+                            background: "var(--blood)",
+                            color: "var(--parchment)",
+                            border: "2px solid var(--gb-dark)",
+                            boxShadow: "2px 2px 0 var(--gb-dark)",
+                            fontFamily: "var(--font-pixel)",
+                            fontSize: 13,
                           }
                         : {
-                            background: "#0f380f",
+                            background: "var(--gb-dark)",
                             color: "var(--muted)",
                             border: "2px solid var(--border)",
+                            fontFamily: "var(--font-pixel)",
+                            fontSize: 13,
                           }
                     }
                   >
@@ -138,18 +138,18 @@ export default function CorrectionReportSheet({
           )}
 
           <div>
-            <label className="block text-[10px] text-muted mb-1.5 font-display">&gt; TYPE</label>
-            <div className="space-y-1.5">
+            <label className="block pixel-label text-muted mb-2">유형</label>
+            <div className="space-y-2">
               {TYPE_ORDER.map((t) => {
                 const active = reportType === t;
                 return (
                   <label
                     key={t}
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer text-sm"
+                    className="flex items-center gap-2.5 px-3 py-2.5 cursor-pointer"
                     style={
                       active
-                        ? { background: "rgba(184, 50, 50, 0.1)", border: "2px solid #b83232" }
-                        : { background: "#2a1f17", border: "2px solid #5a4530" }
+                        ? { background: "rgba(184, 50, 50, 0.1)", border: "2px solid var(--blood)" }
+                        : { background: "var(--muted-bg)", border: "2px solid var(--border)" }
                     }
                   >
                     <input
@@ -158,9 +158,15 @@ export default function CorrectionReportSheet({
                       value={t}
                       checked={active}
                       onChange={() => setReportType(t)}
-                      style={{ accentColor: "#b83232" }}
+                      style={{ accentColor: "var(--blood)" }}
                     />
-                    <span className="font-retro" style={{ color: active ? "#e86060" : "var(--foreground)" }}>
+                    <span
+                      className="body-text"
+                      style={{
+                        color: active ? "var(--danger-fg)" : "var(--foreground)",
+                        fontWeight: active ? 700 : 500,
+                      }}
+                    >
                       {CORRECTION_TYPE_LABELS[t]}
                     </span>
                   </label>
@@ -170,52 +176,40 @@ export default function CorrectionReportSheet({
           </div>
 
           <div>
-            <label className="block text-[10px] text-muted mb-1.5 font-display">&gt; NOTES (OPT)</label>
+            <label className="block pixel-label text-muted mb-2">추가 설명 (선택)</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="어디가 어떻게 잘못됐는지..."
-              className="w-full px-3 py-2.5 text-sm leading-relaxed resize-none focus:outline-none font-retro"
-              style={{
-                background: "#0f380f",
-                border: "2px solid var(--border)",
-                color: "var(--foreground)",
-              }}
+              className="pixel-input"
               rows={3}
             />
           </div>
 
           {error && (
             <div
-              className="text-xs p-3 font-retro"
-              style={{ background: "rgba(184, 50, 50, 0.1)", border: "2px solid #b83232", color: "var(--danger-fg)" }}
+              className="p-3 body-sub"
+              style={{
+                background: "rgba(184, 50, 50, 0.1)",
+                border: "2px solid var(--blood)",
+                color: "var(--danger-fg)",
+              }}
             >
-              &gt; SEND FAILED: {error}
+              &gt; 전송 실패: {error}
             </div>
           )}
 
-          <div className="flex gap-2 pb-20">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 py-2.5 text-xs font-display text-muted"
-              style={{ background: "#2a1f17", border: "2px solid #5a4530", boxShadow: "2px 2px 0 #5a4530" }}
-            >
-              CANCEL
+          <div className="flex gap-3 pb-20">
+            <button type="button" onClick={onClose} className="pixel-btn pixel-btn-ghost flex-1 py-3">
+              취소
             </button>
             <button
               type="button"
               onClick={handleSave}
               disabled={!enabled || submitting}
-              className="flex-1 py-2.5 text-xs font-display pixel-button disabled:opacity-40"
-              style={{
-                background: "#b83232",
-                color: "#e6d3a3",
-                borderColor: "#1a1410",
-                boxShadow: "2px 2px 0 #1a1410",
-              }}
+              className="pixel-btn pixel-btn-danger flex-1 py-3"
             >
-              {submitting ? "SENDING..." : "> SEND"}
+              {submitting ? "전송 중..." : "⚠ 신고 보내기"}
             </button>
           </div>
         </div>

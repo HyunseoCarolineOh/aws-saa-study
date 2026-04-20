@@ -180,7 +180,7 @@ export default function MockExamStartPage() {
   if (phase === "loading") {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted font-display animate-blink">&gt; BOSS SUMMONING...</p>
+        <p className="pixel-label text-muted animate-blink">&gt; BOSS SUMMONING...</p>
       </div>
     );
   }
@@ -189,32 +189,41 @@ export default function MockExamStartPage() {
     const score = Math.round((results.correct / results.total) * 1000);
     const passed = score >= 720;
     return (
-      <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-        <div className="mb-4">
-          <p className="text-[9px] font-display text-gold mb-1">&gt; BATTLE RESULT</p>
-          <h1 className="text-sm font-display font-black text-gb-green">VERDICT</h1>
-        </div>
+      <div className="max-w-lg mx-auto px-4 pt-6 pb-6">
+        <header className="mb-5">
+          <p className="eyebrow">Battle Result</p>
+          <h1 className="page-title">보스전 결과</h1>
+        </header>
 
-        <div
-          className="p-6 mb-4 text-center animate-pop-in pixel-window"
-          style={{ borderColor: passed ? "#9bbc0f" : "#b83232" }}
+        <section
+          className="p-6 mb-5 text-center animate-pop-in pixel-window"
+          style={{ borderColor: passed ? "var(--gb-green)" : "var(--blood)" }}
         >
-          <p className="text-3xl mb-2">{passed ? "★" : "×"}</p>
-          <p className="text-xs font-display mb-2" style={{ color: passed ? "#d4e27a" : "#e86060" }}>
-            {passed ? "★ VICTORY!! ★" : "× GAME OVER ×"}
+          <p className="text-4xl mb-2 leading-none">{passed ? "★" : "×"}</p>
+          <p
+            className="pixel-label mb-3"
+            style={{ color: passed ? "var(--gb-green)" : "var(--blood)" }}
+          >
+            {passed ? "VICTORY" : "GAME OVER"}
           </p>
-          <p className="text-3xl font-display font-black leading-none mb-1" style={{ color: passed ? "#d4e27a" : "#e86060" }}>
+          <p
+            className="stat-value-lg leading-none mb-2"
+            style={{ color: passed ? "var(--success-fg)" : "var(--danger-fg)", fontSize: 36 }}
+          >
             {score}
-            <span className="text-lg opacity-70"> / 1000</span>
+            <span className="pixel-label opacity-70 ml-2">/ 1000</span>
           </p>
-          <p className="text-[10px] text-muted mt-2 font-retro">
-            HIT {results.correct} / {results.total} · PASS 720
+          <p className="body-sub">
+            정답 {results.correct} / {results.total} · 합격 720점
           </p>
-        </div>
+        </section>
 
-        <div className="pixel-panel p-4 mb-4">
-          <h2 className="font-display text-xs text-mana mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
-            ▲ DOMAIN
+        <section className="pixel-panel p-4 mb-5">
+          <h2
+            className="section-title text-mana mb-3 pb-2.5"
+            style={{ borderBottom: "2px dashed var(--border)" }}
+          >
+            ▲ 도메인별 정답률
           </h2>
           <div className="space-y-3">
             {Object.entries(results.domainScores).map(([domain, s]) => {
@@ -222,18 +231,28 @@ export default function MockExamStartPage() {
               const good = pct >= 70;
               return (
                 <div key={domain}>
-                  <div className="flex justify-between text-xs mb-1.5 font-retro">
-                    <span>{domain}</span>
-                    <span style={{ color: good ? "#9bbc0f" : "#b83232" }} className="font-display text-[10px]">
-                      {s.correct}/{s.total} · {pct}%
+                  <div className="flex justify-between items-baseline mb-1.5">
+                    <span className="body-text">{domain}</span>
+                    <span
+                      className="stat-value-md"
+                      style={{ color: good ? "var(--gb-green)" : "var(--blood)" }}
+                    >
+                      {pct}
+                      <span className="pixel-label opacity-70 ml-0.5">%</span>
+                      <span className="caption ml-2 text-muted">
+                        ({s.correct}/{s.total})
+                      </span>
                     </span>
                   </div>
-                  <div className="h-2" style={{ background: "#0f380f", border: "1px solid var(--border)" }}>
+                  <div
+                    className="h-2"
+                    style={{ background: "var(--gb-dark)", border: "1.5px solid var(--border)" }}
+                  >
                     <div
                       className="h-full transition-[width] duration-300"
                       style={{
                         width: `${pct}%`,
-                        background: good ? "#9bbc0f" : "#b83232",
+                        background: good ? "var(--gb-green)" : "var(--blood)",
                       }}
                     />
                   </div>
@@ -241,39 +260,48 @@ export default function MockExamStartPage() {
               );
             })}
           </div>
-        </div>
+        </section>
 
         {results.wrongQuestions.length > 0 && (
-          <div className="pixel-panel p-4 mb-4" style={{ borderColor: "#b83232" }}>
-            <h2 className="font-display text-xs text-blood mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
-              × MISSES ({results.wrongQuestions.length})
+          <section className="pixel-panel p-4 mb-5" style={{ borderColor: "var(--blood)" }}>
+            <h2
+              className="section-title text-blood mb-3 pb-2.5"
+              style={{ borderBottom: "2px dashed var(--border)" }}
+            >
+              × 놓친 문제 ({results.wrongQuestions.length})
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-5">
               {results.wrongQuestions.map(({ index, question, selected }) => (
-                <div key={question.id} className="pb-4 last:pb-0" style={{ borderBottom: "1px dashed var(--border)" }}>
-                  <p className="text-[10px] font-display text-muted mb-1">Q{index + 1}</p>
-                  <p className="text-sm leading-relaxed mb-2 whitespace-pre-line font-retro">{question.question_text}</p>
+                <div
+                  key={question.id}
+                  className="pb-5 last:pb-0"
+                  style={{ borderBottom: "1.5px dashed var(--border)" }}
+                >
+                  <p className="pixel-label text-muted mb-2">Q{index + 1}</p>
+                  <p className="body-text whitespace-pre-line mb-3">{question.question_text}</p>
 
-                  <div className="space-y-1 mb-2">
+                  <ul className="space-y-1.5 mb-3">
                     {question.options.map((opt) => {
                       const isSelected = selected.includes(opt.label);
                       const isCorrect = question.correct_answers.includes(opt.label);
-                      let cls = "text-muted";
-                      if (isCorrect) cls = "text-gb-green font-bold";
-                      if (isSelected && !isCorrect) cls = "text-blood line-through";
+                      let style: React.CSSProperties = { color: "var(--muted)" };
+                      if (isCorrect) style = { color: "var(--gb-green)", fontWeight: 700 };
+                      if (isSelected && !isCorrect)
+                        style = { color: "var(--blood)", textDecoration: "line-through" };
                       return (
-                        <p key={opt.label} className={`text-xs font-retro ${cls}`}>
-                          {opt.label}. {opt.text}
+                        <li key={opt.label} className="body-sub" style={style}>
+                          <span className="pixel-label mr-1.5">{opt.label}.</span>
+                          {opt.text}
                           {isCorrect && " ✓"}
-                          {isSelected && !isCorrect && " [MY]"}
-                        </p>
+                          {isSelected && !isCorrect && " (내 답)"}
+                        </li>
                       );
                     })}
-                  </div>
+                  </ul>
 
                   {question.explanation && (
                     <div
-                      className="p-3 mt-2 text-xs leading-relaxed font-retro"
+                      className="p-3 body-sub leading-relaxed"
                       style={{
                         background: "rgba(91, 156, 216, 0.08)",
                         color: "var(--info-fg)",
@@ -286,26 +314,15 @@ export default function MockExamStartPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        <div className="flex gap-2">
-          <Link
-            href="/mock-exam"
-            className="flex-1 block text-center py-3 text-sm font-display tracking-widest pixel-button"
-            style={{
-              background: "#c4a4e0",
-              color: "#0f380f",
-              borderColor: "#0f380f",
-            }}
-          >
-            &gt; LOG
+        <div className="flex gap-3">
+          <Link href="/mock-exam" className="pixel-btn pixel-btn-ghost flex-1 py-3.5">
+            📜 배틀 로그
           </Link>
-          <Link
-            href="/"
-            className="flex-1 block text-center py-3 text-sm font-display tracking-widest pixel-button"
-          >
-            &gt; HOME
+          <Link href="/" className="pixel-btn pixel-btn-primary flex-1 py-3.5">
+            🏠 홈으로
           </Link>
         </div>
       </div>
@@ -322,43 +339,57 @@ export default function MockExamStartPage() {
   const isTimeWarning = timeLeft < 180;
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-2 pb-24">
+    <div className="max-w-lg mx-auto px-4 pt-3 pb-6">
+      {/* 스티키 HUD */}
       <div
-        className="sticky top-0 z-10 pb-2 pt-2"
-        style={{ background: "linear-gradient(180deg, var(--background) 80%, transparent)" }}
+        className="sticky top-0 z-10 pb-3 pt-2"
+        style={{ background: "linear-gradient(180deg, var(--background) 85%, transparent)" }}
       >
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-2.5">
           <span
-            className="text-[10px] font-display px-2 py-1"
+            className="pixel-badge"
             style={{
-              background: "#0f380f",
-              color: "#9bbc0f",
-              border: "2px solid #9bbc0f",
+              background: "rgba(155, 188, 15, 0.16)",
+              color: "var(--gb-green)",
+              borderColor: "var(--gb-green)",
             }}
           >
-            BOSS Q{currentIndex + 1}/{questions.length}
+            BOSS Q {currentIndex + 1} / {questions.length}
           </span>
           <span
-            className={`text-sm font-display px-2 py-1 ${isTimeWarning ? "animate-shake" : ""}`}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 ${isTimeWarning ? "animate-shake" : ""}`}
             style={
               isTimeWarning
                 ? {
-                    background: "#b83232",
-                    color: "#e6d3a3",
-                    border: "2px solid #1a1410",
-                    boxShadow: "2px 2px 0 #1a1410",
+                    background: "var(--blood)",
+                    color: "var(--parchment)",
+                    border: "2px solid var(--gb-dark)",
+                    boxShadow: "2px 2px 0 var(--gb-dark)",
                   }
                 : {
-                    background: "#0f380f",
-                    color: "#e8b923",
-                    border: "2px solid #e8b923",
+                    background: "var(--gb-dark)",
+                    color: "var(--gold)",
+                    border: "2px solid var(--gold)",
                   }
             }
           >
-            ⏱{formatTime(timeLeft)}
+            <span className="text-sm">⏱</span>
+            <span
+              style={{
+                fontFamily: "var(--font-pixel)",
+                fontSize: 14,
+                letterSpacing: "0.05em",
+                lineHeight: 1,
+              }}
+            >
+              {formatTime(timeLeft)}
+            </span>
           </span>
         </div>
-        <div className="h-2" style={{ background: "#0f380f", border: "2px solid #5a4530" }}>
+        <div
+          className="h-2.5"
+          style={{ background: "var(--gb-dark)", border: "2px solid var(--border)" }}
+        >
           <div
             className="h-full transition-[width] duration-300"
             style={{
@@ -369,108 +400,94 @@ export default function MockExamStartPage() {
         </div>
       </div>
 
-      <div className="p-4 mb-3 mt-2 pixel-window">
+      <article className="pixel-window p-5 mb-4">
         {isMulti && (
           <span
-            className="inline-block text-[10px] px-2 py-0.5 font-display mb-3"
+            className="pixel-badge mb-3"
             style={{
-              background: "#e8b923",
-              color: "#1a1410",
-              border: "2px solid #1a1410",
+              background: "var(--gold)",
+              color: "var(--gb-dark)",
+              borderColor: "var(--gb-dark)",
             }}
           >
-            ⚡ PICK {selectCount}
+            ⚡ {selectCount}개 선택
           </span>
         )}
-        <p className="text-sm leading-relaxed whitespace-pre-line font-retro text-parchment">{q.question_text}</p>
-      </div>
+        <p className="body-text whitespace-pre-line">{q.question_text}</p>
+      </article>
 
-      <div className="space-y-2 mb-4">
+      <div className="space-y-2.5 mb-5">
         {q.options.map((opt) => {
           const isSelected = selected.includes(opt.label);
           return (
             <button
               key={opt.label}
               onClick={() => handleSelect(opt.label)}
-              className="w-full text-left p-3 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+              className="w-full text-left p-3.5 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
               style={
                 isSelected
                   ? {
-                      background: "rgba(91, 156, 216, 0.15)",
-                      border: "2px solid #5b9cd8",
-                      boxShadow: "2px 2px 0 #5b9cd8",
+                      background: "rgba(91, 156, 216, 0.14)",
+                      border: "2px solid var(--mana)",
+                      boxShadow: "2px 2px 0 var(--mana)",
                     }
                   : {
-                      background: "#2a1f17",
-                      border: "2px solid #5a4530",
-                      boxShadow: "2px 2px 0 rgba(0,0,0,0.4)",
+                      background: "var(--card)",
+                      border: "2px solid var(--border)",
+                      boxShadow: "2px 2px 0 rgba(0,0,0,0.35)",
                     }
               }
             >
               <div className="flex gap-3">
                 <span
-                  className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-sm font-display font-bold"
-                  style={
-                    isSelected
-                      ? { background: "#5b9cd8", color: "#1a1410", border: "2px solid #1a1410" }
-                      : { background: "#0f380f", color: "#8a7050", border: "2px solid #5a4530" }
-                  }
+                  className="flex-shrink-0 w-8 h-8 flex items-center justify-center"
+                  style={{
+                    background: isSelected ? "var(--mana)" : "var(--gb-dark)",
+                    color: isSelected ? "var(--gb-dark)" : "var(--muted)",
+                    border: "2px solid var(--gb-dark)",
+                    fontFamily: "var(--font-pixel)",
+                    fontSize: 13,
+                  }}
                 >
                   {opt.label}
                 </span>
-                <span className="text-sm leading-relaxed font-retro pt-0.5">{opt.text}</span>
+                <span className="body-text flex-1 pt-0.5">{opt.text}</span>
               </div>
             </button>
           );
         })}
       </div>
 
-      <div className="flex gap-2">
+      {/* 네비게이션 */}
+      <div className="flex gap-3 mb-5">
         <button
           onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
           disabled={currentIndex === 0}
-          className="flex-1 py-3 text-xs font-display disabled:opacity-30 pixel-button disabled:cursor-not-allowed"
-          style={{
-            background: "#2a1f17",
-            color: "#e6d3a3",
-            borderColor: "#5a4530",
-            boxShadow: "2px 2px 0 #5a4530",
-          }}
+          className="pixel-btn pixel-btn-ghost flex-1 py-3"
         >
-          ◄ PREV
+          ◄ 이전
         </button>
         {currentIndex < questions.length - 1 ? (
           <button
             onClick={() => setCurrentIndex((p) => p + 1)}
-            className="flex-1 py-3 text-xs font-display pixel-button"
-            style={{
-              background: "#5b9cd8",
-              color: "#1a1410",
-              borderColor: "#1a1410",
-              boxShadow: "2px 2px 0 #1a1410",
-            }}
+            className="pixel-btn pixel-btn-mana flex-1 py-3"
           >
-            NEXT ►
+            다음 ►
           </button>
         ) : (
           <button
             onClick={handleFinish}
-            className="flex-1 py-3 text-xs font-display pixel-button"
-            style={{
-              background: "#b83232",
-              color: "#e6d3a3",
-              borderColor: "#1a1410",
-              boxShadow: "2px 2px 0 #1a1410",
-            }}
+            className="pixel-btn pixel-btn-danger flex-1 py-3"
           >
-            &gt; SUBMIT!
+            &gt; 제출!
           </button>
         )}
       </div>
 
-      <div className="mt-5">
-        <p className="text-[10px] font-display text-muted mb-2">&gt; MAP</p>
-        <div className="flex gap-1 flex-wrap">
+      {/* 문제 맵 */}
+      <div className="pixel-panel p-3">
+        <p className="pixel-label text-muted mb-2.5">&gt; QUESTION MAP</p>
+        <div className="flex gap-1.5 flex-wrap">
           {questions.map((_, i) => {
             const isCurrent = i === currentIndex;
             const isAnswered = !!answers[i];
@@ -478,29 +495,35 @@ export default function MockExamStartPage() {
               <button
                 key={i}
                 onClick={() => setCurrentIndex(i)}
-                className="w-9 h-9 text-xs font-display font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                className="w-9 h-9 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
                 style={
                   isCurrent
                     ? {
-                        background: "#e8b923",
-                        color: "#1a1410",
-                        border: "2px solid #1a1410",
-                        boxShadow: "2px 2px 0 #1a1410",
+                        background: "var(--gold)",
+                        color: "var(--gb-dark)",
+                        border: "2px solid var(--gb-dark)",
+                        boxShadow: "2px 2px 0 var(--gb-dark)",
+                        fontFamily: "var(--font-pixel)",
+                        fontSize: 12,
                       }
                     : isAnswered
                     ? {
-                        background: "rgba(155, 188, 15, 0.15)",
-                        color: "#9bbc0f",
-                        border: "2px solid #9bbc0f",
+                        background: "rgba(155, 188, 15, 0.14)",
+                        color: "var(--gb-green)",
+                        border: "2px solid var(--gb-green)",
+                        fontFamily: "var(--font-pixel)",
+                        fontSize: 12,
                       }
                     : {
-                        background: "#2a1f17",
-                        color: "#8a7050",
-                        border: "2px solid #5a4530",
+                        background: "var(--gb-dark)",
+                        color: "var(--muted)",
+                        border: "2px solid var(--border)",
+                        fontFamily: "var(--font-pixel)",
+                        fontSize: 12,
                       }
                 }
               >
-                {(i + 1).toString().padStart(2, "0")}
+                {i + 1}
               </button>
             );
           })}

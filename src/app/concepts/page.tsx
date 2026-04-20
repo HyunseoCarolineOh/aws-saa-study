@@ -1289,24 +1289,19 @@ export default function ConceptsPage() {
   })).filter((cat) => cat.services.length > 0);
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-      <div className="mb-5">
-        <p className="text-[9px] font-display text-gold mb-1">&gt; BESTIARY</p>
-        <h1 className="text-sm font-display font-black text-gb-green">AWS CODEX</h1>
-        <p className="text-xs font-retro text-parchment mt-1">서비스를 수집하라</p>
-      </div>
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-6">
+      <header className="mb-6">
+        <p className="eyebrow">Bestiary</p>
+        <h1 className="page-title">AWS 서비스 도감</h1>
+        <p className="page-sub">학습한 서비스들을 수집해봐요</p>
+      </header>
 
       <input
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="> SEARCH..."
-        className="w-full px-3 py-3 text-sm mb-4 focus:outline-none font-retro"
-        style={{
-          background: "#0f380f",
-          border: "2px solid #5b9cd8",
-          color: "var(--foreground)",
-        }}
+        placeholder="🔍 서비스명 또는 키워드"
+        className="pixel-input mb-4"
       />
 
       <div className="space-y-3">
@@ -1314,19 +1309,23 @@ export default function ConceptsPage() {
           <div key={cat.category} className="pixel-panel overflow-hidden">
             <button
               onClick={() => setExpandedCategory(expandedCategory === cat.category ? null : cat.category)}
-              className="w-full flex justify-between items-center p-3 text-left"
+              className="w-full flex justify-between items-center p-4 text-left"
             >
               <div className="flex items-center gap-2">
-                <span className="font-display font-bold text-xs text-accent-fg">&gt; {cat.category}</span>
+                <span className="section-title text-accent-fg">{cat.category}</span>
                 <span
-                  className="text-[10px] px-1.5 py-0.5 font-display"
-                  style={{ background: "#c4a4e0", color: "#0f380f", border: "1px solid #0f380f" }}
+                  className="pixel-badge"
+                  style={{
+                    background: "var(--accent-fg)",
+                    color: "var(--gb-dark)",
+                    borderColor: "var(--gb-dark)",
+                  }}
                 >
                   {cat.services.length}
                 </span>
               </div>
-              <span className="text-muted text-xs font-display">
-                {expandedCategory === cat.category ? "[-]" : "[+]"}
+              <span className="pixel-label text-muted">
+                {expandedCategory === cat.category ? "[ — ]" : "[ + ]"}
               </span>
             </button>
             {(expandedCategory === cat.category || search) && (
@@ -1337,27 +1336,36 @@ export default function ConceptsPage() {
                   const stats = statsMap.get(svc.name);
                   const hasQuestions = stats && stats.totalQuestions > 0;
                   const rarity =
-                    svc.frequency && svc.frequency >= 100 ? { stars: "★★★", color: "#e8b923" }
-                    : svc.frequency && svc.frequency >= 30 ? { stars: "★★", color: "#b83232" }
-                    : svc.frequency ? { stars: "★", color: "#8fc0e8" }
+                    svc.frequency && svc.frequency >= 100 ? { stars: "★★★", color: "var(--gold)" }
+                    : svc.frequency && svc.frequency >= 30 ? { stars: "★★", color: "var(--blood)" }
+                    : svc.frequency ? { stars: "★", color: "var(--mana)" }
                     : null;
 
                   return (
-                    <div key={svc.name} style={{ borderBottom: "1px solid var(--border)" }}>
+                    <div key={svc.name} style={{ borderBottom: "1.5px solid var(--border)" }}>
                       <button
                         onClick={() => hasDetail && setExpandedService(isExpanded ? null : svc.name)}
-                        className={`w-full px-4 py-3 text-left ${hasDetail ? "cursor-pointer" : "cursor-default"}`}
+                        className={`w-full px-4 py-3.5 text-left ${hasDetail ? "cursor-pointer" : "cursor-default"}`}
                       >
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start justify-between gap-2 mb-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="font-display font-black text-sm text-gb-green">{svc.name}</p>
+                            <p
+                              className="text-gb-green"
+                              style={{
+                                fontFamily: "var(--font-pixel)",
+                                fontSize: 13,
+                                letterSpacing: 0,
+                              }}
+                            >
+                              {svc.name}
+                            </p>
                             {rarity && (
                               <span
-                                className="text-[10px] px-1.5 py-0.5 font-display"
+                                className="pixel-badge"
                                 style={{
                                   background: rarity.color,
-                                  color: "#0f380f",
-                                  border: "1px solid #0f380f",
+                                  color: "var(--gb-dark)",
+                                  borderColor: "var(--gb-dark)",
                                 }}
                               >
                                 {rarity.stars}
@@ -1365,11 +1373,11 @@ export default function ConceptsPage() {
                             )}
                             {hasDetail && (
                               <span
-                                className="text-[10px] px-1.5 py-0.5 font-display"
+                                className="pixel-badge"
                                 style={{
                                   background: "rgba(91, 156, 216, 0.15)",
-                                  color: "#8fc0e8",
-                                  border: "1px solid #5b9cd8",
+                                  color: "var(--mana)",
+                                  borderColor: "var(--mana)",
                                 }}
                               >
                                 INTEL
@@ -1377,11 +1385,11 @@ export default function ConceptsPage() {
                             )}
                             {hasQuestions && stats.solvedCount > 0 && (
                               <span
-                                className="text-[10px] px-1.5 py-0.5 font-display"
+                                className="pixel-badge"
                                 style={{
                                   background: "rgba(155, 188, 15, 0.15)",
-                                  color: "#9bbc0f",
-                                  border: "1px solid #9bbc0f",
+                                  color: "var(--gb-green)",
+                                  borderColor: "var(--gb-green)",
                                 }}
                               >
                                 {stats.solvedCount}/{stats.totalQuestions}
@@ -1389,40 +1397,39 @@ export default function ConceptsPage() {
                             )}
                           </div>
                           {svc.compare && (
-                            <span className="text-[10px] text-muted flex-shrink-0 font-retro">vs {svc.compare}</span>
+                            <span className="caption flex-shrink-0">vs {svc.compare}</span>
                           )}
                         </div>
-                        <p className="text-xs text-parchment mt-1 leading-relaxed font-retro">{svc.summary}</p>
+                        <p className="body-sub leading-relaxed">{svc.summary}</p>
                       </button>
                       {hasQuestions && (
                         <div className="px-4 pb-3">
                           <Link
                             href={`/questions?service=${encodeURIComponent(svc.name)}`}
-                            className="inline-block text-[10px] font-display px-3 py-1 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
-                            style={{
-                              background: "#9bbc0f",
-                              color: "#0f380f",
-                              border: "2px solid #0f380f",
-                              boxShadow: "2px 2px 0 #0f380f",
-                            }}
+                            className="pixel-btn pixel-btn-primary px-3 py-1.5 text-[10px]"
                           >
-                            &gt; BATTLE ({stats.totalQuestions}Q)
+                            ⚔️ 문제 풀기 ({stats.totalQuestions})
                           </Link>
                         </div>
                       )}
 
                       {isExpanded && hasDetail && (
                         <div className="px-4 pb-4 space-y-3 animate-fade-in">
-                          <div className="p-3" style={{ background: "#0f380f", border: "2px solid var(--border)" }}>
-                            <p className="text-xs leading-relaxed font-retro text-parchment">{svc.description}</p>
+                          <div
+                            className="p-3"
+                            style={{ background: "var(--gb-dark)", border: "2px solid var(--border)" }}
+                          >
+                            <p className="body-text text-parchment">{svc.description}</p>
                           </div>
 
                           {svc.keyFeatures && (
                             <div>
-                              <p className="text-[11px] font-display text-accent-fg mb-1.5">&gt; FEATURES</p>
-                              <ul className="space-y-1">
+                              <p className="section-title text-accent-fg mb-2" style={{ fontSize: 13 }}>
+                                ✨ 핵심 특징
+                              </p>
+                              <ul className="space-y-1.5">
                                 {svc.keyFeatures.map((f, i) => (
-                                  <li key={i} className="text-xs text-parchment leading-relaxed flex gap-1.5 font-retro">
+                                  <li key={i} className="body-sub leading-relaxed flex gap-2">
                                     <span className="text-gb-green flex-shrink-0">▸</span>
                                     <span>{f}</span>
                                   </li>
@@ -1432,11 +1439,23 @@ export default function ConceptsPage() {
                           )}
 
                           {svc.examTips && (
-                            <div className="p-3" style={{ background: "rgba(232, 185, 35, 0.08)", border: "2px solid #e8b923" }}>
-                              <p className="text-[11px] font-display text-gold mb-1.5">&gt; SAA TIPS</p>
-                              <ul className="space-y-1">
+                            <div
+                              className="p-3"
+                              style={{
+                                background: "rgba(232, 185, 35, 0.08)",
+                                border: "2px solid var(--gold)",
+                              }}
+                            >
+                              <p className="section-title text-gold mb-2" style={{ fontSize: 13 }}>
+                                💡 SAA 시험 팁
+                              </p>
+                              <ul className="space-y-1.5">
                                 {svc.examTips.map((tip, i) => (
-                                  <li key={i} className="text-xs leading-relaxed flex gap-1.5 font-retro" style={{ color: "var(--warning-fg)" }}>
+                                  <li
+                                    key={i}
+                                    className="body-sub leading-relaxed flex gap-2"
+                                    style={{ color: "var(--warning-fg)" }}
+                                  >
                                     <span className="flex-shrink-0">▸</span>
                                     <span>{tip}</span>
                                   </li>
@@ -1447,10 +1466,12 @@ export default function ConceptsPage() {
 
                           {svc.useCases && (
                             <div>
-                              <p className="text-[11px] font-display text-mana mb-1.5">&gt; USES</p>
-                              <ul className="space-y-1">
+                              <p className="section-title text-mana mb-2" style={{ fontSize: 13 }}>
+                                🎯 주요 사용 사례
+                              </p>
+                              <ul className="space-y-1.5">
                                 {svc.useCases.map((uc, i) => (
-                                  <li key={i} className="text-xs text-parchment leading-relaxed flex gap-1.5 font-retro">
+                                  <li key={i} className="body-sub leading-relaxed flex gap-2">
                                     <span className="text-mana flex-shrink-0">▸</span>
                                     <span>{uc}</span>
                                   </li>
@@ -1460,8 +1481,15 @@ export default function ConceptsPage() {
                           )}
 
                           {svc.pricing && (
-                            <div className="text-xs p-3 font-retro" style={{ background: "rgba(91, 156, 216, 0.08)", border: "2px solid #5b9cd8", color: "var(--info-fg)" }}>
-                              <span className="font-display text-[11px]">&gt; COST: </span>
+                            <div
+                              className="p-3 body-sub"
+                              style={{
+                                background: "rgba(91, 156, 216, 0.08)",
+                                border: "2px solid var(--mana)",
+                                color: "var(--info-fg)",
+                              }}
+                            >
+                              <span className="pixel-label mr-1.5">COST:</span>
                               {svc.pricing}
                             </div>
                           )}

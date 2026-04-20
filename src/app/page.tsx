@@ -21,131 +21,139 @@ function getDayInfo() {
 }
 
 function getWeekPhase(day: number) {
-  if (day <= 3) return { phase: "CH.1 BASICS", desc: "기본기 습득의 시대", color: "#9bbc0f" };
-  if (day <= 7) return { phase: "CH.2 TRAINING", desc: "사고력 연마의 시대", color: "#8fc0e8" };
-  if (day <= 12) return { phase: "CH.3 TRIAL", desc: "실전 시련의 시대", color: "#c4a4e0" };
-  return { phase: "CH.4 BOSS", desc: "최종 결전의 시대", color: "#e86060" };
+  if (day <= 3) return { tag: "CH.1", title: "기초 다지기", desc: "도메인별 핵심 개념 학습", color: "#9bbc0f" };
+  if (day <= 7) return { tag: "CH.2", title: "사고력 훈련", desc: "시나리오 문제로 실력 다지기", color: "#5b9cd8" };
+  if (day <= 12) return { tag: "CH.3", title: "실전 러시", desc: "덤프 문제 집중 풀이", color: "#c4a4e0" };
+  return { tag: "CH.4", title: "최종 결전", desc: "모의시험 + 약점 보강", color: "#e86060" };
 }
 
 export default function Dashboard() {
   const { currentDay, daysLeft, progress } = getDayInfo();
-  const { phase, desc, color } = getWeekPhase(currentDay);
+  const { tag, title, desc, color } = getWeekPhase(currentDay);
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <div className="mb-5 flex items-center justify-between">
+    <div className="max-w-lg mx-auto px-4 pt-6 pb-6">
+      {/* 페이지 헤더 */}
+      <header className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <p className="text-[9px] font-display text-gold mb-1">&gt; AWS SAA-C03</p>
-          <h1 className="text-sm font-display font-black text-gb-green animate-blink">ADVENTURER LOG</h1>
+          <p className="eyebrow">SAA-C03 Adventure</p>
+          <h1 className="page-title">모험일지</h1>
         </div>
         <StreakFlame days={0} />
-      </div>
+      </header>
 
-      {/* PLAYER WINDOW */}
-      <Link href="/curriculum" className="block p-4 mb-4 pixel-window">
+      {/* 플레이어 HUD — 유일한 pixel-window */}
+      <Link href="/curriculum" className="block pixel-window p-4 mb-6">
         <div className="flex items-center gap-4 mb-4">
           <LevelBadge level={currentDay} size="lg" />
-          <div className="flex-1">
-            <p className="text-[10px] font-display mb-1" style={{ color }}>
-              {phase}
-            </p>
-            <p className="text-sm font-retro text-parchment leading-tight">{desc}</p>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span
+                className="pixel-badge"
+                style={{ background: `${color}22`, color, borderColor: `${color}88` }}
+              >
+                {tag}
+              </span>
+              <span className="section-title">{title}</span>
+            </div>
+            <p className="body-sub">{desc}</p>
           </div>
-          <div className="text-right">
-            <p className="text-2xl font-display font-black text-gold leading-none">D-{daysLeft}</p>
-            <p className="text-[9px] text-muted mt-1 font-display">DAYS LEFT</p>
+          <div className="text-right flex-shrink-0">
+            <p className="stat-value-lg text-gold">D-{daysLeft}</p>
+            <p className="pixel-label text-muted mt-1.5">LEFT</p>
           </div>
         </div>
-        <XPBar value={currentDay} max={STUDY_DAYS} label={`JOURNEY ${progress}%`} />
+        <XPBar value={currentDay} max={STUDY_DAYS} label="JOURNEY" />
       </Link>
 
-      {/* DAILY QUEST BOARD */}
-      <div className="pixel-panel p-4 mb-4">
-        <div className="flex items-center justify-between mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
-          <h2 className="font-display text-xs text-gold">★ TODAY'S QUEST</h2>
-          <span className="text-[9px] font-display text-muted">DAILY</span>
+      {/* 오늘의 퀘스트 */}
+      <section className="pixel-panel p-4 mb-6">
+        <div className="flex items-center justify-between mb-3 pb-2.5" style={{ borderBottom: "2px dashed var(--border)" }}>
+          <h2 className="section-title text-gold">★ 오늘의 퀘스트</h2>
+          <span className="section-tag">DAILY</span>
         </div>
-        <div className="space-y-2">
-          <TodoItem label="CONCEPT STUDY" count="×10" tag="LEARN" done={false} />
-          <TodoItem label="QUESTION DRILL" count="×30" tag="BATTLE" done={false} />
-          <TodoItem label="MISS REVENGE" count="×5" tag="REDO" done={false} />
-        </div>
-      </div>
+        <ul className="space-y-0.5">
+          <TodoItem label="개념 학습" count={10} unit="개" done={false} />
+          <TodoItem label="문제 풀이" count={30} unit="문제" done={false} />
+          <TodoItem label="오답 재도전" count={5} unit="문제" done={false} />
+        </ul>
+      </section>
 
       <ServiceResumeCard />
 
-      {/* MENU */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <QuickAction href="/questions" label="BATTLE" sublabel="랜덤 출제" emoji="⚔" color="#9bbc0f" />
-        <QuickAction href="/review" label="REVENGE" sublabel="오답 재도전" emoji="🔄" color="#8fc0e8" />
-        <QuickAction href="/mock-exam" label="BOSS" sublabel="65Q / 130M" emoji="👑" color="#e8b923" />
-        <QuickAction href="/concepts" label="BESTIARY" sublabel="서비스 도감" emoji="📖" color="#c4a4e0" />
+      {/* 메뉴 */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <MenuTile href="/questions" title="문제 풀기" sub="랜덤 출제" emoji="⚔️" code="BATTLE" />
+        <MenuTile href="/review" title="오답 복습" sub="재도전" emoji="🔄" code="REVENGE" />
+        <MenuTile href="/mock-exam" title="모의고사" sub="65문제 · 130분" emoji="👑" code="BOSS" />
+        <MenuTile href="/concepts" title="서비스 도감" sub="AWS 검색" emoji="📖" code="CODEX" />
       </div>
 
-      {/* STATUS WINDOW */}
-      <div className="pixel-panel p-4">
-        <div className="flex items-center justify-between mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
-          <h2 className="font-display text-xs text-mana">▲ STATUS</h2>
-          <span className="text-[9px] font-display text-muted">PARAMS</span>
+      {/* 스탯 */}
+      <section className="pixel-panel p-4">
+        <div className="flex items-center justify-between mb-3 pb-2.5" style={{ borderBottom: "2px dashed var(--border)" }}>
+          <h2 className="section-title text-mana">▲ 스탯</h2>
+          <span className="section-tag">STATUS</span>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="grid grid-cols-3 gap-3">
           <StatBox label="SOLVED" value="0" color="#9bbc0f" />
-          <StatBox label="HIT%" value="0" color="#8fc0e8" />
+          <StatBox label="ACC %" value="0" color="#5b9cd8" />
           <StatBox label="STREAK" value="0" color="#e8b923" />
         </div>
-      </div>
+      </section>
     </div>
   );
 }
 
-function TodoItem({ label, count, tag, done }: { label: string; count: string; tag: string; done: boolean }) {
+function TodoItem({ label, count, unit, done }: { label: string; count: number; unit: string; done: boolean }) {
   return (
-    <div className="flex items-center justify-between py-1" style={{ opacity: done ? 0.5 : 1 }}>
-      <div className="flex items-center gap-2">
+    <li className="flex items-center justify-between py-2" style={{ opacity: done ? 0.45 : 1 }}>
+      <div className="flex items-center gap-2.5">
         <span
-          className="inline-block w-5 h-5 flex items-center justify-center font-display text-[9px]"
+          className="inline-flex w-5 h-5 items-center justify-center text-[10px]"
           style={{
-            background: done ? "#9bbc0f" : "transparent",
-            border: "2px solid #5a4530",
-            color: done ? "#0f380f" : "#8a7050",
+            background: done ? "var(--gb-green)" : "transparent",
+            border: "2px solid var(--border)",
+            color: done ? "var(--gb-dark)" : "transparent",
+            fontFamily: "var(--font-pixel)",
           }}
         >
           {done ? "✓" : ""}
         </span>
-        <span className={`font-retro text-sm tracking-wide ${done ? "line-through" : ""}`}>{label}</span>
-        <span className="text-[9px] font-display text-mana opacity-80">[{tag}]</span>
+        <span className={`body-text ${done ? "line-through text-muted" : ""}`}>{label}</span>
       </div>
-      <span className="text-xs font-display text-gold">{count}</span>
-    </div>
+      <span className="stat-value-md text-gold">
+        {count}
+        <span className="body-sub ml-1 pixel-label">{unit}</span>
+      </span>
+    </li>
   );
 }
 
-function QuickAction({
+function MenuTile({
   href,
-  label,
-  sublabel,
+  title,
+  sub,
   emoji,
-  color,
+  code,
 }: {
   href: string;
-  label: string;
-  sublabel: string;
+  title: string;
+  sub: string;
   emoji: string;
-  color: string;
+  code: string;
 }) {
   return (
     <Link
       href={href}
-      className="p-3 pixel-panel transition-transform active:translate-x-[2px] active:translate-y-[2px]"
-      style={{ borderColor: color }}
+      className="pixel-panel p-4 transition-transform active:translate-x-[2px] active:translate-y-[2px]"
     >
-      <div className="flex items-start justify-between mb-2">
-        <span className="text-2xl" style={{ imageRendering: "pixelated" }}>{emoji}</span>
+      <div className="flex items-start justify-between mb-3">
+        <span className="text-2xl leading-none">{emoji}</span>
+        <span className="pixel-label text-muted">{code}</span>
       </div>
-      <p className="font-display font-bold text-xs" style={{ color }}>
-        {label}
-      </p>
-      <p className="text-[11px] text-muted mt-0.5 font-retro">{sublabel}</p>
+      <p className="section-title text-parchment leading-tight">{title}</p>
+      <p className="caption mt-1">{sub}</p>
     </Link>
   );
 }
@@ -153,16 +161,16 @@ function QuickAction({
 function StatBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div
-      className="py-2"
+      className="py-3 text-center"
       style={{
-        background: "#0f380f",
+        background: "var(--gb-dark)",
         border: `2px solid ${color}`,
       }}
     >
-      <p className="text-xl font-display font-black leading-none" style={{ color }}>
+      <p className="stat-value-lg" style={{ color }}>
         {value}
       </p>
-      <p className="text-[9px] text-muted font-display mt-1">{label}</p>
+      <p className="pixel-label text-muted mt-2">{label}</p>
     </div>
   );
 }

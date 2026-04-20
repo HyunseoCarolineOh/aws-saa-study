@@ -7,22 +7,23 @@ export default function ComboCounter({ combo, className = "" }: ComboCounterProp
   if (combo < 2) return null;
 
   const tier =
-    combo >= 10 ? { label: "LEGEND!", color: "#e8b923" } :
-    combo >= 5 ? { label: "GREAT!", color: "#8fc0e8" } :
-    { label: "NICE!", color: "#9bbc0f" };
+    combo >= 10 ? { label: "LEGEND", color: "#e8b923" } :
+    combo >= 5 ? { label: "GREAT", color: "#8fc0e8" } :
+    { label: "NICE", color: "#9bbc0f" };
 
   return (
     <div
-      className={`${className} inline-flex items-center gap-1.5 px-2 py-1 font-display animate-pop-in`}
+      className={`${className} inline-flex items-center gap-1.5 px-2 py-1 animate-pop-in flex-shrink-0`}
       style={{
-        background: "#0f380f",
+        background: "var(--gb-dark)",
         border: `2px solid ${tier.color}`,
         color: tier.color,
+        fontFamily: "var(--font-pixel)",
       }}
     >
-      <span className="text-[10px]">CMB</span>
-      <span className="text-sm font-black leading-none">×{combo}</span>
-      <span className="text-[9px]">{tier.label}</span>
+      <span style={{ fontSize: 9, letterSpacing: "0.1em", opacity: 0.8 }}>CMB</span>
+      <span style={{ fontSize: 13, fontWeight: 700, lineHeight: 1 }}>×{combo}</span>
+      <span style={{ fontSize: 8, letterSpacing: "0.1em", opacity: 0.85 }}>{tier.label}</span>
     </div>
   );
 }

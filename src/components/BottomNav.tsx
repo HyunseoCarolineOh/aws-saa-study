@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "HOME", emoji: "🏠", color: "#9bbc0f" },
-  { href: "/mock-exam", label: "BOSS", emoji: "👑", color: "#e8b923" },
-  { href: "/review", label: "REDO", emoji: "🔄", color: "#8fc0e8" },
-  { href: "/concepts", label: "BOOK", emoji: "📖", color: "#c4a4e0" },
-  { href: "/stats", label: "STAT", emoji: "📊", color: "#d4e27a" },
+  { href: "/", label: "홈", emoji: "🏠", color: "#9bbc0f" },
+  { href: "/mock-exam", label: "모의고사", emoji: "👑", color: "#e8b923" },
+  { href: "/review", label: "오답", emoji: "🔄", color: "#5b9cd8" },
+  { href: "/concepts", label: "도감", emoji: "📖", color: "#c4a4e0" },
+  { href: "/stats", label: "스탯", emoji: "📊", color: "#d4e27a" },
 ];
 
 export default function BottomNav() {
@@ -18,12 +18,12 @@ export default function BottomNav() {
     <nav
       className="fixed bottom-0 left-0 right-0 z-50"
       style={{
-        background: "#2a1f17",
-        borderTop: "3px solid #5a4530",
-        boxShadow: "0 -2px 0 #1a1410",
+        background: "var(--card)",
+        borderTop: "3px solid var(--border)",
+        boxShadow: "0 -2px 0 var(--background)",
       }}
     >
-      <div className="max-w-lg mx-auto flex justify-around items-center h-16 px-2">
+      <div className="max-w-lg mx-auto flex justify-around items-stretch h-16 px-2">
         {navItems.map((item) => {
           const isActive =
             item.href === "/"
@@ -33,24 +33,28 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center justify-center w-full h-full transition-all relative"
+              className="flex flex-col items-center justify-center flex-1 transition-opacity"
+              style={{ opacity: isActive ? 1 : 0.55 }}
             >
               <div
-                className={`flex flex-col items-center justify-center gap-0.5 py-1 px-2 transition-all ${isActive ? "animate-pop-in" : "opacity-55"}`}
+                className="flex flex-col items-center justify-center gap-0.5 px-3 py-1.5"
                 style={
                   isActive
                     ? {
-                        background: "#0f380f",
+                        background: "var(--gb-dark)",
                         border: `2px solid ${item.color}`,
                       }
                     : {}
                 }
               >
-                <span className={`text-base leading-none ${isActive ? "animate-pixel-bounce" : ""}`} style={{ imageRendering: "pixelated" }}>
+                <span
+                  className={`text-lg leading-none ${isActive ? "animate-pixel-bounce" : ""}`}
+                  aria-hidden
+                >
                   {item.emoji}
                 </span>
                 <span
-                  className="text-[9px] font-display"
+                  className="text-[11px] font-semibold tracking-tight"
                   style={{
                     color: isActive ? item.color : "var(--muted)",
                   }}

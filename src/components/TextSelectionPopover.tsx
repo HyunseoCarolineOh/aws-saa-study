@@ -100,17 +100,14 @@ export default function TextSelectionPopover({
         >
           <button
             onClick={handleSave}
-            className="flex items-center gap-1.5 text-[11px] font-display px-3 py-2 whitespace-nowrap animate-pop-in"
+            className="pixel-btn pixel-btn-primary animate-pop-in whitespace-nowrap"
             style={{
               touchAction: "manipulation",
               minHeight: 44,
-              background: "#9bbc0f",
-              color: "#0f380f",
-              border: "2px solid #0f380f",
-              boxShadow: "2px 2px 0 #0f380f",
+              padding: "10px 14px",
             }}
           >
-            &gt; SAVE NOTE
+            📝 노트 저장
           </button>
         </div>
       )}
