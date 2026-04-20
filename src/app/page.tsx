@@ -1,5 +1,8 @@
 import Link from "next/link";
 import ServiceResumeCard from "@/components/ServiceResumeCard";
+import XPBar from "@/components/game/XPBar";
+import LevelBadge from "@/components/game/LevelBadge";
+import StreakFlame from "@/components/game/StreakFlame";
 
 const STUDY_START = new Date("2026-04-08");
 const STUDY_DAYS = 14;
@@ -18,13 +21,10 @@ function getDayInfo() {
 }
 
 function getWeekPhase(day: number) {
-  if (day <= 3)
-    return { phase: "1주차: 개념 정리", desc: "도메인별 핵심 개념 카드 학습", color: "bg-blue-500" };
-  if (day <= 7)
-    return { phase: "1주차: 사고력 훈련", desc: "시나리오 문제 풀이 (매일 20-30문제)", color: "bg-indigo-500" };
-  if (day <= 12)
-    return { phase: "2주차: 실전 문제", desc: "덤프 문제 집중 풀이 (매일 40-50문제)", color: "bg-purple-500" };
-  return { phase: "2주차: 모의시험", desc: "모의시험 + 최종 약점 보강", color: "bg-red-500" };
+  if (day <= 3) return { phase: "STAGE 1: CONCEPT", desc: "도메인별 기본기 습득", color: "#b4ff39" };
+  if (day <= 7) return { phase: "STAGE 2: THINK FAST", desc: "시나리오 문제 연습", color: "#00f0ff" };
+  if (day <= 12) return { phase: "STAGE 3: SPEED RUSH", desc: "덤프 문제 연타", color: "#a855ff" };
+  return { phase: "FINAL: BOSS RUSH", desc: "모의시험 + 약점 보강", color: "#ff2e88" };
 }
 
 export default function Dashboard() {
@@ -33,99 +33,170 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">AWS SAA-C03</h1>
-        <p className="text-muted text-sm">2주 완성 학습 도구</p>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <p className="text-[10px] font-display text-neon-cyan tracking-[0.3em] neon-glow-cyan">AWS SAA-C03</p>
+          <h1 className="text-xl font-display font-black text-neon-pink neon-glow-pink animate-flicker">&gt; INSERT COIN</h1>
+        </div>
+        <StreakFlame days={0} />
       </div>
 
-      {/* D-Day 카드 */}
-      <Link href="/curriculum" className={`block ${color} text-white rounded-2xl p-5 mb-4 shadow-lg`}>
-        <div className="flex justify-between items-start mb-3">
-          <div>
-            <p className="text-sm opacity-80">현재 진행</p>
-            <p className="text-xl font-bold">Day {currentDay} / {STUDY_DAYS}</p>
+      {/* PLAYER HUD */}
+      <Link
+        href="/curriculum"
+        className="block p-5 mb-4 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, rgba(18, 7, 38, 0.95), rgba(28, 14, 56, 0.95))",
+          border: "1.5px solid rgba(0, 240, 255, 0.45)",
+          boxShadow: "0 0 30px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(255, 46, 136, 0.08)",
+        }}
+      >
+        <div className="flex items-center gap-4 mb-4">
+          <LevelBadge level={currentDay} size="lg" />
+          <div className="flex-1">
+            <p className="text-[10px] font-display tracking-widest mb-1" style={{ color }}>
+              {phase}
+            </p>
+            <p className="text-xs text-muted leading-relaxed">{desc}</p>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold">D-{daysLeft}</p>
-            <p className="text-xs opacity-80">남은 일수</p>
+            <p className="text-3xl font-display font-black text-neon-pink leading-none neon-glow-pink">D-{daysLeft}</p>
+            <p className="text-[9px] text-muted mt-1 tracking-widest font-display">LEFT</p>
           </div>
         </div>
-        <div className="bg-white/20 rounded-full h-2 mb-2">
-          <div className="bg-white rounded-full h-2 transition-all" style={{ width: `${progress}%` }} />
-        </div>
-        <p className="text-sm font-medium">{phase}</p>
-        <p className="text-xs opacity-80">{desc}</p>
+        <XPBar value={currentDay} max={STUDY_DAYS} label={`QUEST PROG ${progress}%`} />
       </Link>
 
-      {/* 오늘의 학습 목표 */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-4">
-        <h2 className="font-semibold mb-3">오늘의 학습 목표</h2>
-        <div className="space-y-2">
-          <TodoItem label="개념 카드 학습" count="10개" done={false} />
-          <TodoItem label="문제 풀이" count="30문제" done={false} />
-          <TodoItem label="오답 복습" count="5문제" done={false} />
+      {/* DAILY QUEST */}
+      <div
+        className="p-5 mb-4 relative"
+        style={{
+          background: "rgba(18, 7, 38, 0.9)",
+          border: "1.5px solid rgba(180, 255, 57, 0.35)",
+          boxShadow: "0 0 18px rgba(180, 255, 57, 0.12)",
+        }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-display text-sm text-neon-lime neon-glow-lime tracking-widest">&gt; DAILY QUEST</h2>
+          <span className="text-[9px] text-muted tracking-widest font-display">LOG</span>
+        </div>
+        <div className="space-y-1">
+          <TodoItem label="CONCEPT CARDS" count="×10" tag="LEARN" done={false} />
+          <TodoItem label="QUESTION DRILL" count="×30" tag="SOLVE" done={false} />
+          <TodoItem label="MISS REMATCH" count="×5" tag="REDO" done={false} />
         </div>
       </div>
 
-      {/* 서비스 문제 이어서 풀기 */}
       <ServiceResumeCard />
 
-      {/* 퀵 액션 */}
+      {/* ARCADE MENU */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <QuickAction href="/questions" label="문제 풀기" sublabel="랜덤 출제" />
-        <QuickAction href="/review" label="오답 복습" sublabel="오늘 복습할 문제" />
-        <QuickAction href="/mock-exam" label="모의시험" sublabel="65문제 / 130분" />
-        <QuickAction href="/concepts" label="개념 사전" sublabel="AWS 서비스 검색" />
+        <QuickAction href="/questions" label="QUEST" sublabel="랜덤 출제" emoji="⚔" color="#ff2e88" />
+        <QuickAction href="/review" label="REMATCH" sublabel="오답 재도전" emoji="🔄" color="#b4ff39" />
+        <QuickAction href="/mock-exam" label="BOSS" sublabel="65Q / 130MIN" emoji="👑" color="#a855ff" />
+        <QuickAction href="/concepts" label="CODEX" sublabel="AWS 도감" emoji="📖" color="#00f0ff" />
       </div>
 
-      {/* 학습 요약 */}
-      <div className="bg-card rounded-xl border border-border p-4">
-        <h2 className="font-semibold mb-3">학습 현황</h2>
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <StatBox label="풀은 문제" value="0" />
-          <StatBox label="정답률" value="0%" />
-          <StatBox label="연속일" value="0일" />
+      {/* HI-SCORE */}
+      <div
+        className="p-5"
+        style={{
+          background: "rgba(18, 7, 38, 0.9)",
+          border: "1.5px solid rgba(168, 85, 255, 0.4)",
+          boxShadow: "0 0 18px rgba(168, 85, 255, 0.12)",
+        }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-display text-sm text-accent-fg tracking-widest" style={{ textShadow: "0 0 8px rgba(168,85,255,0.6)" }}>
+            &gt; HI-SCORE
+          </h2>
+          <span className="text-[9px] text-muted tracking-widest font-display">STATS</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <StatBox label="SOLVED" value="0" color="#ff2e88" />
+          <StatBox label="ACC" value="0%" color="#00f0ff" />
+          <StatBox label="STREAK" value="0D" color="#ffee00" />
         </div>
       </div>
     </div>
   );
 }
 
-function TodoItem({ label, count, done }: { label: string; count: string; done: boolean }) {
+function TodoItem({ label, count, tag, done }: { label: string; count: string; tag: string; done: boolean }) {
   return (
-    <div className={`flex items-center justify-between py-1.5 ${done ? "opacity-50" : ""}`}>
+    <div
+      className="flex items-center justify-between py-2 px-2"
+      style={{
+        background: done ? "rgba(180, 255, 57, 0.06)" : "transparent",
+        opacity: done ? 0.55 : 1,
+      }}
+    >
       <div className="flex items-center gap-2">
-        <div
-          className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-            done ? "bg-success border-success" : "border-muted"
-          }`}
+        <span
+          className="inline-block w-5 h-5 flex items-center justify-center font-display text-[9px]"
+          style={{
+            background: done ? "#b4ff39" : "transparent",
+            border: `1px solid ${done ? "#b4ff39" : "#3a1d5f"}`,
+            color: done ? "#0a0514" : "#8a6fb8",
+          }}
         >
-          {done && <span className="text-on-primary text-xs">&#x2713;</span>}
-        </div>
-        <span className={`text-sm ${done ? "line-through" : ""}`}>{label}</span>
+          {done ? "✓" : ""}
+        </span>
+        <span className={`font-display text-xs tracking-wide ${done ? "line-through" : ""}`}>{label}</span>
+        <span className="text-[9px] font-display text-neon-cyan opacity-70 tracking-widest">[{tag}]</span>
       </div>
-      <span className="text-xs text-muted">{count}</span>
+      <span className="text-xs font-display text-neon-pink">{count}</span>
     </div>
   );
 }
 
-function QuickAction({ href, label, sublabel }: { href: string; label: string; sublabel: string }) {
+function QuickAction({
+  href,
+  label,
+  sublabel,
+  emoji,
+  color,
+}: {
+  href: string;
+  label: string;
+  sublabel: string;
+  emoji: string;
+  color: string;
+}) {
   return (
     <Link
       href={href}
-      className="bg-card rounded-xl border border-border p-4 hover:border-primary transition-colors active:scale-[0.98]"
+      className="p-4 transition-all active:scale-[0.97] relative overflow-hidden"
+      style={{
+        background: "rgba(18, 7, 38, 0.85)",
+        border: `1.5px solid ${color}55`,
+        boxShadow: `0 0 12px ${color}22, inset 0 0 16px rgba(0, 0, 0, 0.5)`,
+      }}
     >
-      <p className="font-medium text-sm">{label}</p>
-      <p className="text-xs text-muted">{sublabel}</p>
+      <div className="flex items-start justify-between mb-2">
+        <span className="text-2xl" style={{ filter: `drop-shadow(0 0 6px ${color})` }}>{emoji}</span>
+      </div>
+      <p className="font-display font-bold text-sm tracking-widest" style={{ color, textShadow: `0 0 8px ${color}99` }}>
+        {label}
+      </p>
+      <p className="text-[10px] text-muted mt-0.5 font-retro">{sublabel}</p>
     </Link>
   );
 }
 
-function StatBox({ label, value }: { label: string; value: string }) {
+function StatBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div>
-      <p className="text-lg font-bold">{value}</p>
-      <p className="text-xs text-muted">{label}</p>
+    <div
+      className="py-2.5 px-1"
+      style={{
+        background: `${color}10`,
+        border: `1px solid ${color}44`,
+      }}
+    >
+      <p className="text-xl font-display font-black leading-none" style={{ color, textShadow: `0 0 8px ${color}99` }}>
+        {value}
+      </p>
+      <p className="text-[9px] text-muted font-display tracking-widest mt-1">{label}</p>
     </div>
   );
 }

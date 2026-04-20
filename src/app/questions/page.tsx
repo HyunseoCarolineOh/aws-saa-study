@@ -182,7 +182,7 @@ function QuestionsContent() {
   if (loading) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">문제 로딩 중...</p>
+        <p className="text-muted font-display tracking-widest animate-flicker">&gt; LOADING...</p>
       </div>
     );
   }
@@ -192,22 +192,24 @@ function QuestionsContent() {
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
         {mode === "service" && service ? (
           <>
-            <p className="text-lg mb-2">{service} 관련 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 아직 없습니다.</p>
-            <Link href="/concepts" className="text-primary font-medium text-sm">
-              서비스 사전으로 돌아가기 &rarr;
+            <p className="text-4xl mb-4 animate-flicker">📭</p>
+            <p className="text-sm font-display tracking-widest text-neon-pink mb-2 neon-glow-pink">&gt; {service} EMPTY</p>
+            <p className="text-xs text-muted mb-4 font-retro">이 서비스 퀘스트가 없음</p>
+            <Link href="/concepts" className="text-neon-cyan font-display text-xs tracking-widest neon-glow-cyan">
+              &gt; BACK TO CODEX →
             </Link>
           </>
         ) : mode === "review" ? (
           <>
-            <p className="text-lg mb-2">복습할 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">오늘 복습 예정인 문제가 없거나, 아직 틀린 문제가 없습니다.</p>
-            <Link href="/review" className="text-primary font-medium text-sm">
-              오답노트로 돌아가기 &rarr;
+            <p className="text-4xl mb-4 animate-flicker">✨</p>
+            <p className="text-sm font-display tracking-widest text-neon-lime neon-glow-lime mb-2">&gt; ALL CLEAR!</p>
+            <p className="text-xs text-muted mb-4 font-retro">재도전 퀘스트 없음</p>
+            <Link href="/review" className="text-neon-pink font-display text-xs tracking-widest neon-glow-pink">
+              &gt; BACK TO REMATCH →
             </Link>
           </>
         ) : (
-          <p className="text-muted">문제가 없습니다.</p>
+          <p className="text-muted font-display tracking-widest">&gt; NO DATA</p>
         )}
       </div>
     );
@@ -215,43 +217,55 @@ function QuestionsContent() {
 
   return (
     <div>
-      {/* 서비스 모드 배너 */}
       {mode === "service" && service && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
-            <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
-            <span>{currentIndex + 1} / {questions.length}문제</span>
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="px-3 py-2 text-xs font-display tracking-widest flex justify-between items-center"
+            style={{
+              background: "rgba(0, 240, 255, 0.1)",
+              border: "1px solid rgba(0, 240, 255, 0.45)",
+              color: "var(--info-fg)",
+            }}
+          >
+            <Link href="/concepts" className="hover:underline">← {service}</Link>
+            <span>{currentIndex + 1} / {questions.length}</span>
           </div>
         </div>
       )}
 
-      {/* 복습 모드 배너 */}
       {mode === "review" && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
-            <span>복습 모드</span>
-            <span>{questions.length}문제</span>
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="px-3 py-2 text-xs font-display tracking-widest flex justify-between items-center"
+            style={{
+              background: "rgba(168, 85, 255, 0.12)",
+              border: "1px solid rgba(168, 85, 255, 0.5)",
+              color: "var(--accent-fg)",
+            }}
+          >
+            <span>&gt; REMATCH MODE</span>
+            <span>{questions.length}Q</span>
           </div>
         </div>
       )}
 
-      {/* 툴바: 처음부터 다시 풀기 + 수정 요청 */}
-      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-3">
+      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-2">
         {(mode === "normal" || mode === "service") && currentIndex > 0 && (
           <button
             onClick={handleRestart}
-            className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
+            className="text-[10px] font-display tracking-widest text-muted hover:text-neon-pink transition-colors px-2 py-1"
           >
-            처음부터 다시 풀기
+            [RESET]
           </button>
         )}
         <button
           type="button"
           onClick={handleOpenReport}
-          className="text-xs text-danger-fg hover:text-danger transition-colors px-2 py-1 flex items-center gap-1"
+          className="text-[10px] font-display tracking-widest transition-colors px-2 py-1 flex items-center gap-1"
+          style={{ color: "var(--danger-fg)" }}
         >
           <span aria-hidden>⚠</span>
-          <span>수정 요청</span>
+          <span>REPORT</span>
         </button>
       </div>
 
@@ -275,7 +289,16 @@ function QuestionsContent() {
       )}
 
       {reportToast && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 text-xs px-4 py-2 z-50 animate-fade-in whitespace-nowrap font-display tracking-widest"
+          style={{
+            background: "rgba(10, 5, 20, 0.95)",
+            color: "var(--neon-cyan)",
+            border: "1px solid rgba(0, 240, 255, 0.5)",
+            boxShadow: "0 0 16px rgba(0, 240, 255, 0.3)",
+            textShadow: "0 0 6px rgba(0, 240, 255, 0.6)",
+          }}
+        >
           {reportToast}
         </div>
       )}
@@ -288,7 +311,7 @@ export default function QuestionsPage() {
     <Suspense
       fallback={
         <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-          <p className="text-muted">문제 로딩 중...</p>
+          <p className="text-muted font-display tracking-widest animate-flicker">&gt; LOADING...</p>
         </div>
       }
     >

@@ -3,49 +3,61 @@
 :root {
   color-scheme: dark;
 
-  /* 서피스 / 텍스트 */
-  --background: #0b1220;
-  --foreground: #e2e8f0;
-  --card: #141d2e;
-  --card-elevated: #1b2540;
-  --border: #2a3548;
-  --muted: #94a3b8;
-  --muted-bg: #1b2540;
+  /* 서피스 / 텍스트 — 딥 퍼플 블랙 */
+  --background: #07020e;
+  --foreground: #e8dfff;
+  --card: #120726;
+  --card-elevated: #1c0e38;
+  --border: #3a1d5f;
+  --muted: #8a6fb8;
+  --muted-bg: #15082b;
 
-  /* 브랜드 */
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --on-primary: #ffffff;
+  /* 네온 팔레트 */
+  --neon-pink: #ff2e88;
+  --neon-cyan: #00f0ff;
+  --neon-lime: #b4ff39;
+  --neon-purple: #a855ff;
+  --neon-yellow: #ffee00;
 
-  /* info (blue) */
-  --info: #60a5fa;
-  --info-bg: rgba(59, 130, 246, 0.15);
-  --info-fg: #93c5fd;
-  --info-border: rgba(59, 130, 246, 0.35);
+  /* 브랜드 — 핫핑크 */
+  --primary: #ff2e88;
+  --primary-light: #ff5fa2;
+  --on-primary: #0a0514;
 
-  /* success (green) */
-  --success: #22c55e;
-  --success-bg: rgba(34, 197, 94, 0.15);
-  --success-fg: #86efac;
-  --success-border: rgba(34, 197, 94, 0.35);
+  /* info (cyan) */
+  --info: #00f0ff;
+  --info-bg: rgba(0, 240, 255, 0.12);
+  --info-fg: #86f6ff;
+  --info-border: rgba(0, 240, 255, 0.45);
 
-  /* danger (red) */
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.15);
-  --danger-fg: #fca5a5;
-  --danger-border: rgba(239, 68, 68, 0.35);
+  /* success (lime) */
+  --success: #b4ff39;
+  --success-bg: rgba(180, 255, 57, 0.12);
+  --success-fg: #d4ff7a;
+  --success-border: rgba(180, 255, 57, 0.45);
 
-  /* warning (yellow/amber) */
-  --warning: #fbbf24;
-  --warning-bg: rgba(251, 191, 36, 0.15);
-  --warning-fg: #fcd34d;
-  --warning-border: rgba(251, 191, 36, 0.35);
+  /* danger (hot pink) */
+  --danger: #ff2e88;
+  --danger-bg: rgba(255, 46, 136, 0.14);
+  --danger-fg: #ff7ab0;
+  --danger-border: rgba(255, 46, 136, 0.5);
 
-  /* accent (orange) */
-  --accent: #fb923c;
-  --accent-bg: rgba(251, 146, 60, 0.15);
-  --accent-fg: #fdba74;
-  --accent-border: rgba(251, 146, 60, 0.35);
+  /* warning (neon yellow) */
+  --warning: #ffee00;
+  --warning-bg: rgba(255, 238, 0, 0.12);
+  --warning-fg: #fff37a;
+  --warning-border: rgba(255, 238, 0, 0.45);
+
+  /* accent (neon purple) */
+  --accent: #a855ff;
+  --accent-bg: rgba(168, 85, 255, 0.15);
+  --accent-fg: #d0a8ff;
+  --accent-border: rgba(168, 85, 255, 0.5);
+
+  /* 글로우 */
+  --glow-pink: 0 0 20px rgba(255, 46, 136, 0.6);
+  --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.6);
+  --glow-lime: 0 0 20px rgba(180, 255, 57, 0.6);
 }
 
 @theme inline {
@@ -86,15 +98,46 @@
   --color-accent-fg: var(--accent-fg);
   --color-accent-border: var(--accent-border);
 
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-lime: var(--neon-lime);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-yellow: var(--neon-yellow);
+
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-press-start), var(--font-geist-sans);
+  --font-retro: var(--font-vt323), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 46, 136, 0.18), transparent 45%),
+    radial-gradient(circle at 100% 40%, rgba(0, 240, 255, 0.15), transparent 50%),
+    radial-gradient(circle at 40% 100%, rgba(168, 85, 255, 0.18), transparent 50%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+/* 스캔라인 오버레이 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(255, 255, 255, 0.015) 3px,
+    rgba(255, 255, 255, 0.015) 4px
+  );
+  z-index: 1;
+  mix-blend-mode: overlay;
 }
 
 html {
@@ -104,8 +147,38 @@ html {
 
 main {
   padding-bottom: 6rem;
+  position: relative;
+  z-index: 2;
 }
 
+.font-display {
+  font-family: var(--font-display), monospace;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.font-retro {
+  font-family: var(--font-retro), monospace;
+  letter-spacing: 0.03em;
+}
+
+.neon-glow-pink {
+  text-shadow: 0 0 8px var(--neon-pink), 0 0 16px rgba(255, 46, 136, 0.6);
+}
+.neon-glow-cyan {
+  text-shadow: 0 0 8px var(--neon-cyan), 0 0 16px rgba(0, 240, 255, 0.6);
+}
+.neon-glow-lime {
+  text-shadow: 0 0 8px var(--neon-lime), 0 0 16px rgba(180, 255, 57, 0.55);
+}
+
+.neon-border-pink {
+  box-shadow: inset 0 0 0 1px rgba(255, 46, 136, 0.4), 0 0 16px rgba(255, 46, 136, 0.35);
+}
+.neon-border-cyan {
+  box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.4), 0 0 16px rgba(0, 240, 255, 0.3);
+}
+
+/* 애니메이션 */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -120,4 +193,62 @@ main {
 }
 .animate-slide-up {
   animation: slide-up 0.25s ease-out;
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.animate-pop-in {
+  animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes neon-pulse {
+  0%, 100% { text-shadow: 0 0 6px currentColor, 0 0 12px currentColor; }
+  50% { text-shadow: 0 0 10px currentColor, 0 0 24px currentColor, 0 0 36px currentColor; }
+}
+.animate-neon-pulse {
+  animation: neon-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes glitch-soft {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
+}
+.animate-glitch {
+  animation: glitch-soft 0.3s ease-in-out;
+}
+
+@keyframes scan-move {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 6px currentColor, 0 0 14px currentColor;
+  }
+  20%, 24%, 55% {
+    opacity: 0.75;
+    text-shadow: none;
+  }
+}
+.animate-flicker {
+  animation: flicker 4s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.animate-shake {
+  animation: shake 0.35s ease-in-out;
 }
