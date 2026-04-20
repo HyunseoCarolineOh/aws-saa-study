@@ -6,6 +6,7 @@ import { addAttempt } from "@/lib/store";
 import { celebrateCorrect } from "@/lib/celebrate";
 import TextSelectionPopover from "./TextSelectionPopover";
 import StudyNoteMemoSheet from "./StudyNoteMemoSheet";
+import ComboCounter from "./game/ComboCounter";
 
 interface QuestionCardProps {
   question: Question;
@@ -29,17 +30,19 @@ export default function QuestionCard({
     sourceContext: "question" | "explanation" | "detail";
   } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [combo, setCombo] = useState(0);
+  const [shakeOnWrong, setShakeOnWrong] = useState(false);
   const toastTimerRef = useRef<number | null>(null);
   const timerRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
 
-  // 문제 변경 시 리셋
   useEffect(() => {
     setSelectedAnswers([]);
     setSubmitted(false);
     setShowExplanation(false);
     setExplanationTab("explanation");
     setMemoSheet(null);
+    setShakeOnWrong(false);
     startTimeRef.current = Date.now();
   }, [question.id]);
 
@@ -55,7 +58,6 @@ export default function QuestionCard({
     toastTimerRef.current = window.setTimeout(() => setToastMessage(null), 2000);
   }
 
-  // 타이머 업데이트
   useEffect(() => {
     if (submitted) return;
     const interval = setInterval(() => {
@@ -64,7 +66,6 @@ export default function QuestionCard({
     return () => clearInterval(interval);
   }, [submitted]);
 
-  // 문제 텍스트에서 복수선택 감지
   const expectedSelectCount = detectMultiSelectCount(question.question_text);
   const isMultiSelect = expectedSelectCount > 1 || question.correct_answers.length > 1;
   const selectCount = Math.max(expectedSelectCount, question.correct_answers.length);
@@ -73,13 +74,8 @@ export default function QuestionCard({
     if (submitted) return;
     if (isMultiSelect) {
       setSelectedAnswers((prev) => {
-        if (prev.includes(label)) {
-          return prev.filter((a) => a !== label);
-        }
-        // 선택 개수 제한
-        if (prev.length >= selectCount) {
-          return [...prev.slice(1), label];
-        }
+        if (prev.includes(label)) return prev.filter((a) => a !== label);
+        if (prev.length >= selectCount) return [...prev.slice(1), label];
         return [...prev, label];
       });
     } else {
@@ -103,6 +99,11 @@ export default function QuestionCard({
 
     if (isCorrect) {
       void celebrateCorrect();
+      setCombo((c) => c + 1);
+    } else {
+      setCombo(0);
+      setShakeOnWrong(true);
+      setTimeout(() => setShakeOnWrong(false), 500);
     }
 
     setSubmitted(true);
@@ -118,7 +119,7 @@ export default function QuestionCard({
 
   function handleNoteSaved() {
     setMemoSheet(null);
-    showToast("오답노트에 저장되었습니다");
+    showToast("> SAVED!");
   }
 
   const isCorrect =
@@ -126,52 +127,92 @@ export default function QuestionCard({
     selectedAnswers.length === question.correct_answers.length &&
     selectedAnswers.every((a) => question.correct_answers.includes(a));
 
+  const progressPct = ((questionIndex + 1) / totalQuestions) * 100;
+
   return (
-    <div className="max-w-lg mx-auto px-4 pt-4 pb-4">
-      {/* 진행 바 */}
-      <div className="flex items-center gap-3 mb-4">
-        <span className="text-sm text-muted font-medium">
-          {questionIndex + 1} / {totalQuestions}
+    <div className={`max-w-lg mx-auto px-4 pt-4 pb-4 ${shakeOnWrong ? "animate-shake" : ""}`}>
+      <div className="flex items-center gap-2 mb-4">
+        <span
+          className="text-[10px] font-display px-2 py-1"
+          style={{
+            background: "#0f380f",
+            color: "#9bbc0f",
+            border: "2px solid #9bbc0f",
+          }}
+        >
+          Q{questionIndex + 1}/{totalQuestions}
         </span>
-        <div className="flex-1 bg-border rounded-full h-1.5">
+        <div className="flex-1 h-2" style={{ background: "#0f380f", border: "2px solid #5a4530" }}>
           <div
-            className="bg-primary rounded-full h-1.5 transition-all"
-            style={{ width: `${((questionIndex + 1) / totalQuestions) * 100}%` }}
+            className="h-full transition-[width] duration-300"
+            style={{
+              width: `${progressPct}%`,
+              background: "linear-gradient(180deg, #d4e27a, #9bbc0f, #4a7a3c)",
+            }}
           />
         </div>
+        <ComboCounter combo={combo} />
       </div>
 
-      {/* 문제 */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-4">
+      <div className="p-4 mb-4 pixel-window">
         {isMultiSelect && (
-          <span className="inline-block text-xs bg-warning-bg text-warning-fg border border-warning-border px-2 py-0.5 rounded mb-2">
-            {selectCount}개 선택
+          <span
+            className="inline-block text-[10px] px-2 py-0.5 font-display mb-3"
+            style={{
+              background: "#e8b923",
+              color: "#1a1410",
+              border: "2px solid #1a1410",
+            }}
+          >
+            ⚡ PICK {selectCount}
           </span>
         )}
         <TextSelectionPopover questionId={question.id} sourceContext="question" onSaveRequest={handleSaveRequest}>
-          <p className="text-sm leading-relaxed whitespace-pre-line">{question.question_text}</p>
+          <p className="text-sm leading-relaxed whitespace-pre-line font-retro text-parchment">
+            {question.question_text}
+          </p>
         </TextSelectionPopover>
       </div>
 
-      {/* 선택지 */}
       <div className="space-y-2 mb-4">
         {question.options.map((opt) => {
           const isSelected = selectedAnswers.includes(opt.label);
           const isCorrectOption = question.correct_answers.includes(opt.label);
-          let borderColor = "border-border";
-          let bgColor = "bg-card";
+
+          let btnStyle: React.CSSProperties = {
+            background: "#2a1f17",
+            border: "2px solid #5a4530",
+            boxShadow: "2px 2px 0 rgba(0,0,0,0.4)",
+          };
+          let labelBg = "#0f380f";
+          let labelColor = "#8a7050";
 
           if (submitted) {
             if (isCorrectOption) {
-              borderColor = "border-success";
-              bgColor = "bg-success-bg";
+              btnStyle = {
+                background: "rgba(155, 188, 15, 0.15)",
+                border: "2px solid #9bbc0f",
+                boxShadow: "2px 2px 0 #9bbc0f",
+              };
+              labelBg = "#9bbc0f";
+              labelColor = "#0f380f";
             } else if (isSelected && !isCorrectOption) {
-              borderColor = "border-danger";
-              bgColor = "bg-danger-bg";
+              btnStyle = {
+                background: "rgba(184, 50, 50, 0.15)",
+                border: "2px solid #b83232",
+                boxShadow: "2px 2px 0 #b83232",
+              };
+              labelBg = "#b83232";
+              labelColor = "#e6d3a3";
             }
           } else if (isSelected) {
-            borderColor = "border-primary";
-            bgColor = "bg-info-bg";
+            btnStyle = {
+              background: "rgba(91, 156, 216, 0.15)",
+              border: "2px solid #5b9cd8",
+              boxShadow: "2px 2px 0 #5b9cd8",
+            };
+            labelBg = "#5b9cd8";
+            labelColor = "#1a1410";
           }
 
           return (
@@ -179,127 +220,105 @@ export default function QuestionCard({
               key={opt.label}
               onClick={() => handleSelect(opt.label)}
               disabled={submitted}
-              className={`w-full text-left ${bgColor} rounded-xl border-2 ${borderColor} p-3 transition-all active:scale-[0.99]`}
+              className="w-full text-left p-3 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+              style={btnStyle}
             >
               <div className="flex gap-3">
                 <span
-                  className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                    submitted && isCorrectOption
-                      ? "bg-success text-on-primary"
-                      : submitted && isSelected && !isCorrectOption
-                      ? "bg-danger text-on-primary"
-                      : isSelected
-                      ? "bg-primary text-on-primary"
-                      : "bg-muted-bg text-muted"
-                  }`}
+                  className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-sm font-display font-bold"
+                  style={{ background: labelBg, color: labelColor, border: "2px solid #1a1410" }}
                 >
                   {opt.label}
                 </span>
-                <span className="text-sm leading-relaxed">{opt.text}</span>
+                <span className="text-sm leading-relaxed font-retro pt-0.5">{opt.text}</span>
               </div>
             </button>
           );
         })}
       </div>
 
-      {/* 제출/다음 버튼 */}
       {!submitted ? (
         <button
           onClick={handleSubmit}
           disabled={selectedAnswers.length === 0}
-          className="w-full bg-primary text-on-primary py-3 rounded-xl font-medium disabled:opacity-40 active:scale-[0.98] transition-all"
+          className="w-full py-3 font-display font-bold text-sm disabled:opacity-40 transition-transform pixel-button disabled:cursor-not-allowed"
+          style={{ letterSpacing: "0.1em" }}
         >
-          정답 확인
+          &gt; ATTACK!
         </button>
       ) : (
         <div>
-          {/* 결과 */}
           <div
-            className={`text-center py-3 rounded-xl mb-3 font-medium ${
-              isCorrect ? "bg-success-bg text-success-fg border border-success-border" : "bg-danger-bg text-danger-fg border border-danger-border"
-            }`}
+            className="text-center py-3 mb-3 font-display font-bold animate-pop-in"
+            style={
+              isCorrect
+                ? {
+                    background: "rgba(155, 188, 15, 0.15)",
+                    border: "2px solid #9bbc0f",
+                    color: "#d4e27a",
+                    boxShadow: "2px 2px 0 #9bbc0f",
+                  }
+                : {
+                    background: "rgba(184, 50, 50, 0.15)",
+                    border: "2px solid #b83232",
+                    color: "#e86060",
+                    boxShadow: "2px 2px 0 #b83232",
+                  }
+            }
           >
-            {isCorrect ? "정답입니다!" : `오답입니다. 정답: ${question.correct_answers.join(", ")}`}
+            {isCorrect ? `★ HIT! +1 EXP ★` : `× MISS! ANS: ${question.correct_answers.join(",")}`}
           </div>
 
-          {/* 풀이 해설 */}
           {(question.explanation || question.detailed_explanation) && (
-            <div className="bg-card-elevated rounded-xl border border-border mb-3 overflow-hidden">
-              {/* 토글 헤더 */}
+            <div className="mb-3 pixel-panel overflow-hidden" style={{ borderColor: "#c4a4e0" }}>
               <button
                 onClick={() => setShowExplanation(!showExplanation)}
                 className="w-full flex justify-between items-center p-3"
               >
-                <span className="text-sm font-medium">풀이 보기</span>
-                <span className="text-xs text-muted">{showExplanation ? "접기" : "펼치기"}</span>
+                <span className="text-[11px] font-display text-accent-fg">▼ INTEL BOOK</span>
+                <span className="text-[10px] text-muted font-display">{showExplanation ? "[-]" : "[+]"}</span>
               </button>
 
               {showExplanation && (
-                <div className="border-t border-border">
-                  {/* 탭 */}
-                  <div className="flex border-b border-border">
-                    <button
-                      onClick={() => setExplanationTab("explanation")}
-                      className={`flex-1 py-2 text-xs font-medium transition-colors ${
-                        explanationTab === "explanation"
-                          ? "text-primary border-b-2 border-primary"
-                          : "text-muted"
-                      }`}
-                    >
-                      정답 해설
-                    </button>
-                    <button
+                <div style={{ borderTop: "2px solid var(--border)" }}>
+                  <div className="flex" style={{ borderBottom: "2px solid var(--border)" }}>
+                    <TabButton active={explanationTab === "explanation"} onClick={() => setExplanationTab("explanation")}>
+                      ANS
+                    </TabButton>
+                    <TabButton
+                      active={explanationTab === "detail"}
                       onClick={() => setExplanationTab("detail")}
                       disabled={!question.detailed_explanation}
-                      className={`flex-1 py-2 text-xs font-medium transition-colors ${
-                        explanationTab === "detail"
-                          ? "text-primary border-b-2 border-primary"
-                          : !question.detailed_explanation
-                          ? "text-muted opacity-50"
-                          : "text-muted"
-                      }`}
                     >
-                      상세 풀이
-                    </button>
-                    <button
+                      MORE
+                    </TabButton>
+                    <TabButton
+                      active={explanationTab === "services"}
                       onClick={() => setExplanationTab("services")}
                       disabled={question.related_services.length === 0}
-                      className={`flex-1 py-2 text-xs font-medium transition-colors ${
-                        explanationTab === "services"
-                          ? "text-primary border-b-2 border-primary"
-                          : question.related_services.length === 0
-                          ? "text-muted opacity-50"
-                          : "text-muted"
-                      }`}
                     >
-                      관련 서비스
-                    </button>
+                      ITEMS
+                    </TabButton>
                   </div>
 
-                  {/* 탭 콘텐츠 */}
                   <div className="p-3">
                     {explanationTab === "explanation" && (
                       <TextSelectionPopover questionId={question.id} sourceContext="explanation" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
-                          {question.explanation || "해설이 없습니다."}
+                        <div className="text-sm leading-relaxed whitespace-pre-line font-retro">
+                          {question.explanation || "NO DATA"}
                         </div>
                       </TextSelectionPopover>
                     )}
 
                     {explanationTab === "detail" && (
                       <TextSelectionPopover questionId={question.id} sourceContext="detail" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
+                        <div className="text-sm leading-relaxed whitespace-pre-line font-retro">
                           {question.detailed_explanation || (
-                            <div className="text-center text-muted py-4">
-                              <p className="mb-2">상세 풀이가 아직 없습니다.</p>
+                            <div className="text-center text-muted py-4 font-display text-xs">
+                              <p className="mb-2">&gt; NO DATA</p>
                               {question.source_url && (
-                                <a
-                                  href={question.source_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-primary text-xs font-medium"
-                                >
-                                  원본 블로그에서 확인 &rarr;
+                                <a href={question.source_url} target="_blank" rel="noopener noreferrer" className="text-gb-green">
+                                  SOURCE ►
                                 </a>
                               )}
                             </div>
@@ -309,28 +328,33 @@ export default function QuestionCard({
                     )}
 
                     {explanationTab === "services" && (
-                      <div className="space-y-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {question.related_services.map((svc) => (
-                          <div key={svc} className="flex items-center gap-2">
-                            <span className="text-xs bg-info-bg text-info-fg border border-info-border px-2 py-0.5 rounded font-medium">
-                              {svc}
-                            </span>
-                          </div>
+                          <span
+                            key={svc}
+                            className="text-[10px] px-2 py-0.5 font-display"
+                            style={{
+                              background: "#0f380f",
+                              color: "#8fc0e8",
+                              border: "2px solid #5b9cd8",
+                            }}
+                          >
+                            {svc}
+                          </span>
                         ))}
                       </div>
                     )}
                   </div>
 
-                  {/* 원본 링크 */}
                   {question.source_url && (
-                    <div className="border-t border-border p-2">
+                    <div style={{ borderTop: "2px dashed var(--border)" }}>
                       <a
                         href={question.source_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-center text-xs text-primary font-medium py-1"
+                        className="block text-center text-[11px] text-gb-green font-display py-2"
                       >
-                        원본 풀이 보기 (Tistory) &rarr;
+                        &gt; SOURCE (TISTORY) ►
                       </a>
                     </div>
                   )}
@@ -341,14 +365,20 @@ export default function QuestionCard({
 
           <button
             onClick={handleNext}
-            className="w-full bg-primary text-on-primary py-3 rounded-xl font-medium active:scale-[0.98] transition-all"
+            className="w-full py-3 font-display font-bold text-sm pixel-button"
+            style={{
+              letterSpacing: "0.1em",
+              background: "#5b9cd8",
+              borderColor: "#1a1410",
+              color: "#e6d3a3",
+              boxShadow: "2px 2px 0 #1a1410",
+            }}
           >
-            다음 문제
+            &gt; NEXT ►
           </button>
         </div>
       )}
 
-      {/* 오답노트 메모 시트 */}
       {memoSheet && (
         <StudyNoteMemoSheet
           isOpen
@@ -360,13 +390,47 @@ export default function QuestionCard({
         />
       )}
 
-      {/* 알림 토스트 */}
       {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-success text-on-primary text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 text-xs px-3 py-2 z-50 animate-fade-in whitespace-nowrap font-display"
+          style={{
+            background: "#0f380f",
+            color: "#9bbc0f",
+            border: "2px solid #9bbc0f",
+            boxShadow: "2px 2px 0 rgba(0,0,0,0.6)",
+          }}
+        >
           {toastMessage}
         </div>
       )}
     </div>
+  );
+}
+
+function TabButton({
+  active,
+  disabled,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="flex-1 py-2 text-[10px] font-display transition-colors"
+      style={{
+        color: active ? "#9bbc0f" : disabled ? "rgba(138, 112, 80, 0.4)" : "var(--muted)",
+        background: active ? "rgba(155, 188, 15, 0.15)" : "transparent",
+        borderRight: "2px solid var(--border)",
+      }}
+    >
+      {children}
+    </button>
   );
 }
 

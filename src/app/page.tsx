@@ -1,5 +1,8 @@
 import Link from "next/link";
 import ServiceResumeCard from "@/components/ServiceResumeCard";
+import XPBar from "@/components/game/XPBar";
+import LevelBadge from "@/components/game/LevelBadge";
+import StreakFlame from "@/components/game/StreakFlame";
 
 const STUDY_START = new Date("2026-04-08");
 const STUDY_DAYS = 14;
@@ -18,13 +21,10 @@ function getDayInfo() {
 }
 
 function getWeekPhase(day: number) {
-  if (day <= 3)
-    return { phase: "1주차: 개념 정리", desc: "도메인별 핵심 개념 카드 학습", color: "bg-blue-500" };
-  if (day <= 7)
-    return { phase: "1주차: 사고력 훈련", desc: "시나리오 문제 풀이 (매일 20-30문제)", color: "bg-indigo-500" };
-  if (day <= 12)
-    return { phase: "2주차: 실전 문제", desc: "덤프 문제 집중 풀이 (매일 40-50문제)", color: "bg-purple-500" };
-  return { phase: "2주차: 모의시험", desc: "모의시험 + 최종 약점 보강", color: "bg-red-500" };
+  if (day <= 3) return { phase: "CH.1 BASICS", desc: "기본기 습득의 시대", color: "#9bbc0f" };
+  if (day <= 7) return { phase: "CH.2 TRAINING", desc: "사고력 연마의 시대", color: "#8fc0e8" };
+  if (day <= 12) return { phase: "CH.3 TRIAL", desc: "실전 시련의 시대", color: "#c4a4e0" };
+  return { phase: "CH.4 BOSS", desc: "최종 결전의 시대", color: "#e86060" };
 }
 
 export default function Dashboard() {
@@ -33,99 +33,136 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">AWS SAA-C03</h1>
-        <p className="text-muted text-sm">2주 완성 학습 도구</p>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <p className="text-[9px] font-display text-gold mb-1">&gt; AWS SAA-C03</p>
+          <h1 className="text-sm font-display font-black text-gb-green animate-blink">ADVENTURER LOG</h1>
+        </div>
+        <StreakFlame days={0} />
       </div>
 
-      {/* D-Day 카드 */}
-      <Link href="/curriculum" className={`block ${color} text-white rounded-2xl p-5 mb-4 shadow-lg`}>
-        <div className="flex justify-between items-start mb-3">
-          <div>
-            <p className="text-sm opacity-80">현재 진행</p>
-            <p className="text-xl font-bold">Day {currentDay} / {STUDY_DAYS}</p>
+      {/* PLAYER WINDOW */}
+      <Link href="/curriculum" className="block p-4 mb-4 pixel-window">
+        <div className="flex items-center gap-4 mb-4">
+          <LevelBadge level={currentDay} size="lg" />
+          <div className="flex-1">
+            <p className="text-[10px] font-display mb-1" style={{ color }}>
+              {phase}
+            </p>
+            <p className="text-sm font-retro text-parchment leading-tight">{desc}</p>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold">D-{daysLeft}</p>
-            <p className="text-xs opacity-80">남은 일수</p>
+            <p className="text-2xl font-display font-black text-gold leading-none">D-{daysLeft}</p>
+            <p className="text-[9px] text-muted mt-1 font-display">DAYS LEFT</p>
           </div>
         </div>
-        <div className="bg-white/20 rounded-full h-2 mb-2">
-          <div className="bg-white rounded-full h-2 transition-all" style={{ width: `${progress}%` }} />
-        </div>
-        <p className="text-sm font-medium">{phase}</p>
-        <p className="text-xs opacity-80">{desc}</p>
+        <XPBar value={currentDay} max={STUDY_DAYS} label={`JOURNEY ${progress}%`} />
       </Link>
 
-      {/* 오늘의 학습 목표 */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-4">
-        <h2 className="font-semibold mb-3">오늘의 학습 목표</h2>
+      {/* DAILY QUEST BOARD */}
+      <div className="pixel-panel p-4 mb-4">
+        <div className="flex items-center justify-between mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
+          <h2 className="font-display text-xs text-gold">★ TODAY'S QUEST</h2>
+          <span className="text-[9px] font-display text-muted">DAILY</span>
+        </div>
         <div className="space-y-2">
-          <TodoItem label="개념 카드 학습" count="10개" done={false} />
-          <TodoItem label="문제 풀이" count="30문제" done={false} />
-          <TodoItem label="오답 복습" count="5문제" done={false} />
+          <TodoItem label="CONCEPT STUDY" count="×10" tag="LEARN" done={false} />
+          <TodoItem label="QUESTION DRILL" count="×30" tag="BATTLE" done={false} />
+          <TodoItem label="MISS REVENGE" count="×5" tag="REDO" done={false} />
         </div>
       </div>
 
-      {/* 서비스 문제 이어서 풀기 */}
       <ServiceResumeCard />
 
-      {/* 퀵 액션 */}
+      {/* MENU */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <QuickAction href="/questions" label="문제 풀기" sublabel="랜덤 출제" />
-        <QuickAction href="/review" label="오답 복습" sublabel="오늘 복습할 문제" />
-        <QuickAction href="/mock-exam" label="모의시험" sublabel="65문제 / 130분" />
-        <QuickAction href="/concepts" label="개념 사전" sublabel="AWS 서비스 검색" />
+        <QuickAction href="/questions" label="BATTLE" sublabel="랜덤 출제" emoji="⚔" color="#9bbc0f" />
+        <QuickAction href="/review" label="REVENGE" sublabel="오답 재도전" emoji="🔄" color="#8fc0e8" />
+        <QuickAction href="/mock-exam" label="BOSS" sublabel="65Q / 130M" emoji="👑" color="#e8b923" />
+        <QuickAction href="/concepts" label="BESTIARY" sublabel="서비스 도감" emoji="📖" color="#c4a4e0" />
       </div>
 
-      {/* 학습 요약 */}
-      <div className="bg-card rounded-xl border border-border p-4">
-        <h2 className="font-semibold mb-3">학습 현황</h2>
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <StatBox label="풀은 문제" value="0" />
-          <StatBox label="정답률" value="0%" />
-          <StatBox label="연속일" value="0일" />
+      {/* STATUS WINDOW */}
+      <div className="pixel-panel p-4">
+        <div className="flex items-center justify-between mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
+          <h2 className="font-display text-xs text-mana">▲ STATUS</h2>
+          <span className="text-[9px] font-display text-muted">PARAMS</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <StatBox label="SOLVED" value="0" color="#9bbc0f" />
+          <StatBox label="HIT%" value="0" color="#8fc0e8" />
+          <StatBox label="STREAK" value="0" color="#e8b923" />
         </div>
       </div>
     </div>
   );
 }
 
-function TodoItem({ label, count, done }: { label: string; count: string; done: boolean }) {
+function TodoItem({ label, count, tag, done }: { label: string; count: string; tag: string; done: boolean }) {
   return (
-    <div className={`flex items-center justify-between py-1.5 ${done ? "opacity-50" : ""}`}>
+    <div className="flex items-center justify-between py-1" style={{ opacity: done ? 0.5 : 1 }}>
       <div className="flex items-center gap-2">
-        <div
-          className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-            done ? "bg-success border-success" : "border-muted"
-          }`}
+        <span
+          className="inline-block w-5 h-5 flex items-center justify-center font-display text-[9px]"
+          style={{
+            background: done ? "#9bbc0f" : "transparent",
+            border: "2px solid #5a4530",
+            color: done ? "#0f380f" : "#8a7050",
+          }}
         >
-          {done && <span className="text-on-primary text-xs">&#x2713;</span>}
-        </div>
-        <span className={`text-sm ${done ? "line-through" : ""}`}>{label}</span>
+          {done ? "✓" : ""}
+        </span>
+        <span className={`font-retro text-sm tracking-wide ${done ? "line-through" : ""}`}>{label}</span>
+        <span className="text-[9px] font-display text-mana opacity-80">[{tag}]</span>
       </div>
-      <span className="text-xs text-muted">{count}</span>
+      <span className="text-xs font-display text-gold">{count}</span>
     </div>
   );
 }
 
-function QuickAction({ href, label, sublabel }: { href: string; label: string; sublabel: string }) {
+function QuickAction({
+  href,
+  label,
+  sublabel,
+  emoji,
+  color,
+}: {
+  href: string;
+  label: string;
+  sublabel: string;
+  emoji: string;
+  color: string;
+}) {
   return (
     <Link
       href={href}
-      className="bg-card rounded-xl border border-border p-4 hover:border-primary transition-colors active:scale-[0.98]"
+      className="p-3 pixel-panel transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+      style={{ borderColor: color }}
     >
-      <p className="font-medium text-sm">{label}</p>
-      <p className="text-xs text-muted">{sublabel}</p>
+      <div className="flex items-start justify-between mb-2">
+        <span className="text-2xl" style={{ imageRendering: "pixelated" }}>{emoji}</span>
+      </div>
+      <p className="font-display font-bold text-xs" style={{ color }}>
+        {label}
+      </p>
+      <p className="text-[11px] text-muted mt-0.5 font-retro">{sublabel}</p>
     </Link>
   );
 }
 
-function StatBox({ label, value }: { label: string; value: string }) {
+function StatBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div>
-      <p className="text-lg font-bold">{value}</p>
-      <p className="text-xs text-muted">{label}</p>
+    <div
+      className="py-2"
+      style={{
+        background: "#0f380f",
+        border: `2px solid ${color}`,
+      }}
+    >
+      <p className="text-xl font-display font-black leading-none" style={{ color }}>
+        {value}
+      </p>
+      <p className="text-[9px] text-muted font-display mt-1">{label}</p>
     </div>
   );
 }

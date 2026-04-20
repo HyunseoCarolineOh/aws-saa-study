@@ -1290,102 +1290,140 @@ export default function ConceptsPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-      <h1 className="text-xl font-bold mb-4">AWS 서비스 사전</h1>
+      <div className="mb-5">
+        <p className="text-[9px] font-display text-gold mb-1">&gt; BESTIARY</p>
+        <h1 className="text-sm font-display font-black text-gb-green">AWS CODEX</h1>
+        <p className="text-xs font-retro text-parchment mt-1">서비스를 수집하라</p>
+      </div>
 
-      {/* 검색 */}
       <input
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="서비스명 또는 키워드 검색..."
-        className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm mb-4 focus:outline-none focus:border-primary"
+        placeholder="> SEARCH..."
+        className="w-full px-3 py-3 text-sm mb-4 focus:outline-none font-retro"
+        style={{
+          background: "#0f380f",
+          border: "2px solid #5b9cd8",
+          color: "var(--foreground)",
+        }}
       />
 
-      {/* 카테고리별 서비스 */}
       <div className="space-y-3">
         {filteredCategories.map((cat) => (
-          <div key={cat.category} className="bg-card rounded-xl border border-border overflow-hidden">
+          <div key={cat.category} className="pixel-panel overflow-hidden">
             <button
-              onClick={() =>
-                setExpandedCategory(expandedCategory === cat.category ? null : cat.category)
-              }
-              className="w-full flex justify-between items-center p-4 text-left"
+              onClick={() => setExpandedCategory(expandedCategory === cat.category ? null : cat.category)}
+              className="w-full flex justify-between items-center p-3 text-left"
             >
-              <div>
-                <span className="font-medium text-sm">{cat.category}</span>
-                <span className="text-xs text-muted ml-2">{cat.services.length}개</span>
+              <div className="flex items-center gap-2">
+                <span className="font-display font-bold text-xs text-accent-fg">&gt; {cat.category}</span>
+                <span
+                  className="text-[10px] px-1.5 py-0.5 font-display"
+                  style={{ background: "#c4a4e0", color: "#0f380f", border: "1px solid #0f380f" }}
+                >
+                  {cat.services.length}
+                </span>
               </div>
-              <span className="text-muted text-xs">
-                {expandedCategory === cat.category ? "접기" : "펼치기"}
+              <span className="text-muted text-xs font-display">
+                {expandedCategory === cat.category ? "[-]" : "[+]"}
               </span>
             </button>
             {(expandedCategory === cat.category || search) && (
-              <div className="border-t border-border">
+              <div style={{ borderTop: "2px solid var(--border)" }}>
                 {cat.services.map((svc) => {
                   const hasDetail = !!svc.description;
                   const isExpanded = expandedService === svc.name;
                   const stats = statsMap.get(svc.name);
                   const hasQuestions = stats && stats.totalQuestions > 0;
+                  const rarity =
+                    svc.frequency && svc.frequency >= 100 ? { stars: "★★★", color: "#e8b923" }
+                    : svc.frequency && svc.frequency >= 30 ? { stars: "★★", color: "#b83232" }
+                    : svc.frequency ? { stars: "★", color: "#8fc0e8" }
+                    : null;
+
                   return (
-                    <div key={svc.name} className="border-b border-border last:border-b-0">
-                      {/* 서비스 헤더 */}
+                    <div key={svc.name} style={{ borderBottom: "1px solid var(--border)" }}>
                       <button
                         onClick={() => hasDetail && setExpandedService(isExpanded ? null : svc.name)}
                         className={`w-full px-4 py-3 text-left ${hasDetail ? "cursor-pointer" : "cursor-default"}`}
                       >
-                        <div className="flex items-start justify-between">
+                        <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="font-semibold text-sm text-primary">{svc.name}</p>
-                            {svc.frequency && svc.frequency >= 30 && (
-                              <span className="text-[10px] bg-danger-bg text-danger-fg border border-danger-border px-1.5 py-0.5 rounded font-medium">
-                                빈출 {svc.frequency}문제
+                            <p className="font-display font-black text-sm text-gb-green">{svc.name}</p>
+                            {rarity && (
+                              <span
+                                className="text-[10px] px-1.5 py-0.5 font-display"
+                                style={{
+                                  background: rarity.color,
+                                  color: "#0f380f",
+                                  border: "1px solid #0f380f",
+                                }}
+                              >
+                                {rarity.stars}
                               </span>
                             )}
                             {hasDetail && (
-                              <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">
-                                상세
+                              <span
+                                className="text-[10px] px-1.5 py-0.5 font-display"
+                                style={{
+                                  background: "rgba(91, 156, 216, 0.15)",
+                                  color: "#8fc0e8",
+                                  border: "1px solid #5b9cd8",
+                                }}
+                              >
+                                INTEL
                               </span>
                             )}
                             {hasQuestions && stats.solvedCount > 0 && (
-                              <span className="text-[10px] bg-success-bg text-success-fg border border-success-border px-1.5 py-0.5 rounded font-medium">
-                                {stats.solvedCount}/{stats.totalQuestions} ({stats.accuracy}%)
+                              <span
+                                className="text-[10px] px-1.5 py-0.5 font-display"
+                                style={{
+                                  background: "rgba(155, 188, 15, 0.15)",
+                                  color: "#9bbc0f",
+                                  border: "1px solid #9bbc0f",
+                                }}
+                              >
+                                {stats.solvedCount}/{stats.totalQuestions}
                               </span>
                             )}
                           </div>
                           {svc.compare && (
-                            <span className="text-[10px] text-muted flex-shrink-0">vs {svc.compare}</span>
+                            <span className="text-[10px] text-muted flex-shrink-0 font-retro">vs {svc.compare}</span>
                           )}
                         </div>
-                        <p className="text-xs text-muted mt-0.5 leading-relaxed">{svc.summary}</p>
+                        <p className="text-xs text-parchment mt-1 leading-relaxed font-retro">{svc.summary}</p>
                       </button>
-                      {/* 관련 문제 풀기 링크 */}
                       {hasQuestions && (
-                        <div className="px-4 pb-2">
+                        <div className="px-4 pb-3">
                           <Link
                             href={`/questions?service=${encodeURIComponent(svc.name)}`}
-                            className="inline-block text-[11px] text-primary font-medium hover:underline"
+                            className="inline-block text-[10px] font-display px-3 py-1 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                            style={{
+                              background: "#9bbc0f",
+                              color: "#0f380f",
+                              border: "2px solid #0f380f",
+                              boxShadow: "2px 2px 0 #0f380f",
+                            }}
                           >
-                            관련 문제 풀기 ({stats.totalQuestions}문제) &rarr;
+                            &gt; BATTLE ({stats.totalQuestions}Q)
                           </Link>
                         </div>
                       )}
 
-                      {/* 상세 정보 */}
                       {isExpanded && hasDetail && (
-                        <div className="px-4 pb-4 space-y-3">
-                          {/* 설명 */}
-                          <div className="bg-card-elevated rounded-lg p-3">
-                            <p className="text-xs text-foreground leading-relaxed">{svc.description}</p>
+                        <div className="px-4 pb-4 space-y-3 animate-fade-in">
+                          <div className="p-3" style={{ background: "#0f380f", border: "2px solid var(--border)" }}>
+                            <p className="text-xs leading-relaxed font-retro text-parchment">{svc.description}</p>
                           </div>
 
-                          {/* 핵심 특징 */}
                           {svc.keyFeatures && (
                             <div>
-                              <p className="text-xs font-bold text-foreground mb-1.5">핵심 특징</p>
+                              <p className="text-[11px] font-display text-accent-fg mb-1.5">&gt; FEATURES</p>
                               <ul className="space-y-1">
                                 {svc.keyFeatures.map((f, i) => (
-                                  <li key={i} className="text-xs text-muted leading-relaxed flex gap-1.5">
-                                    <span className="text-primary mt-0.5 flex-shrink-0">•</span>
+                                  <li key={i} className="text-xs text-parchment leading-relaxed flex gap-1.5 font-retro">
+                                    <span className="text-gb-green flex-shrink-0">▸</span>
                                     <span>{f}</span>
                                   </li>
                                 ))}
@@ -1393,14 +1431,13 @@ export default function ConceptsPage() {
                             </div>
                           )}
 
-                          {/* 시험 팁 */}
                           {svc.examTips && (
-                            <div className="bg-warning-bg border border-warning-border rounded-lg p-3">
-                              <p className="text-xs font-bold text-warning-fg mb-1.5">SAA 시험 팁</p>
+                            <div className="p-3" style={{ background: "rgba(232, 185, 35, 0.08)", border: "2px solid #e8b923" }}>
+                              <p className="text-[11px] font-display text-gold mb-1.5">&gt; SAA TIPS</p>
                               <ul className="space-y-1">
                                 {svc.examTips.map((tip, i) => (
-                                  <li key={i} className="text-xs text-warning-fg leading-relaxed flex gap-1.5">
-                                    <span className="flex-shrink-0">💡</span>
+                                  <li key={i} className="text-xs leading-relaxed flex gap-1.5 font-retro" style={{ color: "var(--warning-fg)" }}>
+                                    <span className="flex-shrink-0">▸</span>
                                     <span>{tip}</span>
                                   </li>
                                 ))}
@@ -1408,14 +1445,13 @@ export default function ConceptsPage() {
                             </div>
                           )}
 
-                          {/* 사용 사례 */}
                           {svc.useCases && (
                             <div>
-                              <p className="text-xs font-bold text-foreground mb-1.5">주요 사용 사례</p>
+                              <p className="text-[11px] font-display text-mana mb-1.5">&gt; USES</p>
                               <ul className="space-y-1">
                                 {svc.useCases.map((uc, i) => (
-                                  <li key={i} className="text-xs text-muted leading-relaxed flex gap-1.5">
-                                    <span className="text-success flex-shrink-0">▸</span>
+                                  <li key={i} className="text-xs text-parchment leading-relaxed flex gap-1.5 font-retro">
+                                    <span className="text-mana flex-shrink-0">▸</span>
                                     <span>{uc}</span>
                                   </li>
                                 ))}
@@ -1423,10 +1459,10 @@ export default function ConceptsPage() {
                             </div>
                           )}
 
-                          {/* 비용 */}
                           {svc.pricing && (
-                            <div className="text-xs text-muted bg-card-elevated rounded-lg p-2">
-                              <span className="font-medium">비용: </span>{svc.pricing}
+                            <div className="text-xs p-3 font-retro" style={{ background: "rgba(91, 156, 216, 0.08)", border: "2px solid #5b9cd8", color: "var(--info-fg)" }}>
+                              <span className="font-display text-[11px]">&gt; COST: </span>
+                              {svc.pricing}
                             </div>
                           )}
                         </div>

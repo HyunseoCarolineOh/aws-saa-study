@@ -182,7 +182,7 @@ function QuestionsContent() {
   if (loading) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">문제 로딩 중...</p>
+        <p className="text-muted font-display animate-blink">&gt; LOADING...</p>
       </div>
     );
   }
@@ -192,22 +192,24 @@ function QuestionsContent() {
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
         {mode === "service" && service ? (
           <>
-            <p className="text-lg mb-2">{service} 관련 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 아직 없습니다.</p>
-            <Link href="/concepts" className="text-primary font-medium text-sm">
-              서비스 사전으로 돌아가기 &rarr;
+            <p className="text-4xl mb-4 animate-pixel-bounce">📭</p>
+            <p className="text-xs font-display text-blood mb-2">&gt; {service} EMPTY</p>
+            <p className="text-sm text-parchment mb-4 font-retro">관련 퀘스트 없음</p>
+            <Link href="/concepts" className="text-gb-green font-display text-xs">
+              &gt; BACK TO BOOK ►
             </Link>
           </>
         ) : mode === "review" ? (
           <>
-            <p className="text-lg mb-2">복습할 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">오늘 복습 예정인 문제가 없거나, 아직 틀린 문제가 없습니다.</p>
-            <Link href="/review" className="text-primary font-medium text-sm">
-              오답노트로 돌아가기 &rarr;
+            <p className="text-4xl mb-4 animate-pixel-bounce">★</p>
+            <p className="text-xs font-display text-gb-green mb-2">&gt; ALL CLEAR!</p>
+            <p className="text-sm text-parchment mb-4 font-retro">재도전 퀘스트 없음</p>
+            <Link href="/review" className="text-gold font-display text-xs">
+              &gt; BACK TO REDO ►
             </Link>
           </>
         ) : (
-          <p className="text-muted">문제가 없습니다.</p>
+          <p className="text-muted font-display">&gt; NO DATA</p>
         )}
       </div>
     );
@@ -215,43 +217,52 @@ function QuestionsContent() {
 
   return (
     <div>
-      {/* 서비스 모드 배너 */}
       {mode === "service" && service && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
-            <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
-            <span>{currentIndex + 1} / {questions.length}문제</span>
-          </div>
-        </div>
-      )}
-
-      {/* 복습 모드 배너 */}
-      {mode === "review" && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
-            <span>복습 모드</span>
-            <span>{questions.length}문제</span>
-          </div>
-        </div>
-      )}
-
-      {/* 툴바: 처음부터 다시 풀기 + 수정 요청 */}
-      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-3">
-        {(mode === "normal" || mode === "service") && currentIndex > 0 && (
-          <button
-            onClick={handleRestart}
-            className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="px-3 py-2 text-xs font-display flex justify-between items-center"
+            style={{
+              background: "rgba(91, 156, 216, 0.1)",
+              border: "2px solid #5b9cd8",
+              color: "#8fc0e8",
+            }}
           >
-            처음부터 다시 풀기
+            <Link href="/concepts">◄ {service}</Link>
+            <span>{currentIndex + 1}/{questions.length}</span>
+          </div>
+        </div>
+      )}
+
+      {mode === "review" && (
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="px-3 py-2 text-xs font-display flex justify-between items-center"
+            style={{
+              background: "rgba(139, 95, 184, 0.12)",
+              border: "2px solid #8b5fb8",
+              color: "#c4a4e0",
+            }}
+          >
+            <span>&gt; REVENGE MODE</span>
+            <span>{questions.length}Q</span>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-2">
+        {(mode === "normal" || mode === "service") && currentIndex > 0 && (
+          <button onClick={handleRestart} className="text-[10px] font-display text-muted hover:text-gb-green px-2 py-1">
+            [RESET]
           </button>
         )}
         <button
           type="button"
           onClick={handleOpenReport}
-          className="text-xs text-danger-fg hover:text-danger transition-colors px-2 py-1 flex items-center gap-1"
+          className="text-[10px] font-display px-2 py-1 flex items-center gap-1"
+          style={{ color: "var(--danger-fg)" }}
         >
           <span aria-hidden>⚠</span>
-          <span>수정 요청</span>
+          <span>REPORT</span>
         </button>
       </div>
 
@@ -275,7 +286,15 @@ function QuestionsContent() {
       )}
 
       {reportToast && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 text-xs px-3 py-2 z-50 animate-fade-in whitespace-nowrap font-display"
+          style={{
+            background: "#0f380f",
+            color: "#8fc0e8",
+            border: "2px solid #5b9cd8",
+            boxShadow: "2px 2px 0 rgba(0,0,0,0.6)",
+          }}
+        >
           {reportToast}
         </div>
       )}
@@ -288,7 +307,7 @@ export default function QuestionsPage() {
     <Suspense
       fallback={
         <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-          <p className="text-muted">문제 로딩 중...</p>
+          <p className="text-muted font-display animate-blink">&gt; LOADING...</p>
         </div>
       }
     >

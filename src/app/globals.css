@@ -3,49 +3,58 @@
 :root {
   color-scheme: dark;
 
-  /* 서피스 / 텍스트 */
-  --background: #0b1220;
-  --foreground: #e2e8f0;
-  --card: #141d2e;
-  --card-elevated: #1b2540;
-  --border: #2a3548;
-  --muted: #94a3b8;
-  --muted-bg: #1b2540;
+  /* 서피스 / 텍스트 — 딥 브라운 RPG 기본 */
+  --background: #1a1410;
+  --foreground: #e6d3a3;
+  --card: #2a1f17;
+  --card-elevated: #3a2a1e;
+  --border: #5a4530;
+  --muted: #8a7050;
+  --muted-bg: #231a13;
 
-  /* 브랜드 */
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --on-primary: #ffffff;
+  /* 픽셀 RPG 팔레트 */
+  --gb-green: #9bbc0f;
+  --gb-dark: #0f380f;
+  --parchment: #e6d3a3;
+  --blood: #b83232;
+  --gold: #e8b923;
+  --mana: #5b9cd8;
+  --forest: #4a7a3c;
 
-  /* info (blue) */
-  --info: #60a5fa;
-  --info-bg: rgba(59, 130, 246, 0.15);
-  --info-fg: #93c5fd;
-  --info-border: rgba(59, 130, 246, 0.35);
+  /* 브랜드 — 게임보이 그린 */
+  --primary: #9bbc0f;
+  --primary-light: #d4e27a;
+  --on-primary: #0f380f;
 
-  /* success (green) */
-  --success: #22c55e;
-  --success-bg: rgba(34, 197, 94, 0.15);
-  --success-fg: #86efac;
-  --success-border: rgba(34, 197, 94, 0.35);
+  /* info (mana blue) */
+  --info: #5b9cd8;
+  --info-bg: rgba(91, 156, 216, 0.15);
+  --info-fg: #8fc0e8;
+  --info-border: rgba(91, 156, 216, 0.5);
 
-  /* danger (red) */
-  --danger: #ef4444;
-  --danger-bg: rgba(239, 68, 68, 0.15);
-  --danger-fg: #fca5a5;
-  --danger-border: rgba(239, 68, 68, 0.35);
+  /* success (forest) */
+  --success: #9bbc0f;
+  --success-bg: rgba(155, 188, 15, 0.15);
+  --success-fg: #d4e27a;
+  --success-border: rgba(155, 188, 15, 0.5);
 
-  /* warning (yellow/amber) */
-  --warning: #fbbf24;
-  --warning-bg: rgba(251, 191, 36, 0.15);
-  --warning-fg: #fcd34d;
-  --warning-border: rgba(251, 191, 36, 0.35);
+  /* danger (blood red) */
+  --danger: #b83232;
+  --danger-bg: rgba(184, 50, 50, 0.15);
+  --danger-fg: #e86060;
+  --danger-border: rgba(184, 50, 50, 0.5);
 
-  /* accent (orange) */
-  --accent: #fb923c;
-  --accent-bg: rgba(251, 146, 60, 0.15);
-  --accent-fg: #fdba74;
-  --accent-border: rgba(251, 146, 60, 0.35);
+  /* warning (gold) */
+  --warning: #e8b923;
+  --warning-bg: rgba(232, 185, 35, 0.15);
+  --warning-fg: #f5d472;
+  --warning-border: rgba(232, 185, 35, 0.5);
+
+  /* accent (royal purple) */
+  --accent: #8b5fb8;
+  --accent-bg: rgba(139, 95, 184, 0.15);
+  --accent-fg: #c4a4e0;
+  --accent-border: rgba(139, 95, 184, 0.5);
 }
 
 @theme inline {
@@ -86,15 +95,35 @@
   --color-accent-fg: var(--accent-fg);
   --color-accent-border: var(--accent-border);
 
+  --color-gb-green: var(--gb-green);
+  --color-gb-dark: var(--gb-dark);
+  --color-parchment: var(--parchment);
+  --color-blood: var(--blood);
+  --color-gold: var(--gold);
+  --color-mana: var(--mana);
+
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-press-start), var(--font-geist-sans);
+  --font-retro: var(--font-vt323), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(155, 188, 15, 0.03) 0%, transparent 50%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(138, 112, 80, 0.02) 0px,
+      rgba(138, 112, 80, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  image-rendering: pixelated;
 }
 
 html {
@@ -106,12 +135,60 @@ main {
   padding-bottom: 6rem;
 }
 
+.font-display {
+  font-family: var(--font-display), monospace;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+.font-retro {
+  font-family: var(--font-retro), monospace;
+  font-size: 1.15em;
+  letter-spacing: 0.02em;
+}
+
+/* 픽셀 윈도우 (9-slice 느낌) */
+.pixel-window {
+  background: var(--card);
+  border: 4px solid var(--parchment);
+  border-radius: 0;
+  box-shadow:
+    inset 0 0 0 2px var(--background),
+    inset 0 0 0 4px var(--border),
+    4px 4px 0 rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.pixel-panel {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 0;
+  box-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.4),
+    inset 1px 1px 0 rgba(230, 211, 163, 0.1);
+}
+
+.pixel-button {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: 2px solid var(--gb-dark);
+  border-radius: 0;
+  box-shadow:
+    2px 2px 0 var(--gb-dark),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.05s ease;
+}
+.pixel-button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--gb-dark);
+}
+
+/* 애니메이션 */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .animate-fade-in {
-  animation: fade-in 0.2s ease-out;
+  animation: fade-in 0.12s steps(3, end);
 }
 
 @keyframes slide-up {
@@ -119,5 +196,48 @@ main {
   to { transform: translateY(0); }
 }
 .animate-slide-up {
-  animation: slide-up 0.25s ease-out;
+  animation: slide-up 0.2s steps(6, end);
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.animate-pop-in {
+  animation: pop-in 0.25s steps(4, end);
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.animate-pixel-bounce {
+  animation: pixel-bounce 0.6s steps(4, end) infinite;
+}
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scaleY(1); filter: brightness(1); }
+  25% { transform: scaleY(1.1); filter: brightness(1.2); }
+  75% { transform: scaleY(0.95); filter: brightness(0.9); }
+}
+.animate-flame {
+  animation: flame-flicker 0.5s steps(2) infinite;
+}
+
+@keyframes shake-pixel {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+.animate-shake {
+  animation: shake-pixel 0.25s steps(2) 2;
 }

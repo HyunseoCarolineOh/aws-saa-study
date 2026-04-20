@@ -177,45 +177,64 @@ export default function MockExamStartPage() {
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  // --- 로딩 ---
   if (phase === "loading") {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">모의고사 준비 중... (도메인별 10문제 선별)</p>
+        <p className="text-muted font-display animate-blink">&gt; BOSS SUMMONING...</p>
       </div>
     );
   }
 
-  // --- 결과 ---
   if (phase === "result" && results) {
     const score = Math.round((results.correct / results.total) * 1000);
     const passed = score >= 720;
     return (
       <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-        <h1 className="text-xl font-bold mb-4">모의고사 결과</h1>
-
-        <div className={`rounded-2xl p-6 mb-4 text-on-primary text-center ${passed ? "bg-success" : "bg-danger"}`}>
-          <p className="text-sm opacity-80 mb-1">{passed ? "합격!" : "불합격"}</p>
-          <p className="text-4xl font-bold mb-1">{score} / 1000</p>
-          <p className="text-sm opacity-80">정답 {results.correct} / {results.total}문제 (합격 기준: 720점)</p>
+        <div className="mb-4">
+          <p className="text-[9px] font-display text-gold mb-1">&gt; BATTLE RESULT</p>
+          <h1 className="text-sm font-display font-black text-gb-green">VERDICT</h1>
         </div>
 
-        {/* 도메인별 정답률 */}
-        <div className="bg-card rounded-xl border border-border p-4 mb-4">
-          <h2 className="font-semibold mb-3">도메인별 정답률</h2>
+        <div
+          className="p-6 mb-4 text-center animate-pop-in pixel-window"
+          style={{ borderColor: passed ? "#9bbc0f" : "#b83232" }}
+        >
+          <p className="text-3xl mb-2">{passed ? "★" : "×"}</p>
+          <p className="text-xs font-display mb-2" style={{ color: passed ? "#d4e27a" : "#e86060" }}>
+            {passed ? "★ VICTORY!! ★" : "× GAME OVER ×"}
+          </p>
+          <p className="text-3xl font-display font-black leading-none mb-1" style={{ color: passed ? "#d4e27a" : "#e86060" }}>
+            {score}
+            <span className="text-lg opacity-70"> / 1000</span>
+          </p>
+          <p className="text-[10px] text-muted mt-2 font-retro">
+            HIT {results.correct} / {results.total} · PASS 720
+          </p>
+        </div>
+
+        <div className="pixel-panel p-4 mb-4">
+          <h2 className="font-display text-xs text-mana mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
+            ▲ DOMAIN
+          </h2>
           <div className="space-y-3">
             {Object.entries(results.domainScores).map(([domain, s]) => {
               const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+              const good = pct >= 70;
               return (
                 <div key={domain}>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs mb-1.5 font-retro">
                     <span>{domain}</span>
-                    <span className="text-muted">{s.correct}/{s.total} ({pct}%)</span>
+                    <span style={{ color: good ? "#9bbc0f" : "#b83232" }} className="font-display text-[10px]">
+                      {s.correct}/{s.total} · {pct}%
+                    </span>
                   </div>
-                  <div className="bg-border rounded-full h-2">
+                  <div className="h-2" style={{ background: "#0f380f", border: "1px solid var(--border)" }}>
                     <div
-                      className={`rounded-full h-2 ${pct >= 70 ? "bg-success" : "bg-danger"}`}
-                      style={{ width: `${pct}%` }}
+                      className="h-full transition-[width] duration-300"
+                      style={{
+                        width: `${pct}%`,
+                        background: good ? "#9bbc0f" : "#b83232",
+                      }}
                     />
                   </div>
                 </div>
@@ -224,36 +243,44 @@ export default function MockExamStartPage() {
           </div>
         </div>
 
-        {/* 오답 해설 */}
         {results.wrongQuestions.length > 0 && (
-          <div className="bg-card rounded-xl border border-border p-4 mb-4">
-            <h2 className="font-semibold mb-3">오답 해설 ({results.wrongQuestions.length}문제)</h2>
+          <div className="pixel-panel p-4 mb-4" style={{ borderColor: "#b83232" }}>
+            <h2 className="font-display text-xs text-blood mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
+              × MISSES ({results.wrongQuestions.length})
+            </h2>
             <div className="space-y-4">
               {results.wrongQuestions.map(({ index, question, selected }) => (
-                <div key={question.id} className="border-b border-border pb-4 last:border-0 last:pb-0">
-                  <p className="text-xs text-muted mb-1">문제 {index + 1}</p>
-                  <p className="text-sm leading-relaxed mb-2 whitespace-pre-line">{question.question_text}</p>
+                <div key={question.id} className="pb-4 last:pb-0" style={{ borderBottom: "1px dashed var(--border)" }}>
+                  <p className="text-[10px] font-display text-muted mb-1">Q{index + 1}</p>
+                  <p className="text-sm leading-relaxed mb-2 whitespace-pre-line font-retro">{question.question_text}</p>
 
                   <div className="space-y-1 mb-2">
                     {question.options.map((opt) => {
                       const isSelected = selected.includes(opt.label);
                       const isCorrect = question.correct_answers.includes(opt.label);
-                      let style = "text-muted";
-                      if (isCorrect) style = "text-success-fg font-medium";
-                      if (isSelected && !isCorrect) style = "text-danger-fg line-through";
+                      let cls = "text-muted";
+                      if (isCorrect) cls = "text-gb-green font-bold";
+                      if (isSelected && !isCorrect) cls = "text-blood line-through";
                       return (
-                        <p key={opt.label} className={`text-xs ${style}`}>
+                        <p key={opt.label} className={`text-xs font-retro ${cls}`}>
                           {opt.label}. {opt.text}
                           {isCorrect && " ✓"}
-                          {isSelected && !isCorrect && " (내 답)"}
+                          {isSelected && !isCorrect && " [MY]"}
                         </p>
                       );
                     })}
                   </div>
 
                   {question.explanation && (
-                    <div className="bg-info-bg border border-info-border rounded-lg p-3 mt-2">
-                      <p className="text-xs text-info-fg leading-relaxed">{question.explanation}</p>
+                    <div
+                      className="p-3 mt-2 text-xs leading-relaxed font-retro"
+                      style={{
+                        background: "rgba(91, 156, 216, 0.08)",
+                        color: "var(--info-fg)",
+                        border: "2px solid var(--info-border)",
+                      }}
+                    >
+                      {question.explanation}
                     </div>
                   )}
                 </div>
@@ -263,18 +290,28 @@ export default function MockExamStartPage() {
         )}
 
         <div className="flex gap-2">
-          <Link href="/mock-exam" className="flex-1 block bg-card border border-border text-center py-3 rounded-xl font-medium text-sm">
-            시험 기록 보기
+          <Link
+            href="/mock-exam"
+            className="flex-1 block text-center py-3 text-sm font-display tracking-widest pixel-button"
+            style={{
+              background: "#c4a4e0",
+              color: "#0f380f",
+              borderColor: "#0f380f",
+            }}
+          >
+            &gt; LOG
           </Link>
-          <Link href="/" className="flex-1 block bg-primary text-on-primary text-center py-3 rounded-xl font-medium text-sm">
-            홈으로
+          <Link
+            href="/"
+            className="flex-1 block text-center py-3 text-sm font-display tracking-widest pixel-button"
+          >
+            &gt; HOME
           </Link>
         </div>
       </div>
     );
   }
 
-  // --- 시험 진행 ---
   if (questions.length === 0) return null;
 
   const q = questions[currentIndex];
@@ -282,104 +319,191 @@ export default function MockExamStartPage() {
   const expectedCount = detectMultiSelectCount(q.question_text);
   const isMulti = expectedCount > 1 || q.correct_answers.length > 1;
   const selectCount = Math.max(expectedCount, q.correct_answers.length);
-  const isTimeWarning = timeLeft < 180; // 3분 미만
+  const isTimeWarning = timeLeft < 180;
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-2 pb-24">
-      {/* 상단 바: 타이머 + 진행률 */}
-      <div className="sticky top-0 bg-background z-10 pb-2 pt-2">
+      <div
+        className="sticky top-0 z-10 pb-2 pt-2"
+        style={{ background: "linear-gradient(180deg, var(--background) 80%, transparent)" }}
+      >
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium">{currentIndex + 1} / {questions.length}</span>
-          <span className={`text-sm font-mono font-bold ${isTimeWarning ? "text-danger" : "text-muted"}`}>
-            {formatTime(timeLeft)}
+          <span
+            className="text-[10px] font-display px-2 py-1"
+            style={{
+              background: "#0f380f",
+              color: "#9bbc0f",
+              border: "2px solid #9bbc0f",
+            }}
+          >
+            BOSS Q{currentIndex + 1}/{questions.length}
+          </span>
+          <span
+            className={`text-sm font-display px-2 py-1 ${isTimeWarning ? "animate-shake" : ""}`}
+            style={
+              isTimeWarning
+                ? {
+                    background: "#b83232",
+                    color: "#e6d3a3",
+                    border: "2px solid #1a1410",
+                    boxShadow: "2px 2px 0 #1a1410",
+                  }
+                : {
+                    background: "#0f380f",
+                    color: "#e8b923",
+                    border: "2px solid #e8b923",
+                  }
+            }
+          >
+            ⏱{formatTime(timeLeft)}
           </span>
         </div>
-        <div className="bg-border rounded-full h-1.5">
+        <div className="h-2" style={{ background: "#0f380f", border: "2px solid #5a4530" }}>
           <div
-            className="bg-primary rounded-full h-1.5 transition-all"
-            style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+            className="h-full transition-[width] duration-300"
+            style={{
+              width: `${((currentIndex + 1) / questions.length) * 100}%`,
+              background: "linear-gradient(180deg, #e8b923, #9bbc0f, #4a7a3c)",
+            }}
           />
         </div>
       </div>
 
-      {/* 문제 */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-3 mt-2">
+      <div className="p-4 mb-3 mt-2 pixel-window">
         {isMulti && (
-          <span className="inline-block text-xs bg-warning-bg text-warning-fg border border-warning-border px-2 py-0.5 rounded mb-2">{selectCount}개 선택</span>
+          <span
+            className="inline-block text-[10px] px-2 py-0.5 font-display mb-3"
+            style={{
+              background: "#e8b923",
+              color: "#1a1410",
+              border: "2px solid #1a1410",
+            }}
+          >
+            ⚡ PICK {selectCount}
+          </span>
         )}
-        <p className="text-sm leading-relaxed whitespace-pre-line">{q.question_text}</p>
+        <p className="text-sm leading-relaxed whitespace-pre-line font-retro text-parchment">{q.question_text}</p>
       </div>
 
-      {/* 선택지 */}
-      <div className="space-y-2 mb-3">
+      <div className="space-y-2 mb-4">
         {q.options.map((opt) => {
           const isSelected = selected.includes(opt.label);
           return (
             <button
               key={opt.label}
               onClick={() => handleSelect(opt.label)}
-              className={`w-full text-left rounded-xl border-2 p-3 transition-all active:scale-[0.99] ${
-                isSelected ? "border-primary bg-info-bg" : "border-border bg-card"
-              }`}
+              className="w-full text-left p-3 transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+              style={
+                isSelected
+                  ? {
+                      background: "rgba(91, 156, 216, 0.15)",
+                      border: "2px solid #5b9cd8",
+                      boxShadow: "2px 2px 0 #5b9cd8",
+                    }
+                  : {
+                      background: "#2a1f17",
+                      border: "2px solid #5a4530",
+                      boxShadow: "2px 2px 0 rgba(0,0,0,0.4)",
+                    }
+              }
             >
               <div className="flex gap-3">
-                <span className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                  isSelected ? "bg-primary text-on-primary" : "bg-muted-bg text-muted"
-                }`}>
+                <span
+                  className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-sm font-display font-bold"
+                  style={
+                    isSelected
+                      ? { background: "#5b9cd8", color: "#1a1410", border: "2px solid #1a1410" }
+                      : { background: "#0f380f", color: "#8a7050", border: "2px solid #5a4530" }
+                  }
+                >
                   {opt.label}
                 </span>
-                <span className="text-sm leading-relaxed">{opt.text}</span>
+                <span className="text-sm leading-relaxed font-retro pt-0.5">{opt.text}</span>
               </div>
             </button>
           );
         })}
       </div>
 
-      {/* 네비게이션 */}
       <div className="flex gap-2">
         <button
           onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
           disabled={currentIndex === 0}
-          className="flex-1 py-3 rounded-xl border border-border text-sm font-medium disabled:opacity-30"
+          className="flex-1 py-3 text-xs font-display disabled:opacity-30 pixel-button disabled:cursor-not-allowed"
+          style={{
+            background: "#2a1f17",
+            color: "#e6d3a3",
+            borderColor: "#5a4530",
+            boxShadow: "2px 2px 0 #5a4530",
+          }}
         >
-          이전
+          ◄ PREV
         </button>
         {currentIndex < questions.length - 1 ? (
           <button
             onClick={() => setCurrentIndex((p) => p + 1)}
-            className="flex-1 py-3 rounded-xl bg-primary text-on-primary text-sm font-medium"
+            className="flex-1 py-3 text-xs font-display pixel-button"
+            style={{
+              background: "#5b9cd8",
+              color: "#1a1410",
+              borderColor: "#1a1410",
+              boxShadow: "2px 2px 0 #1a1410",
+            }}
           >
-            다음
+            NEXT ►
           </button>
         ) : (
           <button
             onClick={handleFinish}
-            className="flex-1 py-3 rounded-xl bg-danger text-on-primary text-sm font-medium"
+            className="flex-1 py-3 text-xs font-display pixel-button"
+            style={{
+              background: "#b83232",
+              color: "#e6d3a3",
+              borderColor: "#1a1410",
+              boxShadow: "2px 2px 0 #1a1410",
+            }}
           >
-            시험 종료
+            &gt; SUBMIT!
           </button>
         )}
       </div>
 
-      {/* 문제 번호 그리드 */}
-      <div className="mt-4">
-        <p className="text-xs text-muted mb-2">문제 번호 (클릭하여 이동)</p>
+      <div className="mt-5">
+        <p className="text-[10px] font-display text-muted mb-2">&gt; MAP</p>
         <div className="flex gap-1 flex-wrap">
-          {questions.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              className={`w-8 h-8 rounded text-xs font-medium ${
-                i === currentIndex
-                  ? "bg-primary text-on-primary"
-                  : answers[i]
-                  ? "bg-info-bg text-info-fg"
-                  : "bg-muted-bg text-muted"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+          {questions.map((_, i) => {
+            const isCurrent = i === currentIndex;
+            const isAnswered = !!answers[i];
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className="w-9 h-9 text-xs font-display font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                style={
+                  isCurrent
+                    ? {
+                        background: "#e8b923",
+                        color: "#1a1410",
+                        border: "2px solid #1a1410",
+                        boxShadow: "2px 2px 0 #1a1410",
+                      }
+                    : isAnswered
+                    ? {
+                        background: "rgba(155, 188, 15, 0.15)",
+                        color: "#9bbc0f",
+                        border: "2px solid #9bbc0f",
+                      }
+                    : {
+                        background: "#2a1f17",
+                        color: "#8a7050",
+                        border: "2px solid #5a4530",
+                      }
+                }
+              >
+                {(i + 1).toString().padStart(2, "0")}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

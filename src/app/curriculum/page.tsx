@@ -29,6 +29,13 @@ function getCurrentDay() {
   return Math.max(1, Math.min(14, Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1));
 }
 
+const TYPE_META = {
+  concept: { label: "STUDY", color: "#9bbc0f" },
+  practice: { label: "TRAIN", color: "#8fc0e8" },
+  drill: { label: "DRILL", color: "#c4a4e0" },
+  exam: { label: "BOSS", color: "#e86060" },
+} as const;
+
 export default function CurriculumPage() {
   const [currentDay] = useState(getCurrentDay());
   const [dailyStats, setDailyStats] = useState<Record<string, number>>({});
@@ -48,37 +55,31 @@ export default function CurriculumPage() {
     return d.toISOString().split("T")[0];
   }
 
-  function getTypeColor(type: string) {
-    switch (type) {
-      case "concept": return "bg-blue-500";
-      case "practice": return "bg-indigo-500";
-      case "drill": return "bg-purple-500";
-      case "exam": return "bg-red-500";
-      default: return "bg-gray-500";
-    }
-  }
-
-  function getTypeLabel(type: string) {
-    switch (type) {
-      case "concept": return "개념";
-      case "practice": return "훈련";
-      case "drill": return "실전";
-      case "exam": return "시험";
-      default: return "";
-    }
-  }
-
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold mb-1">2주 커리큘럼</h1>
-      <p className="text-sm text-muted mb-4">블로그 학습 전략 기반 체계적 일정</p>
+      <div className="mb-5">
+        <p className="text-[9px] font-display text-gold mb-1">&gt; WORLD MAP</p>
+        <h1 className="text-sm font-display font-black text-gb-green">STAGE SELECT</h1>
+        <p className="text-xs font-retro text-parchment mt-1">클리어할 스테이지를 선택하라</p>
+      </div>
 
-      {/* 주차 구분 */}
       {[1, 2].map((week) => (
         <div key={week} className="mb-6">
-          <h2 className="text-sm font-bold text-muted uppercase mb-3">
-            {week}주차 {week === 1 ? "(개념 + 사고력)" : "(실전 + 모의시험)"}
-          </h2>
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="text-[10px] font-display px-2 py-0.5"
+              style={{
+                background: week === 1 ? "#9bbc0f" : "#e8b923",
+                color: "#0f380f",
+                border: "2px solid #1a1410",
+              }}
+            >
+              WORLD {week}
+            </span>
+            <span className="text-xs font-retro text-parchment">
+              {week === 1 ? "BASICS + TRAINING" : "DRILL + BOSS"}
+            </span>
+          </div>
           <div className="space-y-2">
             {CURRICULUM.filter((c) => (week === 1 ? c.day <= 7 : c.day > 7)).map((item) => {
               const dateStr = getDayDate(item.day);
@@ -86,42 +87,72 @@ export default function CurriculumPage() {
               const isToday = item.day === currentDay;
               const isPast = item.day < currentDay;
               const isDone = solved >= item.target;
+              const meta = TYPE_META[item.type as keyof typeof TYPE_META];
+              const pct = Math.min(100, (solved / item.target) * 100);
 
               return (
                 <Link
                   key={item.day}
                   href={item.type === "exam" ? "/mock-exam" : "/questions"}
-                  className={`block bg-card rounded-xl border p-4 transition-all ${
-                    isToday ? "border-primary shadow-md" : "border-border"
-                  } ${isPast && !isToday ? "opacity-70" : ""}`}
+                  className="block p-3 pixel-panel transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+                  style={{
+                    borderColor: isToday ? "#e8b923" : meta.color,
+                    background: isToday ? "rgba(232, 185, 35, 0.1)" : "#2a1f17",
+                    opacity: isPast && !isToday ? 0.6 : 1,
+                    boxShadow: isToday ? "2px 2px 0 #e8b923" : "2px 2px 0 rgba(0,0,0,0.4)",
+                  }}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Day 번호 */}
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                      isDone ? "bg-success" : isPast ? "bg-muted" : getTypeColor(item.type)
-                    }`}>
-                      {isDone ? "\u2713" : item.day}
+                    <div
+                      className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-sm font-display font-black"
+                      style={{
+                        background: isDone ? "#9bbc0f" : meta.color,
+                        color: "#0f380f",
+                        border: "2px solid #0f380f",
+                        boxShadow: "2px 2px 0 #0f380f",
+                      }}
+                    >
+                      {isDone ? "✓" : item.day.toString().padStart(2, "0")}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-medium text-sm">{item.title}</span>
-                        {isToday && <span className="text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded">TODAY</span>}
+                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                        <span
+                          className="text-[9px] font-display px-1.5 py-0.5"
+                          style={{
+                            background: meta.color,
+                            color: "#0f380f",
+                            border: "1px solid #0f380f",
+                          }}
+                        >
+                          {meta.label}
+                        </span>
+                        <span className="font-retro font-bold text-sm">{item.title}</span>
+                        {isToday && (
+                          <span
+                            className="text-[9px] font-display px-1.5 py-0.5 animate-blink"
+                            style={{
+                              background: "#e8b923",
+                              color: "#1a1410",
+                            }}
+                          >
+                            ★ NOW
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-muted">{item.desc}</p>
+                      <p className="text-xs font-retro text-parchment leading-snug">{item.desc}</p>
 
-                      {/* 진도 바 */}
                       <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 bg-border rounded-full h-1.5">
+                        <div className="flex-1 h-1.5" style={{ background: "#0f380f", border: "1px solid #5a4530" }}>
                           <div
-                            className={`rounded-full h-1.5 ${isDone ? "bg-success" : "bg-primary"}`}
-                            style={{ width: `${Math.min(100, (solved / item.target) * 100)}%` }}
+                            className="h-full transition-[width] duration-300"
+                            style={{
+                              width: `${pct}%`,
+                              background: isDone ? "#9bbc0f" : meta.color,
+                            }}
                           />
                         </div>
-                        <span className="text-[10px] text-muted">{solved}/{item.target}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${getTypeColor(item.type)} text-white`}>
-                          {getTypeLabel(item.type)}
-                        </span>
+                        <span className="text-[10px] font-display text-muted">{solved}/{item.target}</span>
                       </div>
                     </div>
                   </div>

@@ -77,36 +77,58 @@ export default function CorrectionReportSheet({
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg bg-card border-t border-border rounded-t-2xl animate-slide-up" style={{ maxHeight: "85vh" }}>
+      <div
+        className="relative w-full max-w-lg animate-slide-up"
+        style={{
+          maxHeight: "85vh",
+          background: "#2a1f17",
+          border: "4px solid #b83232",
+          borderBottom: "none",
+          boxShadow: "inset 0 0 0 2px #1a1410, inset 0 0 0 4px #5a4530",
+        }}
+      >
         <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: "85vh" }}>
           <div className="flex justify-center">
-            <div className="w-10 h-1 bg-border rounded-full" />
+            <div className="w-10 h-1" style={{ background: "#b83232" }} />
           </div>
 
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold">문제 수정 요청</h3>
+            <h3 className="text-xs font-display text-blood">⚠ REPORT BUG</h3>
           </div>
 
           {!enabled && (
-            <div className="bg-warning-bg border border-warning-border text-warning-fg text-xs rounded-lg p-2">
-              Supabase 환경변수가 설정되지 않아 신고를 보낼 수 없습니다.
+            <div
+              className="text-xs p-3 font-retro"
+              style={{ background: "rgba(232, 185, 35, 0.08)", border: "2px solid #e8b923", color: "var(--warning-fg)" }}
+            >
+              &gt; SUPABASE NOT SET
             </div>
           )}
 
           {isChoiceReport && question.options.length > 0 && (
             <div>
-              <label className="block text-xs text-muted mb-1">어느 선지인가요?</label>
+              <label className="block text-[10px] text-muted mb-1.5 font-display">&gt; WHICH OPT?</label>
               <div className="flex gap-2">
                 {question.options.map((opt) => (
                   <button
                     key={opt.label}
                     type="button"
                     onClick={() => setOptionLabel(opt.label)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    className="flex-1 py-2 text-sm font-display font-bold transition-transform active:translate-x-[1px] active:translate-y-[1px]"
+                    style={
                       optionLabel === opt.label
-                        ? "bg-primary text-on-primary border-primary"
-                        : "bg-card text-muted border-border"
-                    }`}
+                        ? {
+                            background: "#b83232",
+                            color: "#e6d3a3",
+                            border: "2px solid #1a1410",
+                            boxShadow: "2px 2px 0 #1a1410",
+                          }
+                        : {
+                            background: "#0f380f",
+                            color: "var(--muted)",
+                            border: "2px solid var(--border)",
+                          }
+                    }
                   >
                     {opt.label}
                   </button>
@@ -116,43 +138,59 @@ export default function CorrectionReportSheet({
           )}
 
           <div>
-            <label className="block text-xs text-muted mb-1">유형</label>
+            <label className="block text-[10px] text-muted mb-1.5 font-display">&gt; TYPE</label>
             <div className="space-y-1.5">
-              {TYPE_ORDER.map((t) => (
-                <label
-                  key={t}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer text-sm ${
-                    reportType === t ? "border-primary bg-info-bg" : "border-border"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="report-type"
-                    value={t}
-                    checked={reportType === t}
-                    onChange={() => setReportType(t)}
-                    className="accent-primary"
-                  />
-                  <span>{CORRECTION_TYPE_LABELS[t]}</span>
-                </label>
-              ))}
+              {TYPE_ORDER.map((t) => {
+                const active = reportType === t;
+                return (
+                  <label
+                    key={t}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer text-sm"
+                    style={
+                      active
+                        ? { background: "rgba(184, 50, 50, 0.1)", border: "2px solid #b83232" }
+                        : { background: "#2a1f17", border: "2px solid #5a4530" }
+                    }
+                  >
+                    <input
+                      type="radio"
+                      name="report-type"
+                      value={t}
+                      checked={active}
+                      onChange={() => setReportType(t)}
+                      style={{ accentColor: "#b83232" }}
+                    />
+                    <span className="font-retro" style={{ color: active ? "#e86060" : "var(--foreground)" }}>
+                      {CORRECTION_TYPE_LABELS[t]}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-muted mb-1">추가 설명 (선택)</label>
+            <label className="block text-[10px] text-muted mb-1.5 font-display">&gt; NOTES (OPT)</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="어디가 어떻게 잘못됐는지 간단히 적어주세요"
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm leading-relaxed resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
+              placeholder="어디가 어떻게 잘못됐는지..."
+              className="w-full px-3 py-2.5 text-sm leading-relaxed resize-none focus:outline-none font-retro"
+              style={{
+                background: "#0f380f",
+                border: "2px solid var(--border)",
+                color: "var(--foreground)",
+              }}
               rows={3}
             />
           </div>
 
           {error && (
-            <div className="bg-danger-bg border border-danger-border text-danger-fg text-xs rounded-lg p-2">
-              전송 실패: {error}
+            <div
+              className="text-xs p-3 font-retro"
+              style={{ background: "rgba(184, 50, 50, 0.1)", border: "2px solid #b83232", color: "var(--danger-fg)" }}
+            >
+              &gt; SEND FAILED: {error}
             </div>
           )}
 
@@ -160,17 +198,24 @@ export default function CorrectionReportSheet({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium text-muted"
+              className="flex-1 py-2.5 text-xs font-display text-muted"
+              style={{ background: "#2a1f17", border: "2px solid #5a4530", boxShadow: "2px 2px 0 #5a4530" }}
             >
-              취소
+              CANCEL
             </button>
             <button
               type="button"
               onClick={handleSave}
               disabled={!enabled || submitting}
-              className="flex-1 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-medium active:scale-[0.98] transition-transform disabled:opacity-40"
+              className="flex-1 py-2.5 text-xs font-display pixel-button disabled:opacity-40"
+              style={{
+                background: "#b83232",
+                color: "#e6d3a3",
+                borderColor: "#1a1410",
+                boxShadow: "2px 2px 0 #1a1410",
+              }}
             >
-              {submitting ? "전송 중..." : "신고"}
+              {submitting ? "SENDING..." : "> SEND"}
             </button>
           </div>
         </div>

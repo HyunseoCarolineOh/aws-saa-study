@@ -14,48 +14,77 @@ export default function MockExamPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-      <h1 className="text-xl font-bold mb-4">미니 모의고사</h1>
+      <div className="mb-5">
+        <p className="text-[9px] font-display text-gold mb-1">&gt; FINAL BOSS</p>
+        <h1 className="text-sm font-display font-black text-blood">BOSS ROOM</h1>
+        <p className="text-xs font-retro text-parchment mt-1">실전 시뮬레이션에 도전하라</p>
+      </div>
 
-      <div className="bg-card rounded-xl border border-border p-6 mb-4">
-        <h2 className="font-semibold text-lg mb-2">SAA-C03 미니 모의고사</h2>
-        <div className="space-y-2 text-sm text-muted mb-6">
-          <p>&#x2022; 10문제 / 15분</p>
-          <p>&#x2022; 합격 기준: 720점 이상 (1000점 만점)</p>
-          <p>&#x2022; SAA-C03 실제 출제 비중에 따라 도메인별 선별</p>
-          <p>&#x2022; 보안 30% · 복원력 26% · 고성능 24% · 비용 20%</p>
+      <div className="p-4 mb-4 pixel-window" style={{ borderColor: "#e8b923" }}>
+        <div className="flex items-start gap-3 mb-4">
+          <div className="text-3xl animate-pixel-bounce" style={{ imageRendering: "pixelated" }}>👑</div>
+          <div className="flex-1">
+            <p className="font-display font-black text-xs text-gold">SAA-C03 MINI BOSS</p>
+            <p className="text-xs text-parchment mt-0.5 font-retro">10 QUESTIONS · 15 MIN</p>
+          </div>
+        </div>
+
+        <div className="space-y-1 text-xs text-parchment font-retro mb-4" style={{ padding: "8px 12px", background: "#0f380f", border: "2px solid var(--border)" }}>
+          <p>&gt; CLEAR: 720 / 1000</p>
+          <p>&gt; SAA-C03 출제 비중 반영</p>
+          <p>&gt; SEC 30% · RES 26% · PERF 24% · COST 20%</p>
         </div>
 
         <Link
           href="/mock-exam/start"
-          className="block w-full bg-primary text-on-primary text-center py-3 rounded-xl font-medium"
+          className="block w-full text-center py-3 font-display font-bold text-sm pixel-button"
+          style={{ letterSpacing: "0.1em" }}
         >
-          모의고사 시작
+          &gt; ENGAGE!
         </Link>
       </div>
 
-      <div className="bg-card rounded-xl border border-border p-4">
-        <h2 className="font-semibold mb-3">이전 시험 기록</h2>
+      <div className="pixel-panel p-4">
+        <h2 className="font-display text-xs text-mana mb-3 pb-2" style={{ borderBottom: "2px dashed var(--border)" }}>
+          ▲ BATTLE LOG
+        </h2>
         {results.length === 0 ? (
-          <p className="text-sm text-muted text-center py-4">아직 시험 기록이 없습니다</p>
+          <p className="text-xs font-display text-muted text-center py-6">&gt; NO BATTLES</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {results.map((exam) => {
               const date = new Date(exam.finished_at);
               const dateStr = `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
               return (
-                <div key={exam.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <div
+                  key={exam.id}
+                  className="flex items-center justify-between py-2 px-2"
+                  style={{
+                    background: exam.passed ? "rgba(155, 188, 15, 0.08)" : "rgba(184, 50, 50, 0.08)",
+                    border: `2px solid ${exam.passed ? "#9bbc0f" : "#b83232"}`,
+                  }}
+                >
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2 py-0.5 rounded font-medium ${exam.passed ? "bg-success-bg text-success-fg border border-success-border" : "bg-danger-bg text-danger-fg border border-danger-border"}`}>
-                        {exam.passed ? "합격" : "불합격"}
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span
+                        className="text-[9px] px-1.5 py-0.5 font-display"
+                        style={
+                          exam.passed
+                            ? { background: "#9bbc0f", color: "#0f380f", border: "1px solid #0f380f" }
+                            : { background: "#b83232", color: "#e6d3a3", border: "1px solid #1a1410" }
+                        }
+                      >
+                        {exam.passed ? "★ WIN" : "× LOSE"}
                       </span>
-                      <span className="text-sm font-bold">{exam.score}점</span>
+                      <span className="text-sm font-display font-bold text-parchment">{exam.score}</span>
                     </div>
-                    <p className="text-xs text-muted mt-0.5">{dateStr} · 정답 {exam.correct_count}/{exam.total_questions}</p>
+                    <p className="text-[10px] text-muted font-retro">
+                      {dateStr} · {exam.correct_count}/{exam.total_questions}
+                    </p>
                   </div>
                   <div className="text-right">
                     {Object.entries(exam.domain_scores).map(([domain, s]) => (
-                      <p key={domain} className="text-[10px] text-muted">
+                      <p key={domain} className="text-[9px] text-muted font-retro">
                         {domain.replace(" 아키텍처", "")} {s.correct}/{s.total}
                       </p>
                     ))}
