@@ -27,6 +27,9 @@ function loadQuestions() {
             correct_answers: q.correct_answers || [],
             explanation: q.explanation || "",
             detailed_explanation: q.detailed_explanation || "",
+            option_analysis: q.option_analysis,
+            saa_tip: q.saa_tip,
+            explanation_source: q.explanation_source,
             related_services: q.related_services || [],
             source_url: q.source_url,
           });
@@ -56,7 +59,11 @@ function loadQuestions() {
             question_text: q.question_text,
             options: q.options,
             correct_answers: q.correct_answers || q.marked_answer || [],
-            explanation: "",
+            explanation: q.explanation || "",
+            detailed_explanation: q.detailed_explanation || "",
+            option_analysis: q.option_analysis,
+            saa_tip: q.saa_tip,
+            explanation_source: q.explanation_source,
             related_services: q.related_services || [],
           });
         }

@@ -1,3 +1,10 @@
+export interface OptionAnalysis {
+  label: string;
+  is_correct: boolean;
+  verdict: string;
+  reason: string;
+}
+
 export interface Question {
   id: string;
   source: "nxtcloud" | "examtopics";
@@ -12,6 +19,10 @@ export interface Question {
   marked_answer?: string[];
   explanation?: string;
   detailed_explanation?: string;
+  option_analysis?: OptionAnalysis[];
+  saa_tip?: string;
+  explanation_source?: string;
+  explanation_generated_at?: string;
   discussion_summary?: string;
   related_services: string[];
   source_url?: string;

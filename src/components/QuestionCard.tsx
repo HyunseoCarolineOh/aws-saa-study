@@ -341,16 +341,6 @@ export default function QuestionCard({
                           {question.detailed_explanation || (
                             <div className="text-center body-sub py-4">
                               <p className="mb-2">상세 풀이가 아직 없어요</p>
-                              {question.source_url && (
-                                <a
-                                  href={question.source_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="pixel-label text-gb-green"
-                                >
-                                  원본 확인 ►
-                                </a>
-                              )}
                             </div>
                           )}
                         </div>
@@ -377,16 +367,28 @@ export default function QuestionCard({
                     )}
                   </div>
 
-                  {question.source_url && (
-                    <a
-                      href={question.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-center py-2.5 pixel-label text-gb-green"
-                      style={{ borderTop: "2px dashed var(--border)" }}
+                  {question.saa_tip && explanationTab !== "services" && (
+                    <div
+                      className="px-4 py-3 body-sub"
+                      style={{
+                        borderTop: "2px dashed var(--border)",
+                        background: "rgba(155, 188, 15, 0.06)",
+                      }}
                     >
-                      &gt; 원본 풀이 보기 (TISTORY) ►
-                    </a>
+                      <p className="pixel-label mb-1" style={{ color: "var(--gb-green)" }}>
+                        💡 SAA 시험 팁
+                      </p>
+                      <p className="whitespace-pre-line">{question.saa_tip}</p>
+                    </div>
+                  )}
+
+                  {question.explanation_source && (
+                    <p
+                      className="text-center py-2 pixel-label text-muted"
+                      style={{ borderTop: "2px dashed var(--border)", fontSize: "0.7rem" }}
+                    >
+                      ※ 본 해설은 AI({question.explanation_source})가 생성했습니다
+                    </p>
                   )}
                 </div>
               )}
