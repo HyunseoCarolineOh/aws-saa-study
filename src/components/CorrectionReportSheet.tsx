@@ -77,36 +77,64 @@ export default function CorrectionReportSheet({
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg bg-card border-t border-border rounded-t-2xl animate-slide-up" style={{ maxHeight: "85vh" }}>
+      <div
+        className="relative w-full max-w-lg rounded-t-[32px] animate-slide-up"
+        style={{
+          maxHeight: "85vh",
+          background: "linear-gradient(180deg, rgba(26, 18, 56, 0.98), rgba(13, 8, 35, 0.98))",
+          border: "1.5px solid rgba(255, 107, 157, 0.4)",
+          borderBottom: "none",
+          backdropFilter: "blur(18px)",
+        }}
+      >
         <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: "85vh" }}>
           <div className="flex justify-center">
-            <div className="w-10 h-1 bg-border rounded-full" />
+            <div
+              className="w-12 h-1.5 rounded-full"
+              style={{ background: "linear-gradient(90deg, #ff6b9d, #c86fff)" }}
+            />
           </div>
 
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold">문제 수정 요청</h3>
+            <h3 className="text-base font-black text-jelly-pink">⚠️ 수정 요청 보내기</h3>
           </div>
 
           {!enabled && (
-            <div className="bg-warning-bg border border-warning-border text-warning-fg text-xs rounded-lg p-2">
-              Supabase 환경변수가 설정되지 않아 신고를 보낼 수 없습니다.
+            <div
+              className="text-xs rounded-2xl p-3"
+              style={{
+                background: "linear-gradient(135deg, rgba(255, 225, 86, 0.12), rgba(255, 160, 64, 0.08))",
+                border: "1.5px solid rgba(255, 225, 86, 0.4)",
+                color: "var(--warning-fg)",
+              }}
+            >
+              Supabase 환경변수가 없어 신고를 보낼 수 없어요.
             </div>
           )}
 
           {isChoiceReport && question.options.length > 0 && (
             <div>
-              <label className="block text-xs text-muted mb-1">어느 선지인가요?</label>
+              <label className="block text-xs text-muted mb-1.5 font-black">어느 선지인가요?</label>
               <div className="flex gap-2">
                 {question.options.map((opt) => (
                   <button
                     key={opt.label}
                     type="button"
                     onClick={() => setOptionLabel(opt.label)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    className="flex-1 py-2.5 rounded-2xl text-sm font-black transition-all active:scale-[0.95]"
+                    style={
                       optionLabel === opt.label
-                        ? "bg-primary text-on-primary border-primary"
-                        : "bg-card text-muted border-border"
-                    }`}
+                        ? {
+                            background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+                            color: "#ffffff",
+                            boxShadow: "0 4px 12px rgba(255, 107, 157, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+                          }
+                        : {
+                            background: "rgba(26, 18, 56, 0.85)",
+                            color: "var(--muted)",
+                            border: "1px solid var(--border)",
+                          }
+                    }
                   >
                     {opt.label}
                   </button>
@@ -116,43 +144,69 @@ export default function CorrectionReportSheet({
           )}
 
           <div>
-            <label className="block text-xs text-muted mb-1">유형</label>
+            <label className="block text-xs text-muted mb-1.5 font-black">유형</label>
             <div className="space-y-1.5">
-              {TYPE_ORDER.map((t) => (
-                <label
-                  key={t}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer text-sm ${
-                    reportType === t ? "border-primary bg-info-bg" : "border-border"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="report-type"
-                    value={t}
-                    checked={reportType === t}
-                    onChange={() => setReportType(t)}
-                    className="accent-primary"
-                  />
-                  <span>{CORRECTION_TYPE_LABELS[t]}</span>
-                </label>
-              ))}
+              {TYPE_ORDER.map((t) => {
+                const active = reportType === t;
+                return (
+                  <label
+                    key={t}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-2xl cursor-pointer text-sm transition-all"
+                    style={
+                      active
+                        ? {
+                            background: "linear-gradient(135deg, rgba(255, 107, 157, 0.14), rgba(200, 111, 255, 0.1))",
+                            border: "1.5px solid rgba(255, 107, 157, 0.5)",
+                          }
+                        : {
+                            background: "rgba(26, 18, 56, 0.5)",
+                            border: "1.5px solid var(--border)",
+                          }
+                    }
+                  >
+                    <input
+                      type="radio"
+                      name="report-type"
+                      value={t}
+                      checked={active}
+                      onChange={() => setReportType(t)}
+                      style={{ accentColor: "var(--jelly-pink)" }}
+                    />
+                    <span style={{ color: active ? "var(--jelly-pink)" : "var(--foreground)", fontWeight: active ? 900 : 600 }}>
+                      {CORRECTION_TYPE_LABELS[t]}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-muted mb-1">추가 설명 (선택)</label>
+            <label className="block text-xs text-muted mb-1.5 font-black">💭 추가 설명 (선택)</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="어디가 어떻게 잘못됐는지 간단히 적어주세요"
-              className="w-full border border-border rounded-xl px-3 py-2.5 text-sm leading-relaxed resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
+              placeholder="어디가 어떻게 잘못됐는지..."
+              className="w-full rounded-2xl px-3 py-2.5 text-sm leading-relaxed resize-none focus:outline-none"
+              style={{
+                background: "rgba(15, 8, 35, 0.8)",
+                border: "1.5px solid var(--border)",
+                color: "var(--foreground)",
+              }}
               rows={3}
             />
           </div>
 
           {error && (
-            <div className="bg-danger-bg border border-danger-border text-danger-fg text-xs rounded-lg p-2">
-              전송 실패: {error}
+            <div
+              className="text-xs rounded-2xl p-3"
+              style={{
+                background: "rgba(255, 77, 143, 0.14)",
+                border: "1.5px solid rgba(255, 77, 143, 0.4)",
+                color: "var(--danger-fg)",
+              }}
+            >
+              💥 전송 실패: {error}
             </div>
           )}
 
@@ -160,7 +214,8 @@ export default function CorrectionReportSheet({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium text-muted"
+              className="flex-1 py-3 rounded-[18px] text-sm font-black text-muted"
+              style={{ background: "rgba(255, 255, 255, 0.05)", border: "1px solid var(--border)" }}
             >
               취소
             </button>
@@ -168,9 +223,13 @@ export default function CorrectionReportSheet({
               type="button"
               onClick={handleSave}
               disabled={!enabled || submitting}
-              className="flex-1 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-medium active:scale-[0.98] transition-transform disabled:opacity-40"
+              className="flex-1 py-3 rounded-[18px] text-sm font-black text-on-primary active:scale-[0.97] active:translate-y-1 transition-all disabled:opacity-40"
+              style={{
+                background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+                boxShadow: "0 10px 24px -4px rgba(255, 107, 157, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.3)",
+              }}
             >
-              {submitting ? "전송 중..." : "신고"}
+              {submitting ? "🎀 전송 중..." : "✨ 신고 보내기"}
             </button>
           </div>
         </div>

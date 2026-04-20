@@ -29,6 +29,13 @@ function getCurrentDay() {
   return Math.max(1, Math.min(14, Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1));
 }
 
+const TYPE_META = {
+  concept: { emoji: "🌱", label: "개념", grad: "linear-gradient(135deg, #7bff9a, #4adede)" },
+  practice: { emoji: "💪", label: "훈련", grad: "linear-gradient(135deg, #4adede, #7b61ff)" },
+  drill: { emoji: "⚡", label: "실전", grad: "linear-gradient(135deg, #ff6b9d, #c86fff)" },
+  exam: { emoji: "👑", label: "보스", grad: "linear-gradient(135deg, #ffe156, #ffa040)" },
+} as const;
+
 export default function CurriculumPage() {
   const [currentDay] = useState(getCurrentDay());
   const [dailyStats, setDailyStats] = useState<Record<string, number>>({});
@@ -48,80 +55,98 @@ export default function CurriculumPage() {
     return d.toISOString().split("T")[0];
   }
 
-  function getTypeColor(type: string) {
-    switch (type) {
-      case "concept": return "bg-blue-500";
-      case "practice": return "bg-indigo-500";
-      case "drill": return "bg-purple-500";
-      case "exam": return "bg-red-500";
-      default: return "bg-gray-500";
-    }
-  }
-
-  function getTypeLabel(type: string) {
-    switch (type) {
-      case "concept": return "개념";
-      case "practice": return "훈련";
-      case "drill": return "실전";
-      case "exam": return "시험";
-      default: return "";
-    }
-  }
-
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-4">
-      <h1 className="text-xl font-bold mb-1">2주 커리큘럼</h1>
-      <p className="text-sm text-muted mb-4">블로그 학습 전략 기반 체계적 일정</p>
+      <div className="mb-5">
+        <p className="text-xs text-muted font-bold tracking-wide">ADVENTURE MAP</p>
+        <h1 className="text-2xl font-black text-jelly-pink">14일 모험 🗺️</h1>
+        <p className="text-xs text-muted mt-1">매일 하나씩 깨면서 전진해요!</p>
+      </div>
 
-      {/* 주차 구분 */}
       {[1, 2].map((week) => (
         <div key={week} className="mb-6">
-          <h2 className="text-sm font-bold text-muted uppercase mb-3">
-            {week}주차 {week === 1 ? "(개념 + 사고력)" : "(실전 + 모의시험)"}
-          </h2>
-          <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="text-xs font-black px-3 py-1 rounded-full text-on-primary"
+              style={{
+                background: week === 1 ? "linear-gradient(135deg, #7bff9a, #4adede)" : "linear-gradient(135deg, #ffe156, #ffa040)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
+              }}
+            >
+              Chapter {week}
+            </span>
+            <span className="text-xs text-muted font-bold">
+              {week === 1 ? "기초 + 훈련" : "실전 + 보스"}
+            </span>
+          </div>
+          <div className="space-y-2.5">
             {CURRICULUM.filter((c) => (week === 1 ? c.day <= 7 : c.day > 7)).map((item) => {
               const dateStr = getDayDate(item.day);
               const solved = dailyStats[dateStr] || 0;
               const isToday = item.day === currentDay;
               const isPast = item.day < currentDay;
               const isDone = solved >= item.target;
+              const meta = TYPE_META[item.type as keyof typeof TYPE_META];
+              const pct = Math.min(100, (solved / item.target) * 100);
 
               return (
                 <Link
                   key={item.day}
                   href={item.type === "exam" ? "/mock-exam" : "/questions"}
-                  className={`block bg-card rounded-xl border p-4 transition-all ${
-                    isToday ? "border-primary shadow-md" : "border-border"
-                  } ${isPast && !isToday ? "opacity-70" : ""}`}
+                  className={`block rounded-[24px] p-4 transition-all active:scale-[0.98] ${isToday ? "animate-glow-pulse" : ""}`}
+                  style={{
+                    background: isToday
+                      ? "linear-gradient(135deg, rgba(255, 107, 157, 0.16), rgba(200, 111, 255, 0.12))"
+                      : "linear-gradient(145deg, rgba(26, 18, 56, 0.85), rgba(35, 24, 80, 0.85))",
+                    border: isToday
+                      ? "1.5px solid rgba(255, 107, 157, 0.55)"
+                      : "1px solid rgba(255, 255, 255, 0.06)",
+                    opacity: isPast && !isToday ? 0.55 : 1,
+                    boxShadow: isToday
+                      ? "0 10px 28px -4px rgba(255, 107, 157, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08)"
+                      : "0 6px 16px rgba(0, 0, 0, 0.25)",
+                  }}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Day 번호 */}
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                      isDone ? "bg-success" : isPast ? "bg-muted" : getTypeColor(item.type)
-                    }`}>
-                      {isDone ? "\u2713" : item.day}
+                    <div
+                      className="flex-shrink-0 w-12 h-12 rounded-[18px] flex items-center justify-center text-lg font-black text-on-primary"
+                      style={{
+                        background: isDone ? "linear-gradient(135deg, #7bff9a, #4adede)" : meta.grad,
+                        boxShadow:
+                          "0 6px 14px rgba(0, 0, 0, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 0 rgba(0, 0, 0, 0.12)",
+                      }}
+                    >
+                      {isDone ? "✓" : item.day}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-medium text-sm">{item.title}</span>
-                        {isToday && <span className="text-[10px] bg-primary text-on-primary px-1.5 py-0.5 rounded">TODAY</span>}
+                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                        <span className="text-xs">{meta.emoji}</span>
+                        <span className="font-black text-sm">{item.title}</span>
+                        {isToday && (
+                          <span
+                            className="text-[10px] px-2 py-0.5 rounded-full font-black text-on-primary animate-jelly-bounce"
+                            style={{
+                              background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+                            }}
+                          >
+                            지금!
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-muted">{item.desc}</p>
+                      <p className="text-[11px] text-muted leading-snug font-semibold">{item.desc}</p>
 
-                      {/* 진도 바 */}
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 bg-border rounded-full h-1.5">
+                      <div className="flex items-center gap-2 mt-2.5">
+                        <div className="flex-1 rounded-full h-1.5 overflow-hidden" style={{ background: "rgba(15, 8, 35, 0.8)" }}>
                           <div
-                            className={`rounded-full h-1.5 ${isDone ? "bg-success" : "bg-primary"}`}
-                            style={{ width: `${Math.min(100, (solved / item.target) * 100)}%` }}
+                            className="h-full rounded-full transition-[width] duration-500"
+                            style={{
+                              width: `${pct}%`,
+                              background: isDone ? "linear-gradient(90deg, #7bff9a, #4adede)" : meta.grad,
+                            }}
                           />
                         </div>
-                        <span className="text-[10px] text-muted">{solved}/{item.target}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${getTypeColor(item.type)} text-white`}>
-                          {getTypeLabel(item.type)}
-                        </span>
+                        <span className="text-[10px] text-muted font-black">{solved}/{item.target}</span>
                       </div>
                     </div>
                   </div>

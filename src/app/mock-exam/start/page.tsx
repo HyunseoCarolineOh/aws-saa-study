@@ -177,45 +177,72 @@ export default function MockExamStartPage() {
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  // --- 로딩 ---
   if (phase === "loading") {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">모의고사 준비 중... (도메인별 10문제 선별)</p>
+        <p className="text-muted font-bold animate-jelly-bounce">🎀 보스 준비 중...</p>
       </div>
     );
   }
 
-  // --- 결과 ---
   if (phase === "result" && results) {
     const score = Math.round((results.correct / results.total) * 1000);
     const passed = score >= 720;
     return (
       <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-        <h1 className="text-xl font-bold mb-4">모의고사 결과</h1>
-
-        <div className={`rounded-2xl p-6 mb-4 text-on-primary text-center ${passed ? "bg-success" : "bg-danger"}`}>
-          <p className="text-sm opacity-80 mb-1">{passed ? "합격!" : "불합격"}</p>
-          <p className="text-4xl font-bold mb-1">{score} / 1000</p>
-          <p className="text-sm opacity-80">정답 {results.correct} / {results.total}문제 (합격 기준: 720점)</p>
+        <div className="mb-4">
+          <p className="text-xs text-muted font-bold tracking-wide">BATTLE RESULT</p>
+          <h1 className="text-2xl font-black text-jelly-pink">보스전 결과 🏁</h1>
         </div>
 
-        {/* 도메인별 정답률 */}
-        <div className="bg-card rounded-xl border border-border p-4 mb-4">
-          <h2 className="font-semibold mb-3">도메인별 정답률</h2>
+        <div
+          className="rounded-[28px] p-6 mb-4 text-center animate-pop-in text-on-primary"
+          style={
+            passed
+              ? {
+                  background: "linear-gradient(135deg, #7bff9a 0%, #4adede 100%)",
+                  boxShadow: "0 16px 44px -6px rgba(123, 255, 154, 0.5), inset 0 3px 0 rgba(255, 255, 255, 0.3)",
+                  color: "#0d0823",
+                }
+              : {
+                  background: "linear-gradient(135deg, #ff4d8f 0%, #c86fff 100%)",
+                  boxShadow: "0 16px 44px -6px rgba(255, 77, 143, 0.5), inset 0 3px 0 rgba(255, 255, 255, 0.3)",
+                }
+          }
+        >
+          <p className="text-4xl mb-2">{passed ? "🏆" : "💥"}</p>
+          <p className="text-sm font-black opacity-90 mb-1">{passed ? "승리!!" : "패배"}</p>
+          <p className="text-4xl font-black mb-1">
+            {score}<span className="text-xl opacity-70"> / 1000</span>
+          </p>
+          <p className="text-xs opacity-90 font-bold">
+            {results.correct} / {results.total}문제 명중 · 합격 720점
+          </p>
+        </div>
+
+        <div className="jelly-card p-5 mb-4">
+          <h2 className="font-black text-base text-jelly-purple mb-3">🎯 도메인별 명중률</h2>
           <div className="space-y-3">
             {Object.entries(results.domainScores).map(([domain, s]) => {
               const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+              const good = pct >= 70;
               return (
                 <div key={domain}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>{domain}</span>
-                    <span className="text-muted">{s.correct}/{s.total} ({pct}%)</span>
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="font-bold">{domain}</span>
+                    <span className={good ? "text-jelly-lime font-black" : "text-jelly-pink font-black"}>
+                      {s.correct}/{s.total} · {pct}%
+                    </span>
                   </div>
-                  <div className="bg-border rounded-full h-2">
+                  <div className="rounded-full h-2 overflow-hidden" style={{ background: "rgba(15, 8, 35, 0.8)" }}>
                     <div
-                      className={`rounded-full h-2 ${pct >= 70 ? "bg-success" : "bg-danger"}`}
-                      style={{ width: `${pct}%` }}
+                      className="h-full rounded-full transition-[width] duration-700"
+                      style={{
+                        width: `${pct}%`,
+                        background: good
+                          ? "linear-gradient(90deg, #7bff9a, #4adede)"
+                          : "linear-gradient(90deg, #ff4d8f, #c86fff)",
+                      }}
                     />
                   </div>
                 </div>
@@ -224,25 +251,26 @@ export default function MockExamStartPage() {
           </div>
         </div>
 
-        {/* 오답 해설 */}
         {results.wrongQuestions.length > 0 && (
-          <div className="bg-card rounded-xl border border-border p-4 mb-4">
-            <h2 className="font-semibold mb-3">오답 해설 ({results.wrongQuestions.length}문제)</h2>
+          <div className="jelly-card p-5 mb-4" style={{ borderColor: "rgba(255, 77, 143, 0.3)" }}>
+            <h2 className="font-black text-base text-jelly-pink mb-3">
+              💥 놓친 문제 ({results.wrongQuestions.length})
+            </h2>
             <div className="space-y-4">
               {results.wrongQuestions.map(({ index, question, selected }) => (
                 <div key={question.id} className="border-b border-border pb-4 last:border-0 last:pb-0">
-                  <p className="text-xs text-muted mb-1">문제 {index + 1}</p>
+                  <p className="text-xs text-muted font-bold mb-1">Q{index + 1}</p>
                   <p className="text-sm leading-relaxed mb-2 whitespace-pre-line">{question.question_text}</p>
 
                   <div className="space-y-1 mb-2">
                     {question.options.map((opt) => {
                       const isSelected = selected.includes(opt.label);
                       const isCorrect = question.correct_answers.includes(opt.label);
-                      let style = "text-muted";
-                      if (isCorrect) style = "text-success-fg font-medium";
-                      if (isSelected && !isCorrect) style = "text-danger-fg line-through";
+                      let cls = "text-muted";
+                      if (isCorrect) cls = "text-jelly-lime font-black";
+                      if (isSelected && !isCorrect) cls = "text-jelly-pink line-through";
                       return (
-                        <p key={opt.label} className={`text-xs ${style}`}>
+                        <p key={opt.label} className={`text-xs ${cls}`}>
                           {opt.label}. {opt.text}
                           {isCorrect && " ✓"}
                           {isSelected && !isCorrect && " (내 답)"}
@@ -252,8 +280,15 @@ export default function MockExamStartPage() {
                   </div>
 
                   {question.explanation && (
-                    <div className="bg-info-bg border border-info-border rounded-lg p-3 mt-2">
-                      <p className="text-xs text-info-fg leading-relaxed">{question.explanation}</p>
+                    <div
+                      className="rounded-2xl p-3 mt-2 text-xs leading-relaxed"
+                      style={{
+                        background: "rgba(74, 222, 222, 0.1)",
+                        color: "var(--info-fg)",
+                        border: "1px solid rgba(74, 222, 222, 0.3)",
+                      }}
+                    >
+                      {question.explanation}
                     </div>
                   )}
                 </div>
@@ -263,18 +298,32 @@ export default function MockExamStartPage() {
         )}
 
         <div className="flex gap-2">
-          <Link href="/mock-exam" className="flex-1 block bg-card border border-border text-center py-3 rounded-xl font-medium text-sm">
-            시험 기록 보기
+          <Link
+            href="/mock-exam"
+            className="flex-1 block text-center py-3.5 rounded-[18px] font-black text-sm active:scale-[0.97] active:translate-y-1 transition-all"
+            style={{
+              background: "rgba(200, 111, 255, 0.14)",
+              border: "1.5px solid rgba(200, 111, 255, 0.45)",
+              color: "var(--jelly-purple)",
+            }}
+          >
+            📜 배틀 로그
           </Link>
-          <Link href="/" className="flex-1 block bg-primary text-on-primary text-center py-3 rounded-xl font-medium text-sm">
-            홈으로
+          <Link
+            href="/"
+            className="flex-1 block text-center py-3.5 rounded-[18px] font-black text-sm text-on-primary active:scale-[0.97] active:translate-y-1 transition-all"
+            style={{
+              background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+              boxShadow: "0 10px 24px -4px rgba(255, 107, 157, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.3)",
+            }}
+          >
+            🏠 홈으로
           </Link>
         </div>
       </div>
     );
   }
 
-  // --- 시험 진행 ---
   if (questions.length === 0) return null;
 
   const q = questions[currentIndex];
@@ -282,104 +331,185 @@ export default function MockExamStartPage() {
   const expectedCount = detectMultiSelectCount(q.question_text);
   const isMulti = expectedCount > 1 || q.correct_answers.length > 1;
   const selectCount = Math.max(expectedCount, q.correct_answers.length);
-  const isTimeWarning = timeLeft < 180; // 3분 미만
+  const isTimeWarning = timeLeft < 180;
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-2 pb-24">
-      {/* 상단 바: 타이머 + 진행률 */}
-      <div className="sticky top-0 bg-background z-10 pb-2 pt-2">
+      <div
+        className="sticky top-0 z-10 pb-2 pt-2"
+        style={{ background: "linear-gradient(180deg, var(--background) 80%, transparent)" }}
+      >
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium">{currentIndex + 1} / {questions.length}</span>
-          <span className={`text-sm font-mono font-bold ${isTimeWarning ? "text-danger" : "text-muted"}`}>
-            {formatTime(timeLeft)}
+          <span
+            className="text-xs font-black px-3 py-1.5 rounded-full text-on-primary"
+            style={{
+              background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+              boxShadow: "0 4px 12px rgba(255, 107, 157, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+            }}
+          >
+            BOSS Q {currentIndex + 1} / {questions.length}
+          </span>
+          <span
+            className={`text-sm font-black px-3 py-1.5 rounded-full text-on-primary ${isTimeWarning ? "animate-shake" : ""}`}
+            style={
+              isTimeWarning
+                ? {
+                    background: "linear-gradient(135deg, #ff4d8f, #c86fff)",
+                    boxShadow:
+                      "0 6px 18px rgba(255, 77, 143, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+                  }
+                : {
+                    background: "linear-gradient(135deg, #4adede, #7b61ff)",
+                    boxShadow:
+                      "0 4px 12px rgba(74, 222, 222, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+                  }
+            }
+          >
+            ⏱ {formatTime(timeLeft)}
           </span>
         </div>
-        <div className="bg-border rounded-full h-1.5">
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(15, 8, 35, 0.8)" }}>
           <div
-            className="bg-primary rounded-full h-1.5 transition-all"
-            style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+            className="h-full rounded-full transition-[width] duration-500"
+            style={{
+              width: `${((currentIndex + 1) / questions.length) * 100}%`,
+              background: "linear-gradient(90deg, #ff6b9d, #c86fff, #4adede)",
+            }}
           />
         </div>
       </div>
 
-      {/* 문제 */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-3 mt-2">
+      <div className="jelly-card p-5 mb-3 mt-2">
         {isMulti && (
-          <span className="inline-block text-xs bg-warning-bg text-warning-fg border border-warning-border px-2 py-0.5 rounded mb-2">{selectCount}개 선택</span>
+          <span
+            className="inline-block text-xs px-3 py-1 rounded-full font-black mb-3 text-on-primary"
+            style={{
+              background: "linear-gradient(135deg, #ffe156, #ffa040)",
+              boxShadow: "0 3px 10px rgba(255, 160, 64, 0.35)",
+            }}
+          >
+            ⚡ {selectCount}개 선택
+          </span>
         )}
         <p className="text-sm leading-relaxed whitespace-pre-line">{q.question_text}</p>
       </div>
 
-      {/* 선택지 */}
-      <div className="space-y-2 mb-3">
+      <div className="space-y-2.5 mb-4">
         {q.options.map((opt) => {
           const isSelected = selected.includes(opt.label);
           return (
             <button
               key={opt.label}
               onClick={() => handleSelect(opt.label)}
-              className={`w-full text-left rounded-xl border-2 p-3 transition-all active:scale-[0.99] ${
-                isSelected ? "border-primary bg-info-bg" : "border-border bg-card"
-              }`}
+              className="w-full text-left rounded-[20px] p-3.5 transition-all active:scale-[0.98]"
+              style={
+                isSelected
+                  ? {
+                      background: "linear-gradient(135deg, rgba(255, 107, 157, 0.16), rgba(200, 111, 255, 0.12))",
+                      border: "1.5px solid rgba(255, 107, 157, 0.55)",
+                      boxShadow: "0 6px 20px rgba(255, 107, 157, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+                    }
+                  : {
+                      background: "linear-gradient(145deg, rgba(26, 18, 56, 0.9), rgba(35, 24, 80, 0.9))",
+                      border: "1.5px solid rgba(255, 255, 255, 0.06)",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+                    }
+              }
             >
               <div className="flex gap-3">
-                <span className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
-                  isSelected ? "bg-primary text-on-primary" : "bg-muted-bg text-muted"
-                }`}>
+                <span
+                  className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-black"
+                  style={
+                    isSelected
+                      ? {
+                          background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+                          color: "#ffffff",
+                          boxShadow: "0 3px 8px rgba(255, 107, 157, 0.4)",
+                        }
+                      : { background: "rgba(255, 255, 255, 0.05)", color: "var(--muted)" }
+                  }
+                >
                   {opt.label}
                 </span>
-                <span className="text-sm leading-relaxed">{opt.text}</span>
+                <span className="text-sm leading-relaxed pt-1">{opt.text}</span>
               </div>
             </button>
           );
         })}
       </div>
 
-      {/* 네비게이션 */}
       <div className="flex gap-2">
         <button
           onClick={() => setCurrentIndex((p) => Math.max(0, p - 1))}
           disabled={currentIndex === 0}
-          className="flex-1 py-3 rounded-xl border border-border text-sm font-medium disabled:opacity-30"
+          className="flex-1 py-3.5 rounded-[18px] text-sm font-black disabled:opacity-30 active:scale-[0.97] active:translate-y-1 transition-all"
+          style={{
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1.5px solid rgba(255, 255, 255, 0.1)",
+            color: "var(--muted)",
+          }}
         >
-          이전
+          ← 이전
         </button>
         {currentIndex < questions.length - 1 ? (
           <button
             onClick={() => setCurrentIndex((p) => p + 1)}
-            className="flex-1 py-3 rounded-xl bg-primary text-on-primary text-sm font-medium"
+            className="flex-1 py-3.5 rounded-[18px] text-sm font-black text-on-primary active:scale-[0.97] active:translate-y-1 transition-all"
+            style={{
+              background: "linear-gradient(135deg, #4adede, #7b61ff)",
+              boxShadow: "0 10px 24px -4px rgba(74, 222, 222, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.25)",
+            }}
           >
-            다음
+            다음 ▶
           </button>
         ) : (
           <button
             onClick={handleFinish}
-            className="flex-1 py-3 rounded-xl bg-danger text-on-primary text-sm font-medium"
+            className="flex-1 py-3.5 rounded-[18px] text-sm font-black text-on-primary active:scale-[0.97] active:translate-y-1 transition-all"
+            style={{
+              background: "linear-gradient(135deg, #ff4d8f, #ffa040)",
+              boxShadow: "0 10px 24px -4px rgba(255, 77, 143, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.25)",
+            }}
           >
-            시험 종료
+            🏁 제출!
           </button>
         )}
       </div>
 
-      {/* 문제 번호 그리드 */}
-      <div className="mt-4">
-        <p className="text-xs text-muted mb-2">문제 번호 (클릭하여 이동)</p>
-        <div className="flex gap-1 flex-wrap">
-          {questions.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              className={`w-8 h-8 rounded text-xs font-medium ${
-                i === currentIndex
-                  ? "bg-primary text-on-primary"
-                  : answers[i]
-                  ? "bg-info-bg text-info-fg"
-                  : "bg-muted-bg text-muted"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+      <div className="mt-5">
+        <p className="text-[10px] text-muted font-black mb-2 tracking-wider">미션 보드</p>
+        <div className="flex gap-1.5 flex-wrap">
+          {questions.map((_, i) => {
+            const isCurrent = i === currentIndex;
+            const isAnswered = !!answers[i];
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className="w-9 h-9 rounded-xl text-xs font-black active:scale-[0.92] transition-all text-on-primary"
+                style={
+                  isCurrent
+                    ? {
+                        background: "linear-gradient(135deg, #ff6b9d, #c86fff)",
+                        boxShadow: "0 4px 14px rgba(255, 107, 157, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+                      }
+                    : isAnswered
+                    ? {
+                        background: "rgba(74, 222, 222, 0.15)",
+                        color: "var(--jelly-teal)",
+                        border: "1px solid rgba(74, 222, 222, 0.35)",
+                      }
+                    : {
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "var(--muted)",
+                        border: "1px solid var(--border)",
+                      }
+                }
+              >
+                {i + 1}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

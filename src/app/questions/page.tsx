@@ -182,7 +182,7 @@ function QuestionsContent() {
   if (loading) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-muted">문제 로딩 중...</p>
+        <p className="text-muted font-bold animate-jelly-bounce">🎀 문제 모으는 중...</p>
       </div>
     );
   }
@@ -192,22 +192,24 @@ function QuestionsContent() {
       <div className="max-w-lg mx-auto px-4 pt-20 text-center">
         {mode === "service" && service ? (
           <>
-            <p className="text-lg mb-2">{service} 관련 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 아직 없습니다.</p>
-            <Link href="/concepts" className="text-primary font-medium text-sm">
-              서비스 사전으로 돌아가기 &rarr;
+            <p className="text-5xl mb-4">🗺️</p>
+            <p className="text-lg font-black text-jelly-pink mb-2">{service} 퀘스트 품절!</p>
+            <p className="text-sm text-muted mb-4">이 서비스와 연결된 문제가 없어요.</p>
+            <Link href="/concepts" className="text-jelly-pink font-black text-sm">
+              📖 서비스 도감으로 돌아가기 →
             </Link>
           </>
         ) : mode === "review" ? (
           <>
-            <p className="text-lg mb-2">복습할 문제가 없습니다</p>
-            <p className="text-sm text-muted mb-4">오늘 복습 예정인 문제가 없거나, 아직 틀린 문제가 없습니다.</p>
-            <Link href="/review" className="text-primary font-medium text-sm">
-              오답노트로 돌아가기 &rarr;
+            <p className="text-5xl mb-4">🌟</p>
+            <p className="text-lg font-black text-jelly-lime mb-2">오늘 복습할 게 없어요!</p>
+            <p className="text-sm text-muted mb-4">틀린 문제가 없으니 문제 풀러 가볼까요?</p>
+            <Link href="/review" className="text-jelly-pink font-black text-sm">
+              🔄 복습 페이지로 돌아가기 →
             </Link>
           </>
         ) : (
-          <p className="text-muted">문제가 없습니다.</p>
+          <p className="text-muted font-bold">문제가 없어요.</p>
         )}
       </div>
     );
@@ -215,40 +217,50 @@ function QuestionsContent() {
 
   return (
     <div>
-      {/* 서비스 모드 배너 */}
       {mode === "service" && service && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
-            <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
-            <span>{currentIndex + 1} / {questions.length}문제</span>
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="rounded-full px-4 py-2 text-xs flex justify-between items-center font-black text-on-primary"
+            style={{
+              background: "linear-gradient(135deg, #4adede, #7b61ff)",
+              boxShadow: "0 4px 14px rgba(74, 222, 222, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+            }}
+          >
+            <Link href="/concepts">← {service} 📖</Link>
+            <span>{currentIndex + 1} / {questions.length}</span>
           </div>
         </div>
       )}
 
-      {/* 복습 모드 배너 */}
       {mode === "review" && (
-        <div className="max-w-lg mx-auto px-4 pt-2">
-          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
-            <span>복습 모드</span>
+        <div className="max-w-lg mx-auto px-4 pt-3">
+          <div
+            className="rounded-full px-4 py-2 text-xs flex justify-between items-center font-black text-on-primary"
+            style={{
+              background: "linear-gradient(135deg, #ffa040, #ff6b9d)",
+              boxShadow: "0 4px 14px rgba(255, 160, 64, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25)",
+            }}
+          >
+            <span>🔄 복습 모드</span>
             <span>{questions.length}문제</span>
           </div>
         </div>
       )}
 
-      {/* 툴바: 처음부터 다시 풀기 + 수정 요청 */}
-      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-3">
+      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-2">
         {(mode === "normal" || mode === "service") && currentIndex > 0 && (
           <button
             onClick={handleRestart}
-            className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
+            className="text-[11px] text-muted hover:text-jelly-pink transition-colors px-2.5 py-1 rounded-full font-black"
           >
-            처음부터 다시 풀기
+            🔁 처음부터
           </button>
         )}
         <button
           type="button"
           onClick={handleOpenReport}
-          className="text-xs text-danger-fg hover:text-danger transition-colors px-2 py-1 flex items-center gap-1"
+          className="text-[11px] transition-colors px-2.5 py-1 rounded-full font-black flex items-center gap-1"
+          style={{ color: "var(--danger-fg)" }}
         >
           <span aria-hidden>⚠</span>
           <span>수정 요청</span>
@@ -275,7 +287,13 @@ function QuestionsContent() {
       )}
 
       {reportToast && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+        <div
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 text-sm px-4 py-2 rounded-full z-50 animate-fade-in whitespace-nowrap font-black text-on-primary"
+          style={{
+            background: "linear-gradient(135deg, #c86fff, #7b61ff)",
+            boxShadow: "0 10px 24px -4px rgba(200, 111, 255, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.3)",
+          }}
+        >
           {reportToast}
         </div>
       )}
@@ -288,7 +306,7 @@ export default function QuestionsPage() {
     <Suspense
       fallback={
         <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-          <p className="text-muted">문제 로딩 중...</p>
+          <p className="text-muted font-bold animate-jelly-bounce">🎀 문제 모으는 중...</p>
         </div>
       }
     >
