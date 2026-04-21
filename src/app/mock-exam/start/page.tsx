@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import type { Question } from "@/lib/types";
 import { addAttempt, saveMockExamResult } from "@/lib/store";
+import MarkdownContent from "@/components/MarkdownContent";
 
 // SAA-C03 도메인별 출제 비중 (10문제 기준)
 const DOMAIN_QUOTA: Record<string, number> = {
@@ -253,7 +254,9 @@ export default function MockExamStartPage() {
 
                   {question.explanation && (
                     <div className="bg-info-bg border border-info-border rounded-lg p-3 mt-2">
-                      <p className="text-xs text-info-fg leading-relaxed">{question.explanation}</p>
+                      <MarkdownContent className="text-info-fg">
+                        {question.explanation}
+                      </MarkdownContent>
                     </div>
                   )}
                 </div>

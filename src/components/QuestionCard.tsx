@@ -6,6 +6,7 @@ import { addAttempt } from "@/lib/store";
 import { celebrateCorrect } from "@/lib/celebrate";
 import TextSelectionPopover from "./TextSelectionPopover";
 import StudyNoteMemoSheet from "./StudyNoteMemoSheet";
+import MarkdownContent from "./MarkdownContent";
 
 interface QuestionCardProps {
   question: Question;
@@ -280,31 +281,37 @@ export default function QuestionCard({
                   <div className="p-3">
                     {explanationTab === "explanation" && (
                       <TextSelectionPopover questionId={question.id} sourceContext="explanation" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
-                          {question.explanation || "해설이 없습니다."}
-                        </div>
+                        {question.explanation ? (
+                          <MarkdownContent className="text-foreground">
+                            {question.explanation}
+                          </MarkdownContent>
+                        ) : (
+                          <div className="text-sm text-foreground leading-relaxed">해설이 없습니다.</div>
+                        )}
                       </TextSelectionPopover>
                     )}
 
                     {explanationTab === "detail" && (
                       <TextSelectionPopover questionId={question.id} sourceContext="detail" onSaveRequest={handleSaveRequest}>
-                        <div className="text-sm text-foreground leading-relaxed whitespace-pre-line">
-                          {question.detailed_explanation || (
-                            <div className="text-center text-muted py-4">
-                              <p className="mb-2">상세 풀이가 아직 없습니다.</p>
-                              {question.source_url && (
-                                <a
-                                  href={question.source_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-primary text-xs font-medium"
-                                >
-                                  원본 블로그에서 확인 &rarr;
-                                </a>
-                              )}
-                            </div>
-                          )}
-                        </div>
+                        {question.detailed_explanation ? (
+                          <MarkdownContent className="text-foreground">
+                            {question.detailed_explanation}
+                          </MarkdownContent>
+                        ) : (
+                          <div className="text-center text-muted py-4">
+                            <p className="mb-2 text-sm">상세 풀이가 아직 없습니다.</p>
+                            {question.source_url && (
+                              <a
+                                href={question.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary text-xs font-medium"
+                              >
+                                원본 블로그에서 확인 &rarr;
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </TextSelectionPopover>
                     )}
 
