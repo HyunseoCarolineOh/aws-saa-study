@@ -1,32 +1,456 @@
 {
   "source": "examtopics",
   "exam": "AWS SAA-C03",
-  "total_count": 2,
+  "total_count": 10,
   "crawled_at": "2026-04-08 00:10:37",
   "questions": [
     {
-      "examtopics_number": 6,
+      "examtopics_number": 1,
       "topic": "Topic 1",
-      "question_text": "한 회사가 온프레미스 NAS(Network Attached Storage)에 대용량 비디오 파일을 저장하기 위해 NFS를 사용하고 있습니다. 각 비디오 파일의 크기는 1MB에서 500GB 사이입니다. 총 스토리지 크기는 70TB이며 더 이상 증가하지 않습니다. 회사는 비디오 파일을 Amazon S3로 마이그레이션하기로 결정했습니다. 회사는 가능한 한 적은 네트워크 대역폭을 사용하면서 비디오 파일을 최대한 빨리 마이그레이션해야 합니다.\n\n어떤 솔루션이 이러한 요구 사항을 충족합니까?",
+      "question_text": "A company collects data for temperature, humidity, and atmospheric pressure in cities across multiple continents. The average volume of data that the company collects from each site daily is 500 GB. Each site has a high-speed Internet connection.The company wants to aggregate the data from all these global sites as quickly as possible in a single Amazon S3 bucket. The solution must minimize operational complexity.Which solution meets these requirements?",
       "options": [
         {
           "label": "A",
-          "text": "S3 버킷을 생성합니다. S3 버킷에 쓸 수 있는 권한이 있는 IAM 역할을 생성합니다. AWS CLI를 사용하여 로컬에 있는 모든 파일을 S3 버킷으로 복사합니다.",
-          "isMostVoted": false
-        },
-        {
-          "label": "B",
-          "text": "AWS Snowball Edge 작업을 생성합니다. 온프레미스에서 Snowball Edge 디바이스를 수령합니다. Snowball Edge 클라이언트를 사용하여 데이터를 디바이스로 전송합니다. 디바이스를 반환하여 AWS가 데이터를 Amazon S3로 가져오도록 합니다.",
+          "text": "Turn on S3 Transfer Acceleration on the destination S3 bucket. Use multipart uploads to directly upload site data to the destination S3 bucket.",
           "isMostVoted": true
         },
         {
+          "label": "B",
+          "text": "Upload the data from each site to an S3 bucket in the closest Region. Use S3 Cross-Region Replication to copy objects to the destination S3 bucket. Then remove the data from the origin S3 bucket.",
+          "isMostVoted": false
+        },
+        {
           "label": "C",
-          "text": "온프레미스에 S3 File Gateway를 배포합니다. S3 File Gateway에 연결할 퍼블릭 서비스 엔드포인트를 생성합니다. S3 버킷을 생성합니다. S3 File Gateway에 새 NFS 파일 공유를 생성하고 해당 파일 공유를 S3 버킷에 연결합니다. 기존 NFS 파일 공유의 데이터를 S3 File Gateway로 전송합니다.",
+          "text": "Schedule AWS Snowball Edge Storage Optimized device jobs daily to transfer data from each site to the closest Region. Use S3 Cross-Region Replication to copy objects to the destination S3 bucket.",
           "isMostVoted": false
         },
         {
           "label": "D",
-          "text": "온프레미스 네트워크와 AWS 사이에 AWS Direct Connect 연결을 설정합니다. 온프레미스에 S3 File Gateway를 배포합니다. S3 File Gateway에 연결할 퍼블릭 가상 인터페이스(VIF)를 생성합니다. S3 버킷을 생성합니다. S3 File Gateway에 새 NFS 파일 공유를 생성하고 해당 파일 공유를 S3 버킷에 연결합니다. 기존 NFS 파일 공유의 데이터를 S3 File Gateway로 전송합니다.",
+          "text": "Upload the data from each site to an Amazon EC2 instance in the closest Region. Store the data in an Amazon Elastic Block Store (Amazon EBS) volume. At regular intervals, take an EBS snapshot and copy it to the Region that contains the destination S3 bucket. Restore the EBS volume in that Region.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "A"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "A",
+          "vote_count": 149,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "B",
+          "vote_count": 8,
+          "is_most_voted": false
+        },
+        {
+          "voted_answers": "U",
+          "vote_count": 1,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "A"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 A입니다. 고속 인터넷을 통해 전 세계 다수 지점에서 하나의 S3 버킷으로 대용량(사이트당 500 GB/일)을 빠르게 모으는 표준 관리형 방법은 S3 Transfer Acceleration + Multipart Upload이며, 추가 인프라 없이 CloudFront 엣지와 AWS 최적 경로를 이용해 업로드 지연을 줄입니다. CRR, Snowball, EBS 스냅샷 릴레이는 모두 '일일 500 GB × 인터넷 가용 + 복잡도 최소'라는 조건에서 더 느리거나 더 복잡한 선택입니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 전 세계 사이트 → 단일 S3 버킷 집약\n- 사이트당 500 GB/일, 고속 인터넷 있음\n- 가능한 한 빠르게 + 운영 복잡도 최소\n\n## 2. 왜 S3 Transfer Acceleration + Multipart인가\n- **S3 Transfer Acceleration**: 업로드 트래픽을 가장 가까운 CloudFront 엣지로 받아 AWS 백본망으로 목적지 버킷까지 전송. 기능 활성화만 하면 끝 (추가 인프라 0)\n- **Multipart Upload**: 대용량(500 GB급) 객체를 병렬 파트로 나눠 업로드 → 처리량 극대화 + 실패 파트만 재시도 가능\n- 두 기능 결합이 '고속 인터넷이 이미 있고 단일 버킷에 빠르게'라는 조건의 정답 패턴\n\n## 3. 왜 다른 선지는 부적합한가\n- CRR 경유(B): 업로드가 두 단계(사이트→근접 리전 버킷→대상 버킷)로 늘고 CRR은 비동기라 '가능한 한 빠르게'에 역행. 중간 버킷·복제 규칙·삭제 스크립트까지 관리 대상 증가\n- Snowball(C): 오프라인 물리 디바이스로, 고속 인터넷이 이미 있는 상황에서 배송·관세·적재 기간이 오히려 느림. '일 단위 빠른 집약'과 궁합이 맞지 않음\n- EBS 스냅샷 릴레이(D): EC2·EBS·스냅샷 복사·복원까지 수많은 단계와 리소스 필요. 파일을 S3에 넣는 가장 먼 길\n\n## 4. SAA 시험 팁\n'글로벌 업로드 + 고속 인터넷 + 단일 S3 버킷 + 운영 단순'이면 S3 Transfer Acceleration이 거의 반사 정답. '오프라인/회선 없음'이면 Snowball, '대규모 정기 배치 마이그레이션'이면 DataSync가 더 어울립니다.",
+      "saa_tip": "'전 세계 업로드 + 고속 인터넷 + 단일 S3 버킷'은 Transfer Acceleration + Multipart가 시험 정답 패턴입니다. Snowball은 '회선이 없거나 매우 느릴 때', DataSync는 '정기적 대량 동기화', CRR/SRR은 '버킷 간 복제' — 키워드로 경계를 외워두면 선지에서 바로 소거할 수 있습니다.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "S3 Transfer Acceleration은 각 사이트의 업로드 트래픽을 가장 가까운 CloudFront 엣지에서 받은 뒤 AWS 글로벌 백본망을 통해 대상 버킷까지 최적 경로로 전달합니다. 버킷 설정 플래그만 켜면 활성화되고 추가 인프라가 없어 운영 복잡도가 거의 0이며, Multipart Upload와 결합하면 500 GB급 대용량을 여러 파트로 병렬 전송해 처리량이 극대화되고 실패 파트만 재시도할 수 있어 '가능한 한 빠르게'라는 조건에 가장 잘 부합합니다."
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "사이트→근접 리전 버킷→대상 버킷으로 두 단계를 거치는 구조이고, Cross-Region Replication은 비동기 복제라 도달 시간이 길어져 '가능한 한 빠르게'에 맞지 않습니다. 또한 중간 버킷·복제 규칙·업로드 후 삭제 스크립트까지 관리할 대상이 늘어나 '운영 복잡도 최소화' 요구와도 상반됩니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "Snowball Edge는 고속 인터넷이 없거나 페타바이트급 일회성 마이그레이션처럼 네트워크 전송이 비효율적인 시나리오용 오프라인 장비입니다. 문제는 이미 모든 사이트에 고속 인터넷이 있고 매일 집약해야 하므로, 장비 배송·수령·적재·반송에 걸리는 시간이 Transfer Acceleration 대비 훨씬 길고 운영이 복잡합니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "사이트 데이터를 EC2의 EBS 볼륨에 저장 → EBS 스냅샷 → 리전 간 스냅샷 복사 → 대상 리전에서 복원 → S3 이관… 단계가 지나치게 많고 각 단계마다 인프라(EC2·EBS·스냅샷)·비용·운영 부담이 늘어납니다. 단순히 파일을 S3에 올리면 되는 문제에 EBS를 중간 저장소로 쓰는 것 자체가 아키텍처적으로 부적절합니다."
+        }
+      ],
+      "related_services": [
+        "S3",
+        "CloudFront"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T21:46:27.412851+00:00"
+    },
+    {
+      "examtopics_number": 2,
+      "topic": "Topic 1",
+      "question_text": "A company needs the ability to analyze the log files of its proprietary application. The logs are stored in JSON format in an Amazon S3 bucket. Queries will be simple and will run on-demand. A solutions architect needs to perform the analysis with minimal changes to the existing architecture.What should the solutions architect do to meet these requirements with the LEAST amount of operational overhead?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Use Amazon Redshift to load all the content into one place and run the SQL queries as needed.",
+          "isMostVoted": false
+        },
+        {
+          "label": "B",
+          "text": "Use Amazon CloudWatch Logs to store the logs. Run SQL queries as needed from the Amazon CloudWatch console.",
+          "isMostVoted": false
+        },
+        {
+          "label": "C",
+          "text": "Use Amazon Athena directly with Amazon S3 to run the queries as needed.",
+          "isMostVoted": true
+        },
+        {
+          "label": "D",
+          "text": "Use AWS Glue to catalog the logs. Use a transient Apache Spark cluster on Amazon EMR to run the SQL queries as needed.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "C"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "C",
+          "vote_count": 127,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "A",
+          "vote_count": 1,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "C"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 C입니다. S3에 JSON으로 저장된 로그를 아키텍처 변경 없이 즉석 SQL로 쿼리하는 교과서적 솔루션은 Amazon Athena입니다 — 서버리스라 운영 부담이 0이고, S3를 직접 테이블 소스로 사용할 수 있어 데이터 이동 없이 바로 쿼리합니다. Redshift 적재(A)·Glue 카탈로그 + EMR Spark(D)는 복잡도와 비용이 과잉이고, CloudWatch Logs(B)는 S3에 있는 기존 로그가 아니라 Logs 서비스로 재수집이 필요해 '기존 아키텍처 최소 변경'에 반합니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 로그는 S3의 JSON 포맷\n- 쿼리는 단순 + 온디맨드\n- 기존 아키텍처 최소 변경 + 운영 오버헤드 최소\n\n## 2. 왜 Athena 인가\n- Athena는 S3 객체를 테이블처럼 쿼리하는 서버리스 SQL 엔진(Presto/Trino 기반)\n- JSON·CSV·Parquet·ORC 등 직접 지원\n- 쿼리당 과금(TB당 요금), 인프라 0, 데이터 이동 0\n\n## 3. 왜 다른 선지는 부적합한가\n- A (Redshift 적재): 데이터웨어하우스 클러스터 프로비저닝·로드 ETL 필요 — 단순 온디맨드 쿼리에 과잉\n- B (CloudWatch Logs): 기존 S3 로그를 재수집/재저장해야 하고, CloudWatch Logs Insights는 Logs에 저장된 데이터만 대상 — 아키텍처 변경 크다\n- D (Glue + EMR Spark): EMR Spark 클러스터 관리, Glue 크롤러 관리, 스크립트 작성 — 운영 부담 큼\n\n## 4. SAA 시험 팁\n'S3에 있는 로그/파일에 즉석 SQL + 관리 없음' → Athena의 교과서 정답.",
+      "saa_tip": "'S3 파일을 SQL로 즉석 쿼리 + 운영 최소'는 Athena의 고정 정답 패턴입니다. EMR은 복잡한 Spark 배치 파이프라인이 필요할 때, Redshift는 반복적 분석 대시보드가 있을 때 쓰입니다.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "Redshift에 로그를 적재하려면 클러스터 프로비저닝, 테이블 설계, 적재 ETL 파이프라인이 필요해 '기존 아키텍처 최소 변경 + 운영 오버헤드 최소' 요구와 충돌합니다. 데이터웨어하우스는 복잡한 분석 워크로드에 적합하지 단순 온디맨드 로그 쿼리의 기본 선택이 아닙니다."
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "CloudWatch Logs Insights는 CloudWatch Logs에 저장된 데이터만 쿼리 대상이므로, 이미 S3에 저장된 기존 JSON 로그를 그대로 쓸 수 없고 Logs로 재수집해야 합니다. 수집 파이프라인과 저장 비용이 추가되어 '아키텍처 최소 변경'과 정면 배치됩니다."
+        },
+        {
+          "label": "C",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "Athena는 S3 객체를 직접 쿼리 대상으로 삼는 서버리스 SQL 엔진이라 클러스터를 프로비저닝하거나 데이터를 다른 스토리지로 이동할 필요가 없습니다. JSON을 포함한 다양한 포맷을 지원하고 쿼리당 과금이라 '단순 + 온디맨드' 패턴에 비용 효율이 가장 좋으며, 운영 오버헤드와 아키텍처 변경이 거의 0이라는 이 문제의 핵심 요구를 정확히 만족합니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "Glue 크롤러로 카탈로그를 만들고 EMR Spark 클러스터에서 SQL을 실행하는 구성은 온디맨드 간단 쿼리에 비해 설정·관리 오버헤드가 크고, Glue·EMR 양쪽의 작업을 유지해야 합니다. Athena가 같은 카탈로그를 훨씬 가볍게 사용할 수 있는 상황에서 굳이 선택할 이유가 없습니다."
+        }
+      ],
+      "related_services": [
+        "Athena",
+        "S3",
+        "Glue"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:14:50.774888+00:00"
+    },
+    {
+      "examtopics_number": 3,
+      "topic": "Topic 1",
+      "question_text": "A company uses AWS Organizations to manage multiple AWS accounts for different departments. The management account has an Amazon S3 bucket that contains project reports. The company wants to limit access to this S3 bucket to only users of accounts within the organization in AWS Organizations.Which solution meets these requirements with the LEAST amount of operational overhead?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Add the aws PrincipalOrgID global condition key with a reference to the organization ID to the S3 bucket policy.",
+          "isMostVoted": true
+        },
+        {
+          "label": "B",
+          "text": "Create an organizational unit (OU) for each department. Add the aws:PrincipalOrgPaths global condition key to the S3 bucket policy.",
+          "isMostVoted": false
+        },
+        {
+          "label": "C",
+          "text": "Use AWS CloudTrail to monitor the CreateAccount, InviteAccountToOrganization, LeaveOrganization, and RemoveAccountFromOrganization events. Update the S3 bucket policy accordingly.",
+          "isMostVoted": false
+        },
+        {
+          "label": "D",
+          "text": "Tag each user that needs access to the S3 bucket. Add the aws:PrincipalTag global condition key to the S3 bucket policy.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "A"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "A",
+          "vote_count": 189,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "B",
+          "vote_count": 5,
+          "is_most_voted": false
+        },
+        {
+          "voted_answers": "C",
+          "vote_count": 1,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "A"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 A입니다. Organizations 내 모든 계정의 사용자만 S3 버킷에 접근시키려면 버킷 정책에 `aws:PrincipalOrgID` 전역 조건 키 하나를 걸어 조직 ID를 검사하는 것이 가장 단순합니다 — 조직에 가입/탈퇴하는 계정 변화를 자동 반영하며 계정·사용자·OU 수와 무관합니다. OU별 세분화(B)가 필요 없는 상황이고, CloudTrail 이벤트 감시(C)는 수동 관리이며, 사용자마다 태그(D)를 관리하는 것은 수백·수천 사용자에 비현실적입니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 관리 계정의 S3 버킷을 조직 내 사용자만 접근\n- 최소 운영 오버헤드\n\n## 2. 왜 aws:PrincipalOrgID 인가\n- 이 전역 조건 키는 요청 주체가 속한 AWS Organizations의 조직 ID를 반환\n- 버킷 정책에 Condition에 StringEquals로 aws:PrincipalOrgID = o-xxxxxxxxxx 한 줄로 조직 가입/탈퇴가 자동 반영되어 유지보수 비용이 거의 0\n\n## 3. 왜 다른 선지는 부적합한가\n- B (aws:PrincipalOrgPaths): OU 경로별 세분화가 필요할 때의 더 구체적 키. 이 문제는 '조직 전체' 허용이라 PrincipalOrgID가 단순함\n- C (CloudTrail 이벤트 감시 + 수동 정책 갱신): 가입/탈퇴 이벤트마다 정책을 사람이 수정 — 관리 부담 큼\n- D (사용자 태그 + PrincipalTag): 사용자 수만큼 태그 관리 필요. Organizations를 쓰는 전제에서 굳이 태그 관리로 우회할 이유 없음\n\n## 4. SAA 시험 팁\n'Organizations 소속 계정만 허용'은 aws:PrincipalOrgID가 SAA 고정 정답.",
+      "saa_tip": "'Organizations 내부만 허용'은 aws:PrincipalOrgID, 'OU 단위로 세분화'는 aws:PrincipalOrgPaths가 정답 키입니다. 둘의 차이를 기억해두면 IAM 조건 키 문제에서 빠르게 소거할 수 있습니다.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "aws:PrincipalOrgID 전역 조건 키는 요청자의 계정이 속한 Organizations의 조직 ID를 반환합니다. 버킷 정책에 이 키 하나를 StringEquals로 걸면 조직에 가입한 모든 계정의 모든 IAM 주체가 자동으로 허용되고, 가입·탈퇴 변화도 즉시 반영되어 관리자가 계정 변경마다 정책을 고칠 필요가 없습니다. 최소 운영 오버헤드로 요구를 정확히 충족하는 단일 조건 정책입니다."
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "aws:PrincipalOrgPaths는 OU 경로별로 세분화된 허용을 걸 때 유용한 키이지만, 이 문제는 '조직 내 모든 사용자'로 통일된 요구라 OU를 일일이 만들 이유가 없습니다. 더 간단한 PrincipalOrgID를 두고 복잡한 경로 구조를 도입하는 것은 관리 오버헤드 증가입니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "CloudTrail로 계정 가입·탈퇴 이벤트를 감시해 정책을 수동 업데이트하는 방식은 운영자가 직접 정책 유지보수를 해야 해 '최소 운영 오버헤드' 요구에 정면 배치됩니다. 자동화를 구현해도 PrincipalOrgID 한 줄과 비교하면 복잡도가 훨씬 큽니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "사용자마다 태그를 달고 PrincipalTag 조건을 거는 방식은 사용자 수만큼 태그 관리가 필요하고, 신규 사용자 누락 시 접근이 불가능해지는 위험이 있습니다. Organizations를 이미 사용 중이라면 조직 ID 조건이 압도적으로 단순합니다."
+        }
+      ],
+      "related_services": [
+        "S3",
+        "Organizations",
+        "IAM"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:26:27.576590+00:00"
+    },
+    {
+      "examtopics_number": 4,
+      "topic": "Topic 1",
+      "question_text": "An application runs on an Amazon EC2 instance in a VPC. The application processes logs that are stored in an Amazon S3 bucket. The EC2 instance needs to access the S3 bucket without connectivity to the internet.Which solution will provide private network connectivity to Amazon S3?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Create a gateway VPC endpoint to the S3 bucket.",
+          "isMostVoted": true
+        },
+        {
+          "label": "B",
+          "text": "Stream the logs to Amazon CloudWatch Logs. Export the logs to the S3 bucket.",
+          "isMostVoted": false
+        },
+        {
+          "label": "C",
+          "text": "Create an instance profile on Amazon EC2 to allow S3 access.",
+          "isMostVoted": false
+        },
+        {
+          "label": "D",
+          "text": "Create an Amazon API Gateway API with a private link to access the S3 endpoint.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "A"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "A",
+          "vote_count": 189,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "D",
+          "vote_count": 1,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "A"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 A입니다. EC2가 인터넷 없이 S3에 프라이빗으로 접근하려면 S3용 Gateway VPC Endpoint를 만들어 라우팅 테이블에 S3 prefix list 경로를 추가하는 것이 표준이며, 추가 비용이 없고 설정이 간단합니다. CloudWatch Logs 경유(B)는 아키텍처가 본말전도이며, 인스턴스 프로파일(C)은 권한 메커니즘이지 네트워크 경로 해결책이 아니고, API Gateway private link(D)는 존재하지 않는 구성입니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- EC2가 S3에 접근 필요 + 인터넷 연결 없음\n- 프라이빗 네트워크 연결 필요\n\n## 2. VPC Endpoint 두 종류\n- **Gateway Endpoint**: S3, DynamoDB 전용. 라우팅 테이블에 prefix list 경로 추가 방식. 추가 요금 없음\n- **Interface Endpoint (PrivateLink)**: 대부분의 다른 AWS 서비스용, ENI 기반, 시간·데이터당 요금\n\n- S3는 Gateway Endpoint가 표준이고 비용 효율\n\n## 3. 왜 다른 선지는 부적합한가\n- B (CloudWatch Logs → S3 내보내기): EC2가 S3에 직접 쓰기·읽기해야 하는데 CloudWatch Logs를 경유하는 것은 아키텍처 본말전도. 게다가 내보내기 자체도 인터넷 경로 문제는 그대로\n- C (인스턴스 프로파일): 인스턴스 프로파일은 IAM 역할을 EC2에 붙여 S3 권한을 부여하는 장치이지 네트워크 도달성을 해결하지 않음 — 권한과 경로는 별개 레이어\n- D (API Gateway + Private Link): API Gateway는 HTTP API 퍼블리싱 도구이며 'S3 엔드포인트에 접근하는 private link'라는 구성은 존재하지 않음\n\n## 4. SAA 시험 팁\n'프라이빗 서브넷 + S3/DynamoDB 접근'은 Gateway VPC Endpoint의 고정 정답.",
+      "saa_tip": "VPC Endpoint 종류 — Gateway(S3/DynamoDB 전용, 무료), Interface(나머지 대부분, 유료)라는 구분이 SAA 단골 함정입니다. S3는 Gateway Endpoint, KMS/SNS/Secrets Manager 등은 Interface Endpoint라는 경계 패턴을 외워두세요.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "S3 Gateway VPC Endpoint를 만들고 VPC 라우팅 테이블에 S3 prefix list 경로를 추가하면 EC2의 S3 트래픽이 AWS 내부 백본망을 통해 프라이빗하게 흐릅니다. 인터넷 게이트웨이·NAT 게이트웨이 없이 동작하고 추가 과금도 없어 '인터넷 없이 S3 접근' 요구를 가장 단순·저렴하게 충족합니다."
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "EC2의 로그를 CloudWatch Logs로 스트리밍하고 거기서 S3로 내보내는 구조는 문제의 방향과 달리 작동하고, 로그 스트리밍 자체도 네트워크 경로 문제를 해결하지 않습니다. 또한 애플리케이션이 S3 객체를 직접 읽고 쓴다는 시나리오에는 적용되지 않습니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "인스턴스 프로파일은 EC2에 IAM 역할을 연결해 S3 API 호출 권한을 부여하는 메커니즘이며, 네트워크 도달성(인터넷 없이 S3에 도달)을 해결하지 않습니다. 권한과 네트워크 경로는 서로 다른 레이어의 문제입니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "API Gateway는 HTTP/REST API 퍼블리싱 서비스이며 'S3 엔드포인트에 접근하는 private link 통합'이라는 구성은 AWS 공식 기능으로 존재하지 않습니다. S3의 프라이빗 연결은 VPC Endpoint(게이트웨이)가 표준입니다."
+        }
+      ],
+      "related_services": [
+        "VPC",
+        "S3"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:26:27.576590+00:00"
+    },
+    {
+      "examtopics_number": 5,
+      "topic": "Topic 1",
+      "question_text": "A company is hosting a web application on AWS using a single Amazon EC2 instance that stores user-uploaded documents in an Amazon EBS volume. For better scalability and availability, the company duplicated the architecture and created a second EC2 instance and EBS volume in another Availability Zone, placing both behind an Application Load Balancer. After completing this change, users reported that, each time they refreshed the website, they could see one subset of their documents or the other, but never all of the documents at the same time.What should a solutions architect propose to ensure users see all of their documents at once?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Copy the data so both EBS volumes contain all the documents",
+          "isMostVoted": false
+        },
+        {
+          "label": "B",
+          "text": "Configure the Application Load Balancer to direct a user to the server with the documents",
+          "isMostVoted": false
+        },
+        {
+          "label": "C",
+          "text": "Copy the data from both EBS volumes to Amazon EFS. Modify the application to save new documents to Amazon EFS",
+          "isMostVoted": true
+        },
+        {
+          "label": "D",
+          "text": "Configure the Application Load Balancer to send the request to both servers. Return each document from the correct server",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "C"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "C",
+          "vote_count": 147,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "D",
+          "vote_count": 3,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "C"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 C입니다. EBS 볼륨은 한 AZ에 묶여 있어 두 인스턴스가 서로 다른 EBS를 보면 업로드 파일이 분리됩니다. 공유 파일 스토리지인 EFS로 옮기고 애플리케이션이 EFS에 쓰도록 바꾸면 두 인스턴스가 같은 파일 세트를 보게 됩니다.",
+      "detailed_explanation": "## 1. 문제 진단\n- 두 EC2가 각자 '자기 AZ의 EBS'에 업로드 파일을 저장 → 파일이 인스턴스별로 분산\n- ALB가 라운드로빈으로 요청을 분배하니 사용자는 새로고침할 때마다 다른 인스턴스로 가고, 다른 절반의 파일만 보임\n\n## 2. 왜 EFS인가\nEFS는 여러 AZ의 여러 EC2가 '동시에 마운트·읽기·쓰기'할 수 있는 완전관리형 NFS 파일 시스템입니다. 모든 EC2가 동일한 네임스페이스를 보므로 업로드가 곧바로 전 인스턴스에서 보입니다. 다중 AZ 고가용성도 기본 제공.\n\n## 3. 다른 선지를 버리는 이유\n- A: 사람이 EBS 간 데이터를 복사해도 실시간 업로드마다 동기화를 다시 해야 함 → 지속 불가\n- B: '문서가 있는 서버로 보내도록 ALB 설정'은 ALB가 어떤 파일이 어디 있는지 알 방법이 없어 구현 자체가 불가\n- D: '요청을 두 서버로 동시에 보내고 올바른 쪽 응답 반환'은 ALB의 동작 방식이 아님(ALB는 요청당 단일 타겟)\n\n## 4. SAA 시험 팁\n'여러 EC2 + 공유 파일 저장 + 멀티 AZ'는 EFS의 교과서 유스케이스입니다. EBS는 원칙적으로 단일 인스턴스·단일 AZ라는 점을 항상 염두에 두세요.",
+      "saa_tip": "'ALB 뒤 다수 EC2가 공유해야 하는 파일' 문제는 거의 항상 EFS 답입니다. EBS = 1 AZ 1 인스턴스, EFS = 다중 AZ 다중 인스턴스라는 1줄 요약을 머리에 새겨두세요.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "EBS 간 수동 복사는 일회성 동기화에 불과합니다. 이후에도 사용자가 업로드할 때마다 한쪽 EBS에만 저장되고 다른 쪽과 갈라지므로 '새로고침할 때마다 다른 부분 집합이 보이는' 문제가 재발합니다."
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "ALB는 라우팅 시점에 '어떤 객체가 어느 타겟에 있는지'를 인식하지 못합니다. 요청 URL만 보고 타겟 그룹의 헬시 인스턴스 중 하나로 분산할 뿐, 파일 위치 기반 라우팅 기능이 없습니다."
+        },
+        {
+          "label": "C",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "EFS는 다중 AZ에서 여러 EC2가 동시에 읽고 쓰는 NFS 파일 시스템입니다. 업로드 파일을 EFS로 옮기고 이후 쓰기 경로도 EFS로 바꾸면 ALB가 어느 인스턴스로 라우팅하든 동일한 파일 세트를 보게 됩니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "ALB는 한 요청을 동시에 두 타겟으로 보내 '올바른 응답을 고르는' 멀티캐스트 동작을 하지 않습니다. 타겟 그룹 알고리즘(라운드로빈/최소 미해결)이 요청당 하나의 타겟만 고릅니다."
+        }
+      ],
+      "related_services": [
+        "EC2",
+        "EBS",
+        "EFS",
+        "ALB"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:49:36.945179+00:00"
+    },
+    {
+      "examtopics_number": 6,
+      "topic": "Topic 1",
+      "question_text": "A company uses NFS to store large video files in on-premises network attached storage. Each video file ranges in size from 1 MB to 500 GB. The total storage is 70 TB and is no longer growing. The company decides to migrate the video files to Amazon S3. The company must migrate the video files as soon as possible while using the least possible network bandwidth.Which solution will meet these requirements?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Create an S3 bucket. Create an IAM role that has permissions to write to the S3 bucket. Use the AWS CLI to copy all files locally to the S3 bucket.",
+          "isMostVoted": false
+        },
+        {
+          "label": "B",
+          "text": "Create an AWS Snowball Edge job. Receive a Snowball Edge device on premises. Use the Snowball Edge client to transfer data to the device. Return the device so that AWS can import the data into Amazon S3.",
+          "isMostVoted": true
+        },
+        {
+          "label": "C",
+          "text": "Deploy an S3 File Gateway on premises. Create a public service endpoint to connect to the S3 File Gateway. Create an S3 bucket. Create a new NFS file share on the S3 File Gateway. Point the new file share to the S3 bucket. Transfer the data from the existing NFS file share to the S3 File Gateway.",
+          "isMostVoted": false
+        },
+        {
+          "label": "D",
+          "text": "Set up an AWS Direct Connect connection between the on-premises network and AWS. Deploy an S3 File Gateway on premises. Create a public virtual interface (VIF) to connect to the S3 File Gateway. Create an S3 bucket. Create a new NFS file share on the S3 File Gateway. Point the new file share to the S3 bucket. Transfer the data from the existing NFS file share to the S3 File Gateway.",
           "isMostVoted": false
         }
       ],
@@ -55,38 +479,68 @@
         "B"
       ],
       "answer_source": "marked",
+      "explanation": "정답은 B입니다. 70TB를 '최단 시간 + 최소 네트워크 대역폭'으로 이전하라는 요구는 물리 장비 배송 방식인 Snowball Edge의 정의 그대로이며, 회사 인터넷을 전혀 쓰지 않습니다. CLI·File Gateway·Direct Connect 기반 해법은 모두 네트워크로 70TB를 밀어내야 해 조건과 충돌합니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 총 70TB 비디오 파일 → S3\n- '최단 시간' + '최소 네트워크 대역폭'\n- 데이터는 더 증가하지 않음(= 일회성 대량 이전)\n\n## 2. 왜 Snowball Edge인가\n최대 ~80TB 장비(모델별 상이)를 AWS가 배송 → 사내 네트워크에서 로컬 10 GbE로 복사 → 장비 반송 → AWS 데이터센터에서 S3 업로드. 회사의 인터넷 회선을 한 바이트도 쓰지 않고 대규모 전송을 끝낼 수 있어 '대역폭 최소'와 '빠른 완료'를 동시에 만족합니다.\n\n## 3. 다른 선지를 버리는 이유\n- A: AWS CLI는 결국 회사 인터넷 대역폭을 70TB만큼 소모 → '최소 대역폭' 위반\n- C: File Gateway를 공개 엔드포인트로 쓰더라도 모든 데이터가 인터넷으로 업로드 → 대역폭 소모 동일\n- D: Direct Connect를 새로 깔려면 회선 개설만 몇 주가 걸리고 여전히 전체 70TB를 선로로 밀어야 함 → '최단 시간' 위반\n\n## 4. SAA 시험 팁\n'수십 TB 이상 + 네트워크 제약 + 일회성'이 보이면 Snowball/Snowball Edge/Snowmobile(100PB 이상)을 즉시 떠올리세요. 반대로 '지속적 증분 동기화'가 요구되면 DataSync·Storage Gateway가 답입니다.",
+      "saa_tip": "키워드 정리 — 대용량 일회성 이전: Snowball/Edge/Snowmobile, 지속 증분 온라인 복제: DataSync, 하이브리드 NFS/SMB 확장 캐시: Storage Gateway, 전용선 상시 연결: Direct Connect. 문제 문장에서 '일회성 vs 지속' 키워드를 먼저 분리하세요.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "CLI의 aws s3 cp/sync는 회사 인터넷을 그대로 타고 나가므로 70TB를 옮기는 동안 '최소 대역폭' 요구를 정면으로 어깁니다. 회선 용량이 낮으면 전송이 수 주~수 개월 걸려 '가능한 한 빠르게'에도 맞지 않습니다."
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "Snowball Edge는 물리 장비를 택배로 받아 사내 LAN으로 복사한 뒤 AWS가 데이터센터에서 S3로 업로드합니다. 회사 인터넷 사용량이 0에 가깝고 70TB도 며칠 내 완료할 수 있어 '최소 대역폭 + 최단 시간'을 동시에 만족하는 유일한 옵션입니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "S3 File Gateway + 공용 엔드포인트 구성도 결국 모든 파일 바이트가 인터넷을 통해 S3로 업로드되어야 합니다. 캐시·프로토콜 변환은 되지만 실제 전송량을 줄이진 못해 '최소 대역폭' 요구와 충돌합니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "Direct Connect는 전용선이라 '회사 인터넷'을 아끼는 효과는 있으나, 선로 개설 리드타임이 수 주~수 개월이고 여전히 70TB를 선로로 밀어야 해 '최단 시간' 요구를 맞추기 어렵습니다. 또한 70TB 일회성 전송에 전용선을 깔면 CAPEX 과잉입니다."
+        }
+      ],
       "related_services": [
-        "S3",
         "Snowball",
+        "S3",
+        "DataSync",
         "Storage Gateway",
         "Direct Connect"
       ],
-      "explanation": "70TB에 달하는 대용량 데이터를 네트워크 대역폭을 거의 사용하지 않으면서 최대한 빠르게 이전해야 하므로, 물리 디바이스로 오프라인 전송하는 AWS Snowball Edge가 가장 적합합니다. AWS CLI나 S3 File Gateway를 통한 네트워크 전송은 70TB만큼의 인터넷 대역폭을 소모하고 시간도 매우 오래 걸리며, Direct Connect 역시 회선을 새로 구축해야 하고 여전히 네트워크 대역폭을 사용합니다.",
-      "detailed_explanation": "1. 문제의 요구사항 분석하기\n\n온프레미스 NFS에 저장된 70TB 비디오 파일을 Amazon S3로 마이그레이션.\n\n네트워크 대역폭을 최대한 적게 사용해야 함.\n\n최대한 빨리 마이그레이션 완료 필요.\n\n데이터가 더 이상 증가하지 않으므로 일회성 대규모 전송.\n\n2. 관련 AWS 서비스 생각하기\n\nAWS Snowball Edge : 테라바이트~페타바이트급 데이터를 물리 디바이스로 오프라인 전송하는 서비스입니다. 디바이스를 택배로 운송하므로 인터넷 대역폭을 사용하지 않으며, 대용량 1회성 마이그레이션에 가장 빠르고 저렴합니다.\n\nAWS Storage Gateway (S3 File Gateway) : 온프레미스 애플리케이션이 NFS/SMB로 S3에 접근할 수 있게 해주는 하이브리드 스토리지입니다. 지속적인 하이브리드 운영에는 적합하지만, 70TB 일회성 전송은 여전히 네트워크를 통해 이뤄져 대역폭을 많이 소모합니다.\n\nAWS Direct Connect : 온프레미스와 AWS 간 전용 네트워크 회선입니다. 구축에 수 주~수 개월이 걸리고 비용이 크며, 회선 대역폭 한도까지 네트워크 전송량이 발생합니다.\n\nAWS CLI 업로드 : 퍼블릭 인터넷을 통해 파일을 전송합니다. 70TB를 전송하려면 막대한 대역폭과 시간이 필요합니다.\n\n3. 선택지 분석하기\n\nA. S3 버킷 + IAM 역할 + AWS CLI 업로드.\n\n→ 70TB를 퍼블릭 인터넷으로 모두 업로드해야 하므로 네트워크 대역폭 최소화 요구를 정면으로 위반합니다.\n\nB. AWS Snowball Edge 작업으로 물리 디바이스에 복사 후 AWS로 반송.\n\n→ 네트워크 대역폭을 거의 사용하지 않고, 70TB 같은 대용량을 가장 빠르게 이전할 수 있는 표준적인 방법입니다. 정답입니다.\n\nC. S3 File Gateway (퍼블릭 서비스 엔드포인트).\n\n→ 여전히 인터넷을 통해 70TB를 전송해야 하므로 대역폭 요구사항을 충족하지 못하며, 일회성 대규모 마이그레이션의 속도 요건에도 불리합니다.\n\nD. Direct Connect + S3 File Gateway.\n\n→ Direct Connect 구축에 시간이 오래 걸리고, 회선 자체도 대역폭을 소비하므로 '최대한 빨리', '대역폭 최소화' 두 조건 모두에서 Snowball Edge보다 열위입니다."
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:49:36.945179+00:00"
     },
     {
       "examtopics_number": 7,
       "topic": "Topic 1",
-      "question_text": "한 회사에는 수신되는 메시지를 수집하는 애플리케이션이 있습니다. 그런 다음 수십 개의 다른 애플리케이션과 마이크로서비스가 이러한 메시지를 빠르게 소비합니다. 메시지 수는 크게 변동하며 때로는 갑자기 초당 100,000개로 급증합니다. 회사는 솔루션을 분리(decouple)하고 확장성을 높이려고 합니다.\n\n어떤 솔루션이 이러한 요구 사항을 충족합니까?",
+      "question_text": "A company has an application that ingests incoming messages. Dozens of other applications and microservices then quickly consume these messages. The number of messages varies drastically and sometimes increases suddenly to 100,000 each second. The company wants to decouple the solution and increase scalability.Which solution meets these requirements?",
       "options": [
         {
           "label": "A",
-          "text": "메시지를 Amazon Kinesis Data Analytics에 유지합니다. 소비자 애플리케이션이 메시지를 읽고 처리하도록 구성합니다.",
+          "text": "Persist the messages to Amazon Kinesis Data Analytics. Configure the consumer applications to read and process the messages.",
           "isMostVoted": false
         },
         {
           "label": "B",
-          "text": "수집 애플리케이션을 Auto Scaling 그룹의 Amazon EC2 인스턴스에 배포하여 CPU 지표를 기반으로 EC2 인스턴스 수를 조정합니다.",
+          "text": "Deploy the ingestion application on Amazon EC2 instances in an Auto Scaling group to scale the number of EC2 instances based on CPU metrics.",
           "isMostVoted": false
         },
         {
           "label": "C",
-          "text": "단일 샤드를 가진 Amazon Kinesis Data Streams에 메시지를 기록합니다. AWS Lambda 함수를 사용하여 메시지를 전처리한 뒤 Amazon DynamoDB에 저장합니다. 소비자 애플리케이션이 DynamoDB에서 읽어 메시지를 처리하도록 구성합니다.",
+          "text": "Write the messages to Amazon Kinesis Data Streams with a single shard. Use an AWS Lambda function to preprocess messages and store them in Amazon DynamoDB. Configure the consumer applications to read from DynamoDB to process the messages.",
           "isMostVoted": false
         },
         {
           "label": "D",
-          "text": "여러 Amazon Simple Queue Service(Amazon SQS) 구독이 연결된 Amazon Simple Notification Service(Amazon SNS) 토픽에 메시지를 게시합니다. 소비자 애플리케이션이 각 대기열에서 메시지를 처리하도록 구성합니다.",
+          "text": "Publish the messages to an Amazon Simple Notification Service (Amazon SNS) topic with multiple Amazon Simple Queue Service (Amazon SOS) subscriptions. Configure the consumer applications to process the messages from the queues.",
           "isMostVoted": true
         }
       ],
@@ -120,18 +574,310 @@
         "D"
       ],
       "answer_source": "marked",
+      "explanation": "정답은 D입니다. '하나의 메시지를 수십 개 소비자가 각자 읽고' 초당 10만 건 버스트까지 견디려면 SNS 토픽에 여러 SQS 큐를 팬아웃(fan-out)시키는 것이 AWS의 표준 분리·확장 패턴입니다. Kinesis Analytics/단일 샤드 KDS/Auto Scaling EC2는 팬아웃·확장·운영 측면에서 각각 하나씩 결격입니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 하나의 메시지를 '수십 개' 애플리케이션/마이크로서비스가 빠르게 소비\n- 초당 100,000건까지 급증하는 가변 트래픽\n- '분리(decouple) + 확장성'\n\n## 2. 왜 SNS → 다중 SQS 팬아웃인가\n- **SNS**는 pub/sub, 여러 구독자에게 메시지를 동시에 분기 전달 → '수십 개 소비자' 요구 매칭\n- **SQS**는 각 소비자별 버퍼·재시도·가시성 타임아웃을 독립적으로 처리 → '분리' 목적 달성\n- SNS는 초당 수만~수십만 퍼블리시, SQS는 사실상 무제한 throughput(표준 큐 기준) → 10만/초 버스트 수용\n- 소비자 하나가 느려져도 다른 구독 큐에는 영향 없음\n\n## 3. 다른 선지를 버리는 이유\n- A: Kinesis Data **Analytics**는 스트림 쿼리·분석 엔진이지 메시지 브로커가 아님. 메시지를 영속 저장하거나 다수 소비자에게 팬아웃하는 역할이 아님\n- B: 수집 앱을 EC2 ASG로 CPU 기반 확장해도 여전히 단일 큐(브로커)가 없으면 소비자들은 팬아웃받지 못함 → 문제의 본질을 해결하지 못함\n- C: KDS는 팬아웃이 되지만 **단일 샤드**는 1 MB/s 또는 1,000 record/s 제한이라 10만/초 요건에 구조적으로 부적합. Lambda → DynamoDB 중간 스테이지는 추가 레이턴시·비용도 발생\n\n## 4. SAA 시험 팁\n'하나의 이벤트 → 여러 소비자'는 SNS+SQS 팬아웃, '순서 보장 필요'는 SQS FIFO, '스트리밍 순서·리플레이 필요'는 KDS, '분석'은 Kinesis Analytics(또는 Managed Service for Apache Flink). 단일 샤드 KDS는 거의 항상 함정 선지입니다.",
+      "saa_tip": "'1개 이벤트 → N개 소비자'는 SNS-to-SQS 팬아웃의 교과서 예시입니다. '순서 보장' 키워드가 추가되면 SNS FIFO + SQS FIFO로 대체합니다. 선지에 '단일 샤드 KDS'가 보이면 거의 90% 함정입니다.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "Kinesis Data Analytics는 스트리밍 SQL/Flink 분석 엔진이며, 메시지를 여러 소비자에게 팬아웃하거나 장기 버퍼링하는 메시지 브로커가 아닙니다. '소비자가 읽고 처리'한다는 선지 설명 자체가 KDA의 용도와 맞지 않습니다."
+        },
+        {
+          "label": "B",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "수집 측 EC2를 CPU 기반 Auto Scaling으로 늘려도 메시지가 여러 소비자에게 분기되는 구조가 없으면 '수십 개 애플리케이션이 각자 빠르게 소비'가 구현되지 않습니다. 즉 분리·확장성의 핵심인 브로커 계층을 아예 빼놓은 설계입니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "KDS는 샤드당 쓰기 1 MB/s 또는 1,000 record/s 제한을 가지며, 단일 샤드로 초당 10만 이벤트는 구조적으로 불가능합니다. 또한 'Lambda로 전처리 → DynamoDB 저장 → 소비자들이 DynamoDB에서 읽기'는 메시지 브로커 패턴이 아니라 데이터베이스 폴링 패턴이라 decoupling이 약합니다."
+        },
+        {
+          "label": "D",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "SNS 토픽에 여러 SQS 큐를 구독시키면 발행자가 한 번만 퍼블리시해도 모든 소비자 큐로 자동 팬아웃됩니다. SQS 표준 큐는 사실상 무제한 throughput이며 각 큐가 독립 버퍼이므로 '10만/초 버스트 + 수십 개 독립 소비자 + 분리'라는 세 조건을 모두 만족합니다."
+        }
+      ],
       "related_services": [
         "SNS",
         "SQS",
-        "Kinesis",
         "Lambda",
-        "DynamoDB",
-        "EC2"
+        "Kinesis"
       ],
-      "explanation": "하나의 메시지가 수십 개의 소비자에게 동시에 전달되어야 하고, 트래픽이 초당 100,000개로 급증할 수 있습니다. Amazon SNS 토픽에 메시지를 게시하고 여러 Amazon SQS 대기열이 이를 구독하도록 하는 팬아웃(Fan-out) 패턴을 사용하면, 각 소비자가 자기 전용 대기열에서 독립적으로 메시지를 처리할 수 있어 완전한 분리(decoupling)와 높은 확장성을 모두 달성할 수 있습니다.",
-      "detailed_explanation": "1. 문제의 요구사항 분석하기\n\n하나의 메시지를 수십 개의 서로 다른 애플리케이션/마이크로서비스가 동시에 소비해야 함 → 팬아웃 요구.\n\n트래픽이 초당 100,000건까지 급변 → 대규모 자동 확장 필요.\n\n솔루션을 분리(decouple)하여 생산자와 소비자의 처리 속도를 독립적으로 유지해야 함.\n\n2. 관련 AWS 서비스 생각하기\n\nAmazon SNS (Simple Notification Service) : 게시/구독(Pub/Sub) 메시징 서비스로, 하나의 토픽에 게시된 메시지를 여러 구독자(SQS, Lambda, HTTP 등)에게 동시에 전달할 수 있습니다. 매우 높은 처리량으로 자동 확장됩니다.\n\nAmazon SQS (Simple Queue Service) : 완전 관리형 메시지 큐로, 소비자가 자신의 속도로 메시지를 Pull해 처리하므로 송신자와 수신자가 완전히 분리됩니다. 사실상 무제한으로 확장 가능합니다.\n\nSNS + SQS 팬아웃 패턴 : SNS 토픽에 메시지를 한 번 게시하면 구독 중인 여러 SQS 대기열 각각에 메시지가 복제되어 들어가, 소비자마다 전용 대기열을 갖고 독립 처리할 수 있습니다. AWS가 권장하는 대규모 분산 메시징 표준 패턴입니다.\n\nAmazon Kinesis Data Streams : 순서 보장이 중요한 실시간 스트리밍에 적합하지만, 샤드당 처리량 한도(쓰기 1MB/s 또는 1,000 레코드/s)가 있어 단일 샤드로는 초당 100,000건을 처리할 수 없습니다.\n\nAmazon Kinesis Data Analytics : 스트림 데이터의 실시간 SQL 분석 서비스이지, 메시지 큐잉/팬아웃 용도가 아닙니다.\n\n3. 선택지 분석하기\n\nA. Kinesis Data Analytics에 메시지 유지.\n\n→ 분석용 서비스이므로 수십 개 소비자에게 메시지를 팬아웃하는 용도로 설계되지 않았고, 메시지 저장소로도 부적합합니다.\n\nB. EC2 Auto Scaling만으로 수집 계층 확장.\n\n→ 수집 애플리케이션만 스케일할 뿐 생산자-소비자 결합이 그대로 유지되어 '분리' 요구를 충족하지 못합니다.\n\nC. 단일 샤드 Kinesis Data Streams + Lambda + DynamoDB.\n\n→ 단일 샤드는 초당 1,000 레코드로 제한되어 100,000 TPS를 감당할 수 없으며, 소비자가 DynamoDB를 폴링하는 구조는 진정한 분리도 아닙니다.\n\nD. SNS 토픽 + 여러 SQS 구독.\n\n→ 수십 개의 소비자가 각자의 SQS 대기열에서 독립적으로 메시지를 처리하며, SNS와 SQS 모두 대규모로 자동 확장되어 초당 100,000건 급증을 수용할 수 있습니다. 완전한 분리와 확장성을 동시에 달성하는 표준 패턴입니다. 정답입니다."
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:49:36.945179+00:00"
+    },
+    {
+      "examtopics_number": 8,
+      "topic": "Topic 1",
+      "question_text": "A company is migrating a distributed application to AWS. The application serves variable workloads. The legacy platform consists of a primary server that coordinates jobs across multiple compute nodes. The company wants to modernize the application with a solution that maximizes resiliency and scalability.How should a solutions architect design the architecture to meet these requirements?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Configure an Amazon Simple Queue Service (Amazon SQS) queue as a destination for the jobs. Implement the compute nodes with Amazon EC2 instances that are managed in an Auto Scaling group. Configure EC2 Auto Scaling to use scheduled scaling.",
+          "isMostVoted": false
+        },
+        {
+          "label": "B",
+          "text": "Configure an Amazon Simple Queue Service (Amazon SQS) queue as a destination for the jobs. Implement the compute nodes with Amazon EC2 instances that are managed in an Auto Scaling group. Configure EC2 Auto Scaling based on the size of the queue.",
+          "isMostVoted": true
+        },
+        {
+          "label": "C",
+          "text": "Implement the primary server and the compute nodes with Amazon EC2 instances that are managed in an Auto Scaling group. Configure AWS CloudTrail as a destination for the jobs. Configure EC2 Auto Scaling based on the load on the primary server.",
+          "isMostVoted": false
+        },
+        {
+          "label": "D",
+          "text": "Implement the primary server and the compute nodes with Amazon EC2 instances that are managed in an Auto Scaling group. Configure Amazon EventBridge (Amazon CloudWatch Events) as a destination for the jobs. Configure EC2 Auto Scaling based on the load on the compute nodes.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "B"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "B",
+          "vote_count": 236,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "D",
+          "vote_count": 9,
+          "is_most_voted": false
+        },
+        {
+          "voted_answers": "C",
+          "vote_count": 5,
+          "is_most_voted": false
+        },
+        {
+          "voted_answers": "A",
+          "vote_count": 5,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "B"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 B입니다. 작업량 가변·레거시 코디네이터를 현대화하는 가장 복원력 있고 확장성 있는 패턴은 SQS로 코디네이터를 대체하고, 큐 깊이(ApproximateNumberOfMessages) 지표로 ASG를 스케일하는 것입니다. 스케줄 기반·CloudTrail·EventBridge로는 수요 변화를 반영한 스케일이 불가합니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 가변 워크로드 + 복원력 + 확장성 최대화\n- 레거시의 '마스터가 일감을 노드에 뿌리는' 구조를 현대화\n\n## 2. 왜 SQS + 큐 길이 기반 ASG인가\n- SQS가 '작업 대기열' 역할을 맡으면 프라이머리 서버라는 단일 장애 지점이 사라집니다 → 복원력↑\n- CloudWatch `ApproximateNumberOfMessages` 지표를 Target Tracking/Step Scaling에 연동하면 대기 중인 작업량에 비례해 워커 수가 자동 증감 → 수요에 맞춘 확장성\n- 작업 하나가 실패해도 가시성 타임아웃이 지나면 다른 워커가 재시도 → at-least-once 처리\n\n## 3. 다른 선지를 버리는 이유\n- A: 스케줄 기반 스케일(Scheduled Scaling)은 '매일 오전 9시 5대 증설' 같은 예측 패턴용. 가변·불규칙 워크로드에는 용량 과/부족이 반복\n- C: CloudTrail은 API 감사 로그라 작업 큐로 쓸 수 없음. 또 '프라이머리 서버 부하 기반 스케일'은 레거시의 코디네이터를 그대로 두는 안이라 단일 장애 지점 제거 실패\n- D: EventBridge는 이벤트 라우터(이벤트 → 대상)이지 작업 큐(영속 버퍼)가 아님. 재시도·가시성 타임아웃·재처리 개념이 없음\n\n## 4. SAA 시험 팁\n'코디네이터 → 다수 워커 + 가변 부하'는 SQS + ASG-based-on-queue-depth의 전형적 조합입니다. 스케줄링 스케일은 'nightly batch' 같은 확정된 패턴에만 어울립니다.",
+      "saa_tip": "'메시지 큐 깊이에 따른 ASG 확장'은 SAA에서 자주 나오는 마법 주문입니다. 반대로 '시간대 기반 정기 확장'은 정확히 야간 배치·새벽 크론처럼 일정이 확정된 패턴에만 정답입니다.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "스케줄링 기반 스케일은 시간표대로만 용량을 바꿉니다. '가변(variable) 워크로드'에는 실제 수요를 반영하지 못해 피크 때 처리가 밀리거나 한가할 때 과용량으로 비용이 낭비됩니다."
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "SQS가 마스터 서버의 일감 분배 역할을 대신하면서 작업을 영속 저장하고, CloudWatch 큐 깊이 지표로 ASG를 늘리고 줄이면 수요와 용량이 자동으로 맞춰집니다. 단일 장애 지점 제거 + 재시도 내장 + 수요 기반 확장이라는 세 가지 요구를 모두 만족합니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "CloudTrail은 AWS API 호출의 감사/거버넌스 로그이며 작업 큐 대상이 될 수 없습니다. 또한 프라이머리 서버를 그대로 두고 그 부하로 스케일하면 레거시의 단일 장애 지점이 그대로 유지되어 '복원력 최대화' 요구와 충돌합니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "EventBridge는 이벤트 버스/룰 라우팅 서비스로, 실패 이벤트의 가시성 타임아웃·재시도·영속 저장이 SQS만큼 명확하지 않습니다. 또 컴퓨팅 노드 부하로 스케일하면 큐에 쌓인 대기량을 반영하지 못해 처리 지연이 발생합니다."
+        }
+      ],
+      "related_services": [
+        "SQS",
+        "EC2",
+        "Auto Scaling",
+        "CloudWatch"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:49:36.945179+00:00"
+    },
+    {
+      "examtopics_number": 9,
+      "topic": "Topic 1",
+      "question_text": "A company is running an SMB file server in its data center. The file server stores large files that are accessed frequently for the first few days after the files are created. After 7 days the files are rarely accessed.The total data size is increasing and is close to the company's total storage capacity. A solutions architect must increase the company's available storage space without losing low-latency access to the most recently accessed files. The solutions architect must also provide file lifecycle management to avoid future storage issues.Which solution will meet these requirements?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Use AWS DataSync to copy data that is older than 7 days from the SMB file server to AWS.",
+          "isMostVoted": false
+        },
+        {
+          "label": "B",
+          "text": "Create an Amazon S3 File Gateway to extend the company's storage space. Create an S3 Lifecycle policy to transition the data to S3 Glacier Deep Archive after 7 days.",
+          "isMostVoted": true
+        },
+        {
+          "label": "C",
+          "text": "Create an Amazon FSx for Windows File Server file system to extend the company's storage space.",
+          "isMostVoted": false
+        },
+        {
+          "label": "D",
+          "text": "Install a utility on each user's computer to access Amazon S3. Create an S3 Lifecycle policy to transition the data to S3 Glacier Flexible Retrieval after 7 days.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "B"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "B",
+          "vote_count": 173,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "D",
+          "vote_count": 25,
+          "is_most_voted": false
+        },
+        {
+          "voted_answers": "A",
+          "vote_count": 7,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "B"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 B입니다. 최근 파일은 저지연 캐시로 계속 접근하고 7일 이후엔 비용을 줄이려면 'SMB → S3 File Gateway(로컬 캐시) + S3 Lifecycle로 Glacier Deep Archive 전환' 조합이 정확히 일치합니다. DataSync는 일회성 복사이고, FSx Windows는 티어링 없고, 개인 PC에 S3 유틸 설치는 애플리케이션 변경이 필요합니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 스토리지 용량 한계 임박 → AWS 확장\n- 최근 며칠만 자주 접근 → 최근 파일은 저지연 유지\n- 7일 이후 거의 미접근 → 장기 보관은 저비용\n- 파일 수명 주기(lifecycle) 관리 필요\n\n## 2. 왜 S3 File Gateway + Lifecycle인가\n- **File Gateway**: 온프레에 가상 어플라이언스로 띄우고 SMB/NFS 프로토콜을 그대로 제공. 뒤로는 S3에 객체로 저장. **로컬 캐시**가 있어 자주 읽는 최근 파일은 LAN 속도로 응답\n- **S3 Lifecycle**: 객체가 일정 일수 지나면 자동으로 스토리지 클래스 전환 → 7일 이후 Glacier Deep Archive로 이동하면 $/TB가 가장 낮은 아카이브가 됨\n- 사용자는 여전히 SMB 마운트로 보이므로 애플리케이션/운영 변경 최소\n\n## 3. 다른 선지를 버리는 이유\n- A: DataSync는 대용량 '이전/복제'용이며 저지연 로컬 캐시를 제공하지 않음. 최근 파일에 대한 저지연 접근 요구 미충족\n- C: FSx for Windows File Server는 확장된 SMB 파일 시스템이지만 객체 티어링/Glacier 전환이 없어 장기 아카이브 비용 절감 요구를 만족하지 못함\n- D: 각 사용자 PC에 S3 접근 유틸을 설치하면 사용자 워크플로/애플리케이션을 모두 바꿔야 하고, Deep Archive 대신 Flexible Retrieval이라 비용 최적도 아님\n\n## 4. SAA 시험 팁\n'온프레 SMB/NFS + 로컬 캐시 + S3 뒤끝 + 수명주기 아카이브'는 File Gateway의 교과서 시나리오입니다. SMB만 키워드라면 FSx Windows도 후보지만, '장기 보관 비용 절감'이 붙으면 거의 File Gateway+Lifecycle로 수렴합니다.",
+      "saa_tip": "File Gateway는 '온프레 SMB/NFS 확장 + 저지연 로컬 캐시 + S3 뒷단 + Lifecycle 티어링'이라는 4단 콤보를 한 번에 제공하는 유일한 서비스입니다. 키워드 하나만 맞아도 후보군에 올려보세요.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "DataSync는 소스 → S3로 데이터를 옮기는 마이그레이션/동기화 도구이며, 최근 파일을 저지연으로 읽게 해주는 로컬 캐시 계층을 제공하지 않습니다. '수명 주기 관리'라는 요구도 충족시키지 못합니다."
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "S3 File Gateway는 SMB 프로토콜을 그대로 제공하면서 뒤로 S3 객체로 저장하고, 어플라이언스 측에 로컬 캐시가 있어 최근 파일은 LAN 속도 응답이 가능합니다. S3 Lifecycle이 7일 후 Deep Archive로 자동 전환해 장기 보관 비용을 최저로 떨어뜨리므로 모든 요구를 한 번에 만족합니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "FSx for Windows File Server는 Windows 네이티브 SMB를 확장 제공하지만 Glacier 같은 아카이브 클래스로의 자동 전환이 없습니다. 7일 이후 '거의 접근 안 함'인 파일까지 SSD/HDD 단가로 계속 보관해야 해 비용 최적이 아닙니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "각 사용자 PC에 S3 접근 유틸을 배포하는 것은 현재 SMB 파일 서버 워크플로를 모두 바꾸라는 요구이며 운영 오버헤드가 큽니다. 또한 Glacier Flexible Retrieval은 Deep Archive보다 더 비싸 '비용 절감' 관점에서도 최선이 아닙니다."
+        }
+      ],
+      "related_services": [
+        "Storage Gateway",
+        "S3",
+        "DataSync",
+        "FSx"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:49:36.945179+00:00"
+    },
+    {
+      "examtopics_number": 10,
+      "topic": "Topic 1",
+      "question_text": "A company is building an ecommerce web application on AWS. The application sends information about new orders to an Amazon API Gateway REST API to process. The company wants to ensure that orders are processed in the order that they are received.Which solution will meet these requirements?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Use an API Gateway integration to publish a message to an Amazon Simple Notification Service (Amazon SNS) topic when the application receives an order. Subscribe an AWS Lambda function to the topic to perform processing.",
+          "isMostVoted": false
+        },
+        {
+          "label": "B",
+          "text": "Use an API Gateway integration to send a message to an Amazon Simple Queue Service (Amazon SQS) FIFO queue when the application receives an order. Configure the SQS FIFO queue to invoke an AWS Lambda function for processing.",
+          "isMostVoted": true
+        },
+        {
+          "label": "C",
+          "text": "Use an API Gateway authorizer to block any requests while the application processes an order.",
+          "isMostVoted": false
+        },
+        {
+          "label": "D",
+          "text": "Use an API Gateway integration to send a message to an Amazon Simple Queue Service (Amazon SQS) standard queue when the application receives an order. Configure the SQS standard queue to invoke an AWS Lambda function for processing.",
+          "isMostVoted": false
+        }
+      ],
+      "marked_answer": [
+        "B"
+      ],
+      "community_votes": [
+        {
+          "voted_answers": "B",
+          "vote_count": 254,
+          "is_most_voted": true
+        },
+        {
+          "voted_answers": "A",
+          "vote_count": 5,
+          "is_most_voted": false
+        }
+      ],
+      "discussion_count": 0,
+      "correct_answers": [
+        "B"
+      ],
+      "answer_source": "marked",
+      "explanation": "정답은 B입니다. '수신 순서 그대로 처리'라는 요구는 FIFO 큐의 정의 자체입니다. SQS FIFO + Lambda 조합이면 순서 보장과 정확히 한 번 처리를 모두 얻습니다. SNS 표준·SQS 표준은 순서를 보장하지 않고, API Gateway authorizer는 순서와 무관합니다.",
+      "detailed_explanation": "## 1. 요구사항 분해\n- 주문을 '수신한 순서대로' 처리\n- API Gateway REST API가 진입점\n\n## 2. 왜 SQS FIFO인가\n- FIFO 큐는 MessageGroupId 단위로 strictly-ordered delivery + exactly-once processing을 제공합니다. 같은 그룹 안에서는 도착 순서 그대로 소비자에게 전달됨\n- API Gateway는 SQS와의 네이티브 AWS 서비스 통합을 지원해 Lambda 없이도 메시지를 큐로 밀어넣을 수 있음\n- SQS FIFO는 Lambda 트리거의 이벤트 소스로 지원됨 → 서버리스 처리 가능\n\n## 3. 다른 선지를 버리는 이유\n- A: SNS 표준 토픽은 순서를 보장하지 않음(SNS FIFO는 존재하지만 여기선 '표준' 언급)\n- C: '처리 중엔 들어오는 요청을 막는다'는 authorizer의 본 기능이 아니며, 그렇게 하면 동시성 = 1이라 API가 사실상 블로킹됨\n- D: SQS 표준 큐는 best-effort ordering만 제공(동일 그룹 키에도 순서 역전 가능) → 엄격한 순서 보장 요구 미충족\n\n## 4. SAA 시험 팁\n'순서 보장/중복 없음/정확히 한 번'이 요구되면 FIFO 큐(또는 SNS FIFO) 라인업을 떠올리세요. 순서가 필요 없고 고처리량만이면 SQS 표준이 답입니다.",
+      "saa_tip": "큐 선택 공식 — 순서/중복 관리 필요 = FIFO 큐, 고처리량·비순차 허용 = 표준 큐. 같은 SNS도 Standard vs FIFO 구분이 있음을 함께 기억하세요.",
+      "option_analysis": [
+        {
+          "label": "A",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "SNS 표준 토픽은 구독자에게 메시지를 팬아웃하지만 순서를 보장하지 않습니다. 주문이 '수신한 순서대로' 처리되어야 한다는 요구와 정면으로 어긋납니다."
+        },
+        {
+          "label": "B",
+          "is_correct": true,
+          "verdict": "정답",
+          "reason": "SQS FIFO 큐는 엄격한 순서 보장과 exactly-once 처리를 공식적으로 제공하는 유일한 AWS 네이티브 큐입니다. API Gateway ↔ SQS 서비스 통합과 SQS FIFO ↔ Lambda 트리거가 모두 관리형으로 지원되어 가장 단순하면서 요구를 정확히 만족합니다."
+        },
+        {
+          "label": "C",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "authorizer는 인증/인가용 메커니즘이지 요청 큐잉·직렬화 수단이 아닙니다. '처리 중 요청 차단'은 authorizer의 설계 용도가 아니며, 설령 강제로 구현하더라도 동시성=1이 되어 API가 극단적으로 느려집니다."
+        },
+        {
+          "label": "D",
+          "is_correct": false,
+          "verdict": "오답",
+          "reason": "SQS 표준 큐는 최선형(best-effort) 순서 + at-least-once 전달을 제공하며, 엄격한 FIFO를 보장하지 않습니다. 주문 순서 역전이 발생할 수 있어 비즈니스 요건을 충족하지 못합니다."
+        }
+      ],
+      "related_services": [
+        "API Gateway",
+        "SQS",
+        "SNS",
+        "Lambda"
+      ],
+      "explanation_source": "claude-opus-4-7",
+      "explanation_generated_at": "2026-04-20T22:49:36.945179+00:00"
     }
-  ],
-  "cleansed_at": "2026-04-18",
-  "cleanse_note": "nxtcloud와 중복되는 8문제(#1,2,3,4,5,8,9,10) 제거, #6/#7은 한국어로 번역 및 해설 추가"
+  ]
 }
