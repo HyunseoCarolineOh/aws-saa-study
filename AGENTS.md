@@ -25,6 +25,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
    - **invalid_choice**: `option_label`에 해당하는 선지 텍스트를 수정한다. 선지 블록에 섞여 있던 비(非)선지 콘텐츠는 해설 쪽으로 옮기거나 제거. 정답 변경이 필요한지 재검증.
    - **wrong_answer**: `source_url`과 문제 본문을 대조해 `correct_answers`를 업데이트. 판단이 불확실하면 중단하고 사용자에게 확인.
    - **service_type_change**: 문제의 `related_services` 배열을 수정한다. `description`에 적힌 사용자 요청을 참고하되, `question_text` · `explanation` · `detailed_explanation`을 교차 검증해 실제로 어떤 AWS 서비스가 핵심인지 확인한 뒤 반영. 확실하지 않으면 중단하고 사용자에게 확인.
+   - **wrong_question**: 문제 지문 자체의 오류(오타, 누락, 번역 불일치, 의미 불명확, 원문과의 불일치 등)를 수정한다. `description`에 지적된 부분을 참고하되, `source_url`과 원본 크롤링 데이터를 대조해 `question_text` 필드를 업데이트. 지문 수정으로 선지/정답/해설의 의미가 바뀐다면 함께 재검증. 원문 판단이 불확실하면 중단하고 사용자에게 확인.
 5. 수정이 반영되면 해당 레코드를 삭제한다:
    ```sql
    delete from saa_correction_requests where id = <id>;

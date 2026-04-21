@@ -19,6 +19,7 @@ const TYPE_BADGE_CLASS: Record<CorrectionType, string> = {
   invalid_choice: "bg-warning-bg text-warning-fg border border-warning-border",
   wrong_answer: "bg-danger-bg text-danger-fg border border-danger-border",
   service_type_change: "bg-success-bg text-success-fg border border-success-border",
+  wrong_question: "bg-danger-bg text-danger-fg border border-danger-border",
 };
 
 export default function ReviewPage() {

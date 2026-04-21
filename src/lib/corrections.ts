@@ -5,7 +5,8 @@ export type CorrectionType =
   | "wrong_explanation"
   | "invalid_choice"
   | "wrong_answer"
-  | "service_type_change";
+  | "service_type_change"
+  | "wrong_question";
 
 export type CorrectionScope = "question" | "option" | "explanation" | "detail";
 
@@ -15,6 +16,7 @@ export const CORRECTION_TYPE_LABELS: Record<CorrectionType, string> = {
   invalid_choice: "선지 내용 오류",
   wrong_answer: "정답 표시 오류",
   service_type_change: "서비스 유형 변경",
+  wrong_question: "문제 지문 오류",
 };
 
 export const CORRECTION_SCOPE_LABELS: Record<CorrectionScope, string> = {

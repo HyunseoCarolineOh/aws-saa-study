@@ -17,6 +17,7 @@ interface Props {
 }
 
 const TYPE_ORDER: CorrectionType[] = [
+  "wrong_question",
   "translation_needed",
   "wrong_explanation",
   "invalid_choice",
