@@ -1,23 +1,30 @@
-/**
- * 로컬 스토리지 기반 상태 관리
- * Supabase 연동 전까지 로컬에서 학습 데이터 관리
- */
-
-import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats, StudyNote, MockExam } from "./types";
+import type { Attempt, ReviewSchedule, DailyStats, Question, ServiceStats, StudyNote, MockExam, ExamType } from "./types";
 import { sm2, getQuality } from "./sm2";
 
-const STORAGE_KEYS = {
-  ATTEMPTS: "saa_attempts",
-  REVIEW_SCHEDULE: "saa_review_schedule",
-  DAILY_STATS: "saa_daily_stats",
-  STUDY_START: "saa_study_start",
-  QUIZ_PROGRESS: "saa_quiz_progress",
-  SERVICE_QUIZ_PROGRESS: "saa_service_quiz_progress",
-  STUDY_NOTES: "saa_study_notes",
-  MOCK_EXAMS: "saa_mock_exams",
-} as const;
+let currentExamType: ExamType = "SAA-C03";
 
-// 퀴즈 진행 상태
+export function setCurrentExamType(examType: ExamType) {
+  currentExamType = examType;
+}
+
+export function getCurrentExamType(): ExamType {
+  return currentExamType;
+}
+
+function getStorageKeys() {
+  const prefix = currentExamType === "CLF-C02" ? "clf" : "saa";
+  return {
+    ATTEMPTS: `${prefix}_attempts`,
+    REVIEW_SCHEDULE: `${prefix}_review_schedule`,
+    DAILY_STATS: `${prefix}_daily_stats`,
+    STUDY_START: `${prefix}_study_start`,
+    QUIZ_PROGRESS: `${prefix}_quiz_progress`,
+    SERVICE_QUIZ_PROGRESS: `${prefix}_service_quiz_progress`,
+    STUDY_NOTES: `${prefix}_study_notes`,
+    MOCK_EXAMS: `${prefix}_mock_exams`,
+  };
+}
+
 export interface QuizProgress {
   questionIds: string[];
   currentIndex: number;
@@ -40,12 +47,10 @@ function setToStorage(key: string, data: unknown) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// 풀이 기록
 export function getAttempts(): Attempt[] {
-  return getFromStorage(STORAGE_KEYS.ATTEMPTS, []);
+  return getFromStorage(getStorageKeys().ATTEMPTS, []);
 }
 
-// 한 번이라도 풀이 기록이 있는 문제 ID 집합
 export function getAttemptedQuestionIds(): Set<string> {
   const attempts = getAttempts();
   const ids = new Set<string>();
@@ -61,20 +66,14 @@ export function addAttempt(attempt: Omit<Attempt, "id" | "attempted_at">): Attem
     attempted_at: new Date().toISOString(),
   };
   attempts.push(newAttempt);
-  setToStorage(STORAGE_KEYS.ATTEMPTS, attempts);
-
-  // 오답이면 복습 스케줄 추가/업데이트
+  setToStorage(getStorageKeys().ATTEMPTS, attempts);
   updateReviewSchedule(attempt.question_id, attempt.is_correct, attempt.time_spent_seconds);
-
-  // 일일 통계 업데이트
   updateDailyStats(attempt.is_correct);
-
   return newAttempt;
 }
 
-// 복습 스케줄 (SM-2)
 export function getReviewSchedules(): ReviewSchedule[] {
-  return getFromStorage(STORAGE_KEYS.REVIEW_SCHEDULE, []);
+  return getFromStorage(getStorageKeys().REVIEW_SCHEDULE, []);
 }
 
 export function getTodayReviewQuestionIds(): string[] {
@@ -99,7 +98,6 @@ function updateReviewSchedule(questionId: string, isCorrect: boolean, timeSpent:
     nextDate.setDate(nextDate.getDate() + result.interval);
     existing.next_review_at = nextDate.toISOString();
   } else if (!isCorrect) {
-    // 처음 틀린 문제만 스케줄에 추가
     const nextDate = new Date();
     nextDate.setDate(nextDate.getDate() + 1);
     schedules.push({
@@ -112,23 +110,24 @@ function updateReviewSchedule(questionId: string, isCorrect: boolean, timeSpent:
     });
   }
 
-  setToStorage(STORAGE_KEYS.REVIEW_SCHEDULE, schedules);
+  setToStorage(getStorageKeys().REVIEW_SCHEDULE, schedules);
 }
 
-// 일일 통계
 export function getDailyStats(): DailyStats[] {
-  return getFromStorage(STORAGE_KEYS.DAILY_STATS, []);
+  return getFromStorage(getStorageKeys().DAILY_STATS, []);
 }
 
 export function getTodayStats(): DailyStats {
   const stats = getDailyStats();
   const today = new Date().toISOString().split("T")[0];
-  return stats.find((s) => s.study_date === today) || {
-    study_date: today,
-    study_minutes: 0,
-    questions_solved: 0,
-    correct_count: 0,
-  };
+  return (
+    stats.find((s) => s.study_date === today) || {
+      study_date: today,
+      study_minutes: 0,
+      questions_solved: 0,
+      correct_count: 0,
+    }
+  );
 }
 
 function updateDailyStats(isCorrect: boolean) {
@@ -143,39 +142,35 @@ function updateDailyStats(isCorrect: boolean) {
 
   todayStat.questions_solved += 1;
   if (isCorrect) todayStat.correct_count += 1;
-
-  setToStorage(STORAGE_KEYS.DAILY_STATS, stats);
+  setToStorage(getStorageKeys().DAILY_STATS, stats);
 }
 
-// 퀴즈 진행 상태 관리
 export function getQuizProgress(): QuizProgress | null {
-  return getFromStorage<QuizProgress | null>(STORAGE_KEYS.QUIZ_PROGRESS, null);
+  return getFromStorage<QuizProgress | null>(getStorageKeys().QUIZ_PROGRESS, null);
 }
 
 export function saveQuizProgress(progress: QuizProgress) {
-  setToStorage(STORAGE_KEYS.QUIZ_PROGRESS, progress);
+  setToStorage(getStorageKeys().QUIZ_PROGRESS, progress);
 }
 
 export function clearQuizProgress() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEYS.QUIZ_PROGRESS);
+  localStorage.removeItem(getStorageKeys().QUIZ_PROGRESS);
 }
 
-// 서비스 모드 퀴즈 진행 상태 관리
 export function getServiceQuizProgress(): QuizProgress | null {
-  return getFromStorage<QuizProgress | null>(STORAGE_KEYS.SERVICE_QUIZ_PROGRESS, null);
+  return getFromStorage<QuizProgress | null>(getStorageKeys().SERVICE_QUIZ_PROGRESS, null);
 }
 
 export function saveServiceQuizProgress(progress: QuizProgress) {
-  setToStorage(STORAGE_KEYS.SERVICE_QUIZ_PROGRESS, progress);
+  setToStorage(getStorageKeys().SERVICE_QUIZ_PROGRESS, progress);
 }
 
 export function clearServiceQuizProgress() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEYS.SERVICE_QUIZ_PROGRESS);
+  localStorage.removeItem(getStorageKeys().SERVICE_QUIZ_PROGRESS);
 }
 
-// 오답 요약 (문제별 틀린 횟수, 마지막 시도)
 export function getWrongAttemptsSummary(): { questionId: string; lastAttemptAt: string; attemptCount: number }[] {
   const attempts = getAttempts();
   const wrongMap = new Map<string, { lastAttemptAt: string; attemptCount: number }>();
@@ -183,7 +178,10 @@ export function getWrongAttemptsSummary(): { questionId: string; lastAttemptAt: 
     if (!a.is_correct) {
       const existing = wrongMap.get(a.question_id);
       wrongMap.set(a.question_id, {
-        lastAttemptAt: a.attempted_at > (existing?.lastAttemptAt || "") ? a.attempted_at : existing?.lastAttemptAt || a.attempted_at,
+        lastAttemptAt:
+          a.attempted_at > (existing?.lastAttemptAt || "")
+            ? a.attempted_at
+            : existing?.lastAttemptAt || a.attempted_at,
         attemptCount: (existing?.attemptCount || 0) + 1,
       });
     }
@@ -191,7 +189,6 @@ export function getWrongAttemptsSummary(): { questionId: string; lastAttemptAt: 
   return [...wrongMap.entries()].map(([questionId, data]) => ({ questionId, ...data }));
 }
 
-// 연속 학습일
 export function getStreak(): number {
   const stats = getDailyStats();
   if (stats.length === 0) return 0;
@@ -215,15 +212,12 @@ export function getStreak(): number {
   return streak;
 }
 
-// 서비스별 통계
 export function getAllServiceStats(
   allQuestions: Question[],
   getNames: (conceptName: string) => string[],
   conceptServiceNames: string[]
 ): Map<string, ServiceStats> {
   const attempts = getAttempts();
-
-  // 문제 ID → 최신 시도 매핑
   const latestAttempts = new Map<string, Attempt>();
   for (const a of attempts) {
     const existing = latestAttempts.get(a.question_id);
@@ -262,9 +256,8 @@ export function getAllServiceStats(
   return result;
 }
 
-// 오답노트
 export function getStudyNotes(): StudyNote[] {
-  return getFromStorage(STORAGE_KEYS.STUDY_NOTES, []);
+  return getFromStorage(getStorageKeys().STUDY_NOTES, []);
 }
 
 export function getStudyNotesByQuestion(questionId: string): StudyNote[] {
@@ -279,7 +272,7 @@ export function addStudyNote(note: Omit<StudyNote, "id" | "createdAt">): StudyNo
     createdAt: new Date().toISOString(),
   };
   notes.push(newNote);
-  setToStorage(STORAGE_KEYS.STUDY_NOTES, notes);
+  setToStorage(getStorageKeys().STUDY_NOTES, notes);
   return newNote;
 }
 
@@ -288,7 +281,7 @@ export function updateStudyNoteMemo(id: string, memo: string): boolean {
   const note = notes.find((n) => n.id === id);
   if (!note) return false;
   note.memo = memo;
-  setToStorage(STORAGE_KEYS.STUDY_NOTES, notes);
+  setToStorage(getStorageKeys().STUDY_NOTES, notes);
   return true;
 }
 
@@ -296,17 +289,27 @@ export function deleteStudyNote(id: string): boolean {
   const notes = getStudyNotes();
   const filtered = notes.filter((n) => n.id !== id);
   if (filtered.length === notes.length) return false;
-  setToStorage(STORAGE_KEYS.STUDY_NOTES, filtered);
+  setToStorage(getStorageKeys().STUDY_NOTES, filtered);
   return true;
 }
 
-// 모의고사 기록
 export function getMockExamResults(): MockExam[] {
-  return getFromStorage(STORAGE_KEYS.MOCK_EXAMS, []);
+  return getFromStorage(getStorageKeys().MOCK_EXAMS, []);
 }
 
 export function saveMockExamResult(result: MockExam): void {
   const exams = getMockExamResults();
   exams.push(result);
-  setToStorage(STORAGE_KEYS.MOCK_EXAMS, exams);
+  setToStorage(getStorageKeys().MOCK_EXAMS, exams);
+}
+
+export function buildPrioritizedOrder(
+  allQuestions: Question[],
+  filter?: (q: Question) => boolean
+): string[] {
+  const filtered = filter ? allQuestions.filter(filter) : allQuestions;
+  const attempted = getAttemptedQuestionIds();
+  const unattempted = filtered.filter((q) => !attempted.has(q.id)).map((q) => q.id);
+  const attemptedIds = filtered.filter((q) => attempted.has(q.id)).map((q) => q.id);
+  return [...unattempted, ...attemptedIds];
 }
