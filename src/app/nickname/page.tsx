@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
 export default function NicknamePage() {
-  const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,16 +20,16 @@ export default function NicknamePage() {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      router.push("/login");
+      window.location.href = "/login";
       return;
     }
     const { error } = await supabase.from("profiles").upsert({ id: user.id, nickname: trimmed });
     if (error) {
       setError("저장에 실패했습니다. 다시 시도해주세요.");
+      setLoading(false);
     } else {
-      router.push("/exam-select");
+      window.location.href = "/exam-select";
     }
-    setLoading(false);
   }
 
   return (
