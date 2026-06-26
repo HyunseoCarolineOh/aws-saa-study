@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExam } from "@/contexts/ExamContext";
-import ExamSelector from "@/components/ExamSelector";
+import type { ExamType } from "@/lib/types";
 import { getDailyStats, getStreak, getWrongAttemptsSummary } from "@/lib/store";
 
 export default function MyPage() {
   const router = useRouter();
   const { user, nickname, signOut, refreshNickname } = useAuth();
-  const { currentExam, examConfig } = useExam();
+  const { currentExam, examConfig, setExam } = useExam();
   const [editingNickname, setEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState(nickname || "");
   const [nicknameError, setNicknameError] = useState("");
@@ -127,8 +127,23 @@ export default function MyPage() {
       </div>
 
       {/* 시험 전환 */}
-      <div className="bg-gray-800/50 rounded-2xl p-5 mb-4">
-        <ExamSelector mode="switch" />
+      <div className="bg-gray-800/50 rounded-2xl px-5 py-4 mb-4 flex items-center justify-between">
+        <span className="text-sm font-semibold text-white">시험 전환</span>
+        <div className="flex rounded-xl overflow-hidden border border-gray-700">
+          {(["SAA-C03", "CLF-C02"] as ExamType[]).map((exam) => (
+            <button
+              key={exam}
+              onClick={() => setExam(exam)}
+              className={`px-3 py-1.5 text-xs font-mono transition-colors ${
+                currentExam === exam
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              {exam}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 건의사항 */}
