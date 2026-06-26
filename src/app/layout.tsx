@@ -4,7 +4,6 @@ import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ExamProvider } from "@/contexts/ExamContext";
-import ExamGate from "@/components/ExamGate";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,10 +47,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <ExamProvider>
-            <ExamGate>
-              <main className="flex-1">{children}</main>
-              <BottomNav />
-            </ExamGate>
+            <main className="flex-1">{children}</main>
+            <BottomNav />
           </ExamProvider>
         </AuthProvider>
       </body>

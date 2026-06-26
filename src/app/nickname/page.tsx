@@ -29,7 +29,7 @@ export default function NicknamePage() {
     if (error) {
       setError("저장에 실패했습니다. 다시 시도해주세요.");
     } else {
-      router.push("/questions");
+      router.push("/exam-select");
     }
     setLoading(false);
   }

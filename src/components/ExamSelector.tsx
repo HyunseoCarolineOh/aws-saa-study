@@ -6,13 +6,15 @@ import type { ExamType } from "@/lib/types";
 
 interface Props {
   mode: "initial" | "switch";
+  onSelect?: () => void;
 }
 
-export default function ExamSelector({ mode }: Props) {
+export default function ExamSelector({ mode, onSelect }: Props) {
   const { setExam, currentExam } = useExam();
 
   function handleSelect(exam: ExamType) {
     setExam(exam);
+    onSelect?.();
   }
 
   return (
@@ -43,12 +45,8 @@ export default function ExamSelector({ mode }: Props) {
               }`}
             >
               <div className="text-xs font-mono text-gray-400 mb-1">{cfg.shortLabel}</div>
-              <div className="text-sm font-semibold text-white leading-tight mb-3">
+              <div className="text-sm font-semibold text-white leading-tight">
                 {cfg.label}
-              </div>
-              <div className="text-xs text-gray-400 space-y-0.5">
-                <div>{cfg.totalQuestions}문제 · {cfg.examTimeMinutes}분</div>
-                <div>합격 {cfg.passingScore}점↑</div>
               </div>
             </button>
           );
