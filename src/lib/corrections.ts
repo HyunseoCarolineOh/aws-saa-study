@@ -27,7 +27,7 @@ export const CORRECTION_SCOPE_LABELS: Record<CorrectionScope, string> = {
 };
 
 export interface CorrectionRequestInput {
-  question_source: "nxtcloud" | "examtopics";
+  question_source: "nxtcloud" | "examtopics" | "clf";
   question_id: string;
   report_type: CorrectionType;
   scope: CorrectionScope;
@@ -64,8 +64,9 @@ function getClient(): SupabaseClient {
   return cachedClient;
 }
 
-export function inferSource(questionId: string): "nxtcloud" | "examtopics" {
+export function inferSource(questionId: string): "nxtcloud" | "examtopics" | "clf" {
   if (questionId.startsWith("et-")) return "examtopics";
+  if (questionId.startsWith("clf-")) return "clf";
   return "nxtcloud";
 }
 

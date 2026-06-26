@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ExamProvider } from "@/contexts/ExamContext";
+import ExamGate from "@/components/ExamGate";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,13 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AWS SAA Study",
-  description: "AWS Solutions Architect Associate 2주 완성 학습 도구",
+  title: "AWS Study",
+  description: "AWS 자격증 학습 도구 (SAA-C03 / CLF-C02)",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "SAA Study",
+    title: "AWS Study",
   },
 };
 
@@ -43,8 +46,14 @@ export default function RootLayout({
       style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full flex flex-col">
-        <main className="flex-1">{children}</main>
-        <BottomNav />
+        <AuthProvider>
+          <ExamProvider>
+            <ExamGate>
+              <main className="flex-1">{children}</main>
+              <BottomNav />
+            </ExamGate>
+          </ExamProvider>
+        </AuthProvider>
       </body>
     </html>
   );

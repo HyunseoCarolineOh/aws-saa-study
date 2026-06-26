@@ -5,6 +5,8 @@ import Link from "next/link";
 import type { Question, ServiceStats } from "@/lib/types";
 import { getAllServiceStats } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
+import { CLF_CATEGORIES, CLF_SERVICE_NAMES, getClfDataServiceNames } from "@/lib/clfServiceMap";
+import { useExam } from "@/contexts/ExamContext";
 
 interface AWSService {
   name: string;
@@ -1263,23 +1265,29 @@ const ALL_CONCEPT_NAMES = AWS_SERVICES.flatMap((cat) =>
 );
 
 export default function ConceptsPage() {
+  const { currentExam } = useExam();
+  const isCLF = currentExam === "CLF-C02";
+  const activeCategories = (isCLF ? CLF_CATEGORIES : AWS_SERVICES) as AWSCategory[];
+  const activeServiceNames = isCLF ? CLF_SERVICE_NAMES : ALL_CONCEPT_NAMES;
+  const activeGetNames = isCLF ? getClfDataServiceNames : getDataServiceNames;
+
   const [search, setSearch] = useState("");
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [expandedService, setExpandedService] = useState<string | null>(null);
   const [statsMap, setStatsMap] = useState<Map<string, ServiceStats>>(new Map());
 
   useEffect(() => {
-    fetch("/api/questions")
+    fetch(`/api/questions?exam=${currentExam}`)
       .then((res) => res.json())
       .then((data) => {
         const questions = data.questions as Question[];
-        const stats = getAllServiceStats(questions, getDataServiceNames, ALL_CONCEPT_NAMES);
+        const stats = getAllServiceStats(questions, activeGetNames, activeServiceNames);
         setStatsMap(stats);
       })
       .catch(() => {});
-  }, []);
+  }, [currentExam]);
 
-  const filteredCategories = AWS_SERVICES.map((cat) => ({
+  const filteredCategories = activeCategories.map((cat) => ({
     ...cat,
     services: cat.services.filter(
       (svc) =>
@@ -1290,7 +1298,7 @@ export default function ConceptsPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-      <h1 className="text-xl font-bold mb-4">AWS 서비스 사전</h1>
+      <h1 className="text-xl font-bold mb-4">{isCLF ? "CLF-C02 개념 사전" : "AWS 서비스 사전"}</h1>
 
       {/* 검색 */}
       <input

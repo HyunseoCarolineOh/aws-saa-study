@@ -1,0 +1,982 @@
+{
+  "source": "clf",
+  "exam": "AWS CLF-C02",
+  "total_count": 65,
+  "questions": [
+    {
+      "id": "clf-1",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "클라우드 컴퓨팅의 주요 이점 중 하나는 '탄력성(Elasticity)'입니다. 탄력성이란 무엇을 의미합니까?",
+      "options": [
+        { "label": "A", "text": "수요에 따라 컴퓨팅 리소스를 자동으로 늘리거나 줄이는 능력" },
+        { "label": "B", "text": "전 세계 여러 리전에 데이터를 복제하는 능력" },
+        { "label": "C", "text": "하드웨어 장애 시 자동으로 복구하는 능력" },
+        { "label": "D", "text": "여러 팀이 동시에 같은 리소스를 사용하는 능력" }
+      ],
+      "correct_answers": ["A"],
+      "explanation": "탄력성(Elasticity)은 수요 변화에 따라 자동으로 리소스를 확장하거나 축소하는 능력입니다. 예를 들어 트래픽이 급증하면 EC2 인스턴스를 자동 추가하고, 트래픽이 줄면 불필요한 인스턴스를 종료하여 비용을 절감합니다.",
+      "related_services": ["Auto Scaling", "EC2"]
+    },
+    {
+      "id": "clf-2",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS 공동 책임 모델(Shared Responsibility Model)에서 AWS가 책임지는 영역은 무엇입니까?",
+      "options": [
+        { "label": "A", "text": "고객 데이터의 암호화" },
+        { "label": "B", "text": "운영체제 패치 및 업데이트" },
+        { "label": "C", "text": "데이터 센터 물리적 보안" },
+        { "label": "D", "text": "IAM 사용자 비밀번호 정책" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "AWS는 '클라우드의 보안(Security OF the Cloud)'을 담당합니다. 여기에는 데이터 센터의 물리적 보안, 하드웨어 인프라, 네트워크 인프라 등이 포함됩니다. 고객은 '클라우드에서의 보안(Security IN the Cloud)'을 담당하며, 데이터 암호화, OS 패치, IAM 정책 등이 해당됩니다.",
+      "related_services": ["Shared Responsibility Model"]
+    },
+    {
+      "id": "clf-3",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "회사가 온프레미스에서 AWS 클라우드로 전환할 때 가장 큰 재정적 이점은 무엇입니까?",
+      "options": [
+        { "label": "A", "text": "자본 지출(CapEx)에서 운영 지출(OpEx)로 전환" },
+        { "label": "B", "text": "운영 지출(OpEx)에서 자본 지출(CapEx)로 전환" },
+        { "label": "C", "text": "고정 비용 구조 유지" },
+        { "label": "D", "text": "초기 하드웨어 투자 증가" }
+      ],
+      "correct_answers": ["A"],
+      "explanation": "클라우드 컴퓨팅은 서버 구매 같은 대규모 초기 자본 지출(CapEx)을 월별 사용량 기반 운영 지출(OpEx)로 전환합니다. 이를 통해 초기 투자 없이 필요할 때만 비용을 지불하는 방식으로 재정 유연성이 향상됩니다.",
+      "related_services": ["AWS Cloud"]
+    },
+    {
+      "id": "clf-4",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS 리전(Region), 가용 영역(Availability Zone), 엣지 로케이션(Edge Location)에 대한 설명으로 올바른 것은?",
+      "options": [
+        { "label": "A", "text": "각 리전은 단일 가용 영역으로 구성된다" },
+        { "label": "B", "text": "엣지 로케이션은 데이터베이스를 실행하는 데 사용된다" },
+        { "label": "C", "text": "각 가용 영역은 하나 이상의 물리적으로 분리된 데이터 센터로 구성된다" },
+        { "label": "D", "text": "리전은 하나의 국가에만 존재한다" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "각 가용 영역(AZ)은 독립된 전원, 냉각, 네트워킹을 갖춘 하나 이상의 데이터 센터로 구성됩니다. 리전은 2개 이상의 AZ로 구성되며, 엣지 로케이션은 CloudFront CDN 캐싱에 사용됩니다.",
+      "related_services": ["AWS Global Infrastructure"]
+    },
+    {
+      "id": "clf-5",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS Well-Architected Framework의 5가지 핵심 요소(Pillars)에 해당하지 않는 것은?",
+      "options": [
+        { "label": "A", "text": "운영 탁월성(Operational Excellence)" },
+        { "label": "B", "text": "보안(Security)" },
+        { "label": "C", "text": "비용 최적화(Cost Optimization)" },
+        { "label": "D", "text": "지속적 통합(Continuous Integration)" }
+      ],
+      "correct_answers": ["D"],
+      "explanation": "AWS Well-Architected Framework의 5대 기둥은 운영 탁월성, 보안, 신뢰성(Reliability), 성능 효율성(Performance Efficiency), 비용 최적화입니다. '지속적 통합'은 Well-Architected Framework의 기둥이 아닙니다.",
+      "related_services": ["AWS Cloud"]
+    },
+    {
+      "id": "clf-6",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "회사가 일부 워크로드는 온프레미스에 유지하고 나머지는 AWS 클라우드에서 실행하려고 합니다. 이 배포 모델을 무엇이라고 합니까?",
+      "options": [
+        { "label": "A", "text": "퍼블릭 클라우드(Public Cloud)" },
+        { "label": "B", "text": "프라이빗 클라우드(Private Cloud)" },
+        { "label": "C", "text": "하이브리드 클라우드(Hybrid Cloud)" },
+        { "label": "D", "text": "멀티 클라우드(Multi Cloud)" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "하이브리드 클라우드는 온프레미스 인프라와 퍼블릭 클라우드 서비스를 함께 사용하는 배포 모델입니다. AWS Direct Connect나 VPN을 통해 온프레미스와 AWS를 연결하여 사용합니다.",
+      "related_services": ["AWS Cloud", "Direct Connect"]
+    },
+    {
+      "id": "clf-7",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "클라우드 서비스 모델 중 사용자가 애플리케이션 코드만 관리하고 서버, OS, 런타임은 AWS가 모두 관리하는 모델은?",
+      "options": [
+        { "label": "A", "text": "IaaS (Infrastructure as a Service)" },
+        { "label": "B", "text": "PaaS (Platform as a Service)" },
+        { "label": "C", "text": "SaaS (Software as a Service)" },
+        { "label": "D", "text": "FaaS (Function as a Service)" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "PaaS는 사용자가 애플리케이션 코드와 데이터만 관리하고, 런타임, 미들웨어, OS, 서버, 스토리지, 네트워킹은 AWS가 관리합니다. AWS Elastic Beanstalk이 대표적인 PaaS 서비스입니다.",
+      "related_services": ["Elastic Beanstalk"]
+    },
+    {
+      "id": "clf-8",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS 클라우드를 사용하면 새로운 서버를 수 분 내에 프로비저닝할 수 있습니다. 이것은 클라우드의 어떤 이점을 나타냅니까?",
+      "options": [
+        { "label": "A", "text": "글로벌 도달 범위(Global Reach)" },
+        { "label": "B", "text": "민첩성(Agility)" },
+        { "label": "C", "text": "규모의 경제(Economies of Scale)" },
+        { "label": "D", "text": "탄력성(Elasticity)" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "민첩성(Agility)은 IT 리소스를 빠르게 확보하고 실험하며 실패 시 빠르게 폐기할 수 있는 능력입니다. 온프레미스에서는 몇 주가 걸리던 서버 프로비저닝을 클라우드에서는 몇 분 내에 완료할 수 있습니다.",
+      "related_services": ["AWS Cloud"]
+    },
+    {
+      "id": "clf-9",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS가 전 세계 수백만 고객에게 서비스를 제공함으로써 고객이 낮은 가격으로 서비스를 이용할 수 있는 클라우드 이점은?",
+      "options": [
+        { "label": "A", "text": "민첩성(Agility)" },
+        { "label": "B", "text": "탄력성(Elasticity)" },
+        { "label": "C", "text": "규모의 경제(Economies of Scale)" },
+        { "label": "D", "text": "고가용성(High Availability)" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "규모의 경제는 AWS가 대규모로 서비스를 운영함으로써 단가를 낮추고, 그 이점을 고객에게 저렴한 가격으로 제공하는 것입니다. 개별 기업이 자체 데이터센터를 운영하는 것보다 훨씬 저렴합니다.",
+      "related_services": ["AWS Cloud"]
+    },
+    {
+      "id": "clf-10",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS Well-Architected Tool은 어떤 용도로 사용됩니까?",
+      "options": [
+        { "label": "A", "text": "코드를 자동으로 배포하는 CI/CD 파이프라인 구축" },
+        { "label": "B", "text": "Well-Architected Framework 기반으로 워크로드의 위험과 개선 기회를 검토" },
+        { "label": "C", "text": "AWS 비용을 자동으로 최적화" },
+        { "label": "D", "text": "다중 리전에 자동으로 인프라를 복제" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Well-Architected Tool은 AWS Well-Architected Framework의 5대 기둥을 기반으로 워크로드를 검토하여 잠재적 위험을 식별하고 개선 방안을 제안하는 서비스입니다.",
+      "related_services": ["AWS Cloud"]
+    },
+    {
+      "id": "clf-11",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "수직적 확장(Scaling Up)과 수평적 확장(Scaling Out)의 차이점으로 올바른 것은?",
+      "options": [
+        { "label": "A", "text": "수직 확장은 더 강력한 인스턴스 타입으로 교체, 수평 확장은 인스턴스 수를 늘림" },
+        { "label": "B", "text": "수직 확장은 인스턴스 수를 늘림, 수평 확장은 더 강력한 인스턴스로 교체" },
+        { "label": "C", "text": "수직 확장은 여러 리전에 배포, 수평 확장은 한 리전 내에서만 배포" },
+        { "label": "D", "text": "수직 확장과 수평 확장은 AWS에서 동일한 의미" }
+      ],
+      "correct_answers": ["A"],
+      "explanation": "수직적 확장(Scale Up)은 기존 인스턴스를 더 큰 사이즈로 교체하는 방식이고, 수평적 확장(Scale Out)은 동일한 인스턴스를 더 많이 추가하는 방식입니다. 클라우드에서는 Auto Scaling을 통한 수평적 확장이 권장됩니다.",
+      "related_services": ["EC2", "Auto Scaling"]
+    },
+    {
+      "id": "clf-12",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS 로컬 존(Local Zone)이란 무엇입니까?",
+      "options": [
+        { "label": "A", "text": "AWS 서비스를 특정 도시 또는 인구 밀집 지역에 더 가깝게 제공하는 인프라" },
+        { "label": "B", "text": "AWS 데이터 센터 내부의 물리적 보안 구역" },
+        { "label": "C", "text": "AWS 리전 내에서 특별히 격리된 가용 영역" },
+        { "label": "D", "text": "온프레미스에서 AWS 서비스를 실행하기 위한 하드웨어" }
+      ],
+      "correct_answers": ["A"],
+      "explanation": "AWS 로컬 존은 AWS 인프라를 주요 도시나 인구 밀집 지역에 더 가깝게 배치하여 지연 시간에 민감한 애플리케이션(미디어, 게임, 실시간 처리 등)을 위한 한 자릿수 밀리초 대기 시간을 제공합니다.",
+      "related_services": ["AWS Global Infrastructure"]
+    },
+    {
+      "id": "clf-13",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "회사가 자체 데이터 센터에서 모든 IT 인프라를 관리하는 경우 발생하는 문제점으로 AWS 클라우드 전환을 통해 해결할 수 있는 것은?",
+      "options": [
+        { "label": "A", "text": "데이터 주권 문제가 완전히 해소된다" },
+        { "label": "B", "text": "수요 예측 실패로 인한 과잉 또는 부족 프로비저닝 문제" },
+        { "label": "C", "text": "모든 컴플라이언스 요구사항이 자동으로 충족된다" },
+        { "label": "D", "text": "네트워크 레이턴시가 완전히 제거된다" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "온프레미스에서는 트래픽을 예측하여 미리 서버를 구매해야 하므로, 예측이 틀리면 서버가 남거나 부족한 상황이 발생합니다. AWS 클라우드는 수요에 따라 자동으로 확장/축소되어 이 문제를 해결합니다.",
+      "related_services": ["AWS Cloud", "Auto Scaling"]
+    },
+    {
+      "id": "clf-14",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS Outposts란 무엇입니까?",
+      "options": [
+        { "label": "A", "text": "AWS의 전 세계 데이터 센터 네트워크" },
+        { "label": "B", "text": "고객의 온프레미스 환경에 AWS 인프라를 설치하여 AWS 서비스를 로컬에서 실행할 수 있게 해주는 서비스" },
+        { "label": "C", "text": "AWS와 다른 클라우드 제공업체를 연결하는 서비스" },
+        { "label": "D", "text": "원격 위치에 있는 AWS 직원이 지원하는 서비스" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Outposts는 AWS가 설계한 랙, 서버 형태로 고객의 온프레미스에 설치되며, 데이터 레지던시 요구사항이 있거나 극도로 낮은 지연 시간이 필요한 경우에 사용합니다. 동일한 AWS 서비스, API, 도구를 온프레미스에서 사용할 수 있습니다.",
+      "related_services": ["AWS Outposts"]
+    },
+    {
+      "id": "clf-15",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "고가용성(High Availability)을 보장하기 위해 AWS에서 권장하는 설계 방식은?",
+      "options": [
+        { "label": "A", "text": "단일 대형 EC2 인스턴스에 모든 것을 배포" },
+        { "label": "B", "text": "여러 가용 영역(AZ)에 걸쳐 리소스를 분산 배포" },
+        { "label": "C", "text": "모든 리소스를 단일 가용 영역에 집중" },
+        { "label": "D", "text": "백업만 다른 리전에 저장" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "고가용성을 위해서는 하나의 AZ에 장애가 발생해도 서비스가 지속될 수 있도록 여러 AZ에 걸쳐 리소스를 분산 배포해야 합니다. ELB와 Auto Scaling을 결합하면 AZ 간 트래픽 분산과 자동 장애 조치가 가능합니다.",
+      "related_services": ["ELB", "Auto Scaling", "EC2"]
+    },
+    {
+      "id": "clf-16",
+      "source": "clf",
+      "domain": "Cloud Concepts",
+      "question_text": "AWS 클라우드의 이점인 '글로벌 도달 범위(Global Reach)'는 무엇을 의미합니까?",
+      "options": [
+        { "label": "A", "text": "AWS 지원팀이 24시간 전 세계 어디서나 즉시 방문 가능" },
+        { "label": "B", "text": "단 몇 분 만에 전 세계 여러 리전에 애플리케이션을 배포 가능" },
+        { "label": "C", "text": "AWS 서비스를 모든 국가의 법률 없이 사용 가능" },
+        { "label": "D", "text": "인터넷 없이도 AWS에 접속 가능" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "글로벌 도달 범위는 AWS의 전 세계 리전 인프라를 활용하여 몇 분 만에 전 세계 어디서나 애플리케이션을 배포하고, 사용자와 가까운 위치에서 낮은 지연 시간으로 서비스를 제공할 수 있는 능력입니다.",
+      "related_services": ["AWS Global Infrastructure", "CloudFront"]
+    },
+    {
+      "id": "clf-17",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "AWS Identity and Access Management(IAM)에서 '최소 권한 원칙(Principle of Least Privilege)'이란 무엇입니까?",
+      "options": [
+        { "label": "A", "text": "모든 사용자에게 동일한 권한 부여" },
+        { "label": "B", "text": "사용자에게 작업 수행에 필요한 최소한의 권한만 부여" },
+        { "label": "C", "text": "루트 계정으로만 모든 작업 수행" },
+        { "label": "D", "text": "권한을 시간 제한 없이 영구 부여" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "최소 권한 원칙은 사용자, 서비스, 시스템이 정상 운영에 필요한 최소한의 권한만 가져야 한다는 보안 개념입니다. IAM 정책을 통해 구체적인 리소스와 작업에만 접근 권한을 부여하면 보안 침해 시 피해 범위를 최소화할 수 있습니다.",
+      "related_services": ["IAM"]
+    },
+    {
+      "id": "clf-18",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "회사의 보안 팀이 AWS 계정에서 이루어진 모든 API 호출과 사용자 활동을 감사하려고 합니다. 어떤 서비스를 사용해야 합니까?",
+      "options": [
+        { "label": "A", "text": "Amazon CloudWatch" },
+        { "label": "B", "text": "AWS CloudTrail" },
+        { "label": "C", "text": "AWS Config" },
+        { "label": "D", "text": "Amazon GuardDuty" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS CloudTrail은 AWS 계정에서 발생하는 모든 API 호출을 로깅하고 감사하는 서비스입니다. 누가, 언제, 어떤 리소스에 어떤 작업을 했는지 추적할 수 있어 보안 감사와 컴플라이언스에 필수적입니다.",
+      "related_services": ["CloudTrail"]
+    },
+    {
+      "id": "clf-19",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "IAM에서 여러 사용자에게 동일한 권한을 효율적으로 관리하려면 무엇을 사용해야 합니까?",
+      "options": [
+        { "label": "A", "text": "각 사용자에게 개별 정책 직접 연결" },
+        { "label": "B", "text": "IAM 그룹을 생성하고 정책을 그룹에 연결한 뒤 사용자를 그룹에 추가" },
+        { "label": "C", "text": "루트 계정 자격 증명을 모든 사용자와 공유" },
+        { "label": "D", "text": "단일 IAM 사용자 계정을 모든 사람이 공유" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "IAM 그룹은 유사한 역할을 가진 사용자들을 묶어 동일한 권한 정책을 한 번에 관리하는 방법입니다. 신규 직원 추가, 역할 변경, 퇴직 처리 등을 그룹 단위로 관리하면 효율적이고 일관성 있는 권한 관리가 가능합니다.",
+      "related_services": ["IAM"]
+    },
+    {
+      "id": "clf-20",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "AWS에서 다중 요소 인증(MFA, Multi-Factor Authentication)을 사용하면 어떤 보안 이점이 있습니까?",
+      "options": [
+        { "label": "A", "text": "비밀번호 없이 로그인 가능" },
+        { "label": "B", "text": "비밀번호가 유출되더라도 추가 인증 요소 없이는 계정 접근 불가" },
+        { "label": "C", "text": "계정 비밀번호를 자동으로 변경" },
+        { "label": "D", "text": "로그인 속도를 향상" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "MFA는 비밀번호 외에 OTP 디바이스, 가상 인증 앱 등 두 번째 인증 요소를 요구합니다. 비밀번호가 유출되더라도 MFA 디바이스 없이는 접근할 수 없어 계정 보안이 강화됩니다. AWS는 루트 계정에 MFA 활성화를 강력히 권장합니다.",
+      "related_services": ["IAM"]
+    },
+    {
+      "id": "clf-21",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "AWS에서 DDoS(분산 서비스 거부) 공격으로부터 자동으로 보호하는 서비스는?",
+      "options": [
+        { "label": "A", "text": "AWS WAF" },
+        { "label": "B", "text": "AWS Shield Standard" },
+        { "label": "C", "text": "Amazon GuardDuty" },
+        { "label": "D", "text": "AWS Inspector" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Shield Standard는 모든 AWS 고객에게 추가 비용 없이 자동으로 제공되는 DDoS 방어 서비스입니다. AWS Shield Advanced는 더 강력한 DDoS 방어와 24/7 DDoS 대응팀(DRT) 지원을 유료로 제공합니다.",
+      "related_services": ["Shield"]
+    },
+    {
+      "id": "clf-22",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "웹 애플리케이션을 SQL 인젝션, 크로스 사이트 스크립팅(XSS) 같은 웹 공격으로부터 보호하는 AWS 서비스는?",
+      "options": [
+        { "label": "A", "text": "AWS Shield" },
+        { "label": "B", "text": "Amazon GuardDuty" },
+        { "label": "C", "text": "AWS WAF (Web Application Firewall)" },
+        { "label": "D", "text": "AWS CloudTrail" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "AWS WAF는 웹 애플리케이션 방화벽으로, SQL 인젝션, XSS, 악성 봇 등 일반적인 웹 공격으로부터 애플리케이션을 보호합니다. CloudFront, ALB, API Gateway 앞단에 배치하여 HTTP/HTTPS 트래픽을 필터링합니다.",
+      "related_services": ["WAF"]
+    },
+    {
+      "id": "clf-23",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "Amazon GuardDuty는 어떤 기능을 제공합니까?",
+      "options": [
+        { "label": "A", "text": "EC2 인스턴스의 취약점 자동 스캔" },
+        { "label": "B", "text": "S3 버킷의 민감 데이터 탐지" },
+        { "label": "C", "text": "머신러닝 기반의 지능형 위협 탐지 서비스" },
+        { "label": "D", "text": "네트워크 트래픽을 필터링하는 방화벽" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "Amazon GuardDuty는 CloudTrail 이벤트, VPC 플로우 로그, DNS 로그를 머신러닝으로 분석하여 비정상적인 활동이나 잠재적 위협(계정 탈취, 악성코드 등)을 자동으로 탐지하는 위협 감지 서비스입니다.",
+      "related_services": ["GuardDuty"]
+    },
+    {
+      "id": "clf-24",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "EC2 인스턴스와 컨테이너 이미지의 소프트웨어 취약점과 의도하지 않은 네트워크 노출을 자동으로 탐지하는 서비스는?",
+      "options": [
+        { "label": "A", "text": "Amazon GuardDuty" },
+        { "label": "B", "text": "AWS Inspector" },
+        { "label": "C", "text": "Amazon Macie" },
+        { "label": "D", "text": "AWS Shield" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Inspector는 EC2 인스턴스, Lambda 함수, ECR 컨테이너 이미지의 소프트웨어 취약점(CVE)과 의도하지 않은 네트워크 접근성을 자동으로 스캔하여 보안 리스크를 우선순위별로 제공합니다.",
+      "related_services": ["Inspector"]
+    },
+    {
+      "id": "clf-25",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "S3 버킷에서 신용카드 번호, 주민등록번호 같은 민감한 개인 정보(PII)를 자동으로 발견하고 보호하는 서비스는?",
+      "options": [
+        { "label": "A", "text": "AWS Inspector" },
+        { "label": "B", "text": "AWS Config" },
+        { "label": "C", "text": "Amazon Macie" },
+        { "label": "D", "text": "AWS CloudTrail" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "Amazon Macie는 머신러닝을 활용하여 S3에 저장된 데이터에서 PII(개인 식별 정보), 금융 데이터, 자격 증명 같은 민감 정보를 자동으로 탐지하고 분류하여 데이터 프라이버시 보호를 지원합니다.",
+      "related_services": ["Macie"]
+    },
+    {
+      "id": "clf-26",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "IAM 역할(Role)을 사용하는 적합한 시나리오는?",
+      "options": [
+        { "label": "A", "text": "특정 사용자에게 영구적인 콘솔 접근 권한 부여" },
+        { "label": "B", "text": "EC2 인스턴스가 S3 버킷에 접근할 수 있도록 권한 부여" },
+        { "label": "C", "text": "팀 전체의 공통 비밀번호 관리" },
+        { "label": "D", "text": "루트 계정의 MFA 대체" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "IAM 역할은 EC2 인스턴스 같은 AWS 서비스가 다른 AWS 서비스에 안전하게 접근할 수 있도록 임시 자격 증명을 부여하는 데 사용됩니다. 장기 자격 증명(액세스 키)을 코드에 하드코딩하는 것보다 훨씬 안전한 방법입니다.",
+      "related_services": ["IAM"]
+    },
+    {
+      "id": "clf-27",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "AWS의 보안 및 컴플라이언스 보고서(예: SOC, ISO 인증서)를 다운로드할 수 있는 서비스는?",
+      "options": [
+        { "label": "A", "text": "AWS Trusted Advisor" },
+        { "label": "B", "text": "AWS Artifact" },
+        { "label": "C", "text": "AWS Config" },
+        { "label": "D", "text": "AWS Security Hub" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Artifact는 AWS의 컴플라이언스 문서, 보안 보고서, 인증서(SOC 1/2/3, ISO 27001, PCI DSS 등)를 다운로드할 수 있는 중앙 집중식 리소스입니다. 감사 및 컴플라이언스 요건 충족 시 활용합니다.",
+      "related_services": ["AWS Artifact"]
+    },
+    {
+      "id": "clf-28",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "보안 그룹(Security Group)과 네트워크 ACL(NACL)의 차이점으로 올바른 것은?",
+      "options": [
+        { "label": "A", "text": "보안 그룹은 상태 비저장(Stateless), NACL은 상태 저장(Stateful)" },
+        { "label": "B", "text": "보안 그룹은 상태 저장(Stateful), NACL은 상태 비저장(Stateless)" },
+        { "label": "C", "text": "보안 그룹과 NACL 모두 상태 저장(Stateful)" },
+        { "label": "D", "text": "보안 그룹과 NACL 모두 상태 비저장(Stateless)" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "보안 그룹은 상태 저장(Stateful)으로, 인바운드를 허용하면 해당 연결의 아웃바운드 응답이 자동 허용됩니다. NACL은 상태 비저장(Stateless)으로, 인바운드와 아웃바운드 규칙을 각각 명시적으로 설정해야 합니다.",
+      "related_services": ["VPC"]
+    },
+    {
+      "id": "clf-29",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "AWS KMS(Key Management Service)의 주요 기능은?",
+      "options": [
+        { "label": "A", "text": "사용자 비밀번호 관리 및 자동 순환" },
+        { "label": "B", "text": "SSL/TLS 인증서 프로비저닝 및 관리" },
+        { "label": "C", "text": "데이터 암호화에 사용되는 암호화 키 생성, 관리, 제어" },
+        { "label": "D", "text": "네트워크 트래픽 암호화" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "AWS KMS는 암호화 키를 생성, 저장, 관리하는 완전 관리형 서비스입니다. S3, EBS, RDS 등 대부분의 AWS 서비스와 통합되어 데이터 암호화/복호화에 사용되며, 키 사용 감사 로그도 CloudTrail로 기록됩니다.",
+      "related_services": ["KMS"]
+    },
+    {
+      "id": "clf-30",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "Amazon Cognito는 어떤 용도로 사용됩니까?",
+      "options": [
+        { "label": "A", "text": "AWS 서비스 간 API 호출 인증" },
+        { "label": "B", "text": "웹 및 모바일 앱에 사용자 인증, 권한 부여, 사용자 관리 기능 제공" },
+        { "label": "C", "text": "AWS 콘솔 로그인 관리" },
+        { "label": "D", "text": "데이터베이스 접근 인증" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Amazon Cognito는 웹/모바일 앱에 회원가입, 로그인, 소셜 로그인(Google, Facebook 등), MFA, 사용자 디렉토리 관리 기능을 쉽게 추가할 수 있게 해주는 완전 관리형 서비스입니다.",
+      "related_services": ["Cognito"]
+    },
+    {
+      "id": "clf-31",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "AWS Config는 어떤 기능을 제공합니까?",
+      "options": [
+        { "label": "A", "text": "API 호출 로깅 및 감사" },
+        { "label": "B", "text": "AWS 리소스의 구성 변경 사항을 추적하고 컴플라이언스를 평가" },
+        { "label": "C", "text": "네트워크 트래픽 모니터링" },
+        { "label": "D", "text": "비용 최적화 권장 사항 제공" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Config는 AWS 리소스의 구성을 지속적으로 모니터링하여 구성 변경 기록을 유지하고, 원하는 구성 상태와의 차이를 탐지합니다. 컴플라이언스 규칙을 설정하여 비준수 리소스를 자동으로 탐지할 수 있습니다.",
+      "related_services": ["AWS Config"]
+    },
+    {
+      "id": "clf-32",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "애플리케이션에서 데이터베이스 비밀번호, API 키 같은 민감한 정보를 코드에 하드코딩하지 않고 안전하게 관리하는 AWS 서비스는?",
+      "options": [
+        { "label": "A", "text": "AWS KMS" },
+        { "label": "B", "text": "AWS Secrets Manager" },
+        { "label": "C", "text": "AWS IAM" },
+        { "label": "D", "text": "Amazon Macie" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Secrets Manager는 데이터베이스 자격 증명, API 키, 비밀번호 같은 민감 정보를 안전하게 저장하고, 자동 순환(rotation)하며, 애플리케이션이 필요할 때 안전하게 검색할 수 있게 해주는 서비스입니다.",
+      "related_services": ["AWS Secrets Manager"]
+    },
+    {
+      "id": "clf-33",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "공동 책임 모델에서 Amazon RDS를 사용할 때 고객의 책임은?",
+      "options": [
+        { "label": "A", "text": "데이터베이스 엔진 소프트웨어 패치" },
+        { "label": "B", "text": "물리적 서버 유지 관리" },
+        { "label": "C", "text": "데이터베이스 내 데이터 암호화 및 보안 그룹 설정" },
+        { "label": "D", "text": "데이터 센터 보안" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "RDS에서 AWS는 DB 엔진 패치, 하드웨어, 네트워크 인프라를 관리합니다. 고객은 데이터 암호화, 네트워크 접근 제어(보안 그룹, NACL), 데이터베이스 인증, 사용자 권한 관리 등을 책임집니다.",
+      "related_services": ["RDS", "Shared Responsibility Model"]
+    },
+    {
+      "id": "clf-34",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "VPC Flow Logs는 무엇을 기록합니까?",
+      "options": [
+        { "label": "A", "text": "EC2 인스턴스에서 실행되는 애플리케이션 로그" },
+        { "label": "B", "text": "VPC 내 네트워크 인터페이스를 통과하는 IP 트래픽 정보" },
+        { "label": "C", "text": "AWS API 호출 로그" },
+        { "label": "D", "text": "DNS 쿼리 로그" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "VPC Flow Logs는 VPC의 네트워크 인터페이스에서 송수신되는 IP 트래픽 정보를 캡처합니다. 출발지/목적지 IP, 포트, 프로토콜, 허용/거부 여부 등을 기록하여 네트워크 모니터링과 보안 분석에 활용됩니다.",
+      "related_services": ["VPC"]
+    },
+    {
+      "id": "clf-35",
+      "source": "clf",
+      "domain": "Security & Compliance",
+      "question_text": "IAM 정책의 기본 동작(default behavior)은?",
+      "options": [
+        { "label": "A", "text": "명시적으로 거부하지 않으면 모든 권한 허용" },
+        { "label": "B", "text": "명시적으로 허용하지 않으면 모든 권한 거부" },
+        { "label": "C", "text": "관리자 권한은 기본적으로 모든 사용자에게 부여" },
+        { "label": "D", "text": "같은 그룹의 사용자는 자동으로 동일한 권한 상속" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "IAM은 기본적으로 암묵적 거부(implicit deny) 방식으로 동작합니다. 명시적 허용 정책이 없으면 모든 접근이 거부됩니다. 단, 명시적 거부(explicit deny)는 허용 정책보다 항상 우선합니다.",
+      "related_services": ["IAM"]
+    },
+    {
+      "id": "clf-36",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon EC2의 스팟 인스턴스(Spot Instance)는 어떤 경우에 가장 적합합니까?",
+      "options": [
+        { "label": "A", "text": "24시간 중단 없이 실행되어야 하는 프로덕션 웹 서버" },
+        { "label": "B", "text": "중단될 수 있는 배치 처리, 데이터 분석, 빅데이터 처리" },
+        { "label": "C", "text": "예측 가능한 트래픽 패턴의 데이터베이스 서버" },
+        { "label": "D", "text": "금융 거래 처리 시스템" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "스팟 인스턴스는 온디맨드 대비 최대 90%까지 저렴하지만, AWS가 용량이 필요하면 인스턴스를 회수(2분 전 알림)할 수 있습니다. 중단을 허용할 수 있는 배치 처리, CI/CD, 빅데이터, 이미지 처리 등에 적합합니다.",
+      "related_services": ["EC2"]
+    },
+    {
+      "id": "clf-37",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS Lambda를 사용할 때의 주요 이점은?",
+      "options": [
+        { "label": "A", "text": "서버를 프로비저닝하거나 관리할 필요 없이 코드 실행 가능" },
+        { "label": "B", "text": "실행 시간 제한 없이 무한정 코드 실행 가능" },
+        { "label": "C", "text": "전용 서버에서 코드가 실행되어 예측 가능한 성능 보장" },
+        { "label": "D", "text": "모든 프로그래밍 언어를 기본 지원" }
+      ],
+      "correct_answers": ["A"],
+      "explanation": "AWS Lambda는 서버리스 컴퓨팅 서비스로, 서버를 프로비저닝하거나 관리하지 않고 코드를 실행할 수 있습니다. 이벤트 기반으로 실행되고 사용한 컴퓨팅 시간에 대해서만 비용을 지불합니다. 최대 실행 시간은 15분입니다.",
+      "related_services": ["Lambda"]
+    },
+    {
+      "id": "clf-38",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon S3에서 자주 접근하지 않는 데이터를 저렴하게 보관하되, 즉시 접근이 가능해야 할 때 가장 적합한 스토리지 클래스는?",
+      "options": [
+        { "label": "A", "text": "S3 Standard" },
+        { "label": "B", "text": "S3 Standard-IA (Infrequent Access)" },
+        { "label": "C", "text": "S3 Glacier Instant Retrieval" },
+        { "label": "D", "text": "S3 One Zone-IA" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "S3 Standard-IA는 자주 접근하지 않지만 필요할 때 즉시 접근이 가능해야 하는 데이터에 적합합니다. S3 Standard보다 저장 비용이 저렴하지만 검색 시 요금이 추가됩니다. 재해 복구 파일, 백업 등에 활용됩니다.",
+      "related_services": ["S3"]
+    },
+    {
+      "id": "clf-39",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon RDS의 다중 AZ(Multi-AZ) 배포는 어떤 이점을 제공합니까?",
+      "options": [
+        { "label": "A", "text": "읽기 성능 향상을 위한 읽기 전용 복제본 제공" },
+        { "label": "B", "text": "자동 장애 조치를 통한 고가용성 및 내구성 향상" },
+        { "label": "C", "text": "여러 리전에 데이터 복제" },
+        { "label": "D", "text": "데이터베이스 비용 절감" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "RDS Multi-AZ는 대기(Standby) 인스턴스를 다른 AZ에 자동으로 유지하며, 기본 인스턴스에 장애 발생 시 자동으로 대기 인스턴스로 전환(Failover)합니다. 읽기 성능 향상은 읽기 전용 복제본(Read Replica)의 기능입니다.",
+      "related_services": ["RDS"]
+    },
+    {
+      "id": "clf-40",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon DynamoDB의 특징으로 올바른 것은?",
+      "options": [
+        { "label": "A", "text": "SQL 쿼리를 완벽하게 지원하는 관계형 데이터베이스" },
+        { "label": "B", "text": "서버리스 키-값 및 문서 기반 완전 관리형 NoSQL 데이터베이스" },
+        { "label": "C", "text": "인메모리 캐싱 서비스" },
+        { "label": "D", "text": "비정형 파일 저장을 위한 스토리지 서비스" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "DynamoDB는 키-값 및 문서 기반 NoSQL 데이터베이스로, 서버리스로 운영되며 수 밀리초의 일관된 성능을 제공합니다. 테이블 크기에 관계없이 자동으로 확장되며 서버 관리가 필요 없습니다.",
+      "related_services": ["DynamoDB"]
+    },
+    {
+      "id": "clf-41",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon CloudFront의 주요 역할은?",
+      "options": [
+        { "label": "A", "text": "DNS 도메인 이름을 IP 주소로 변환" },
+        { "label": "B", "text": "글로벌 콘텐츠 전송 네트워크(CDN)로 사용자와 가까운 엣지 로케이션에서 콘텐츠 캐싱" },
+        { "label": "C", "text": "여러 EC2 인스턴스에 트래픽 분산" },
+        { "label": "D", "text": "온프레미스와 AWS를 전용 네트워크로 연결" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "CloudFront는 AWS의 CDN 서비스로, 정적/동적 콘텐츠를 전 세계 400개 이상의 엣지 로케이션에 캐싱하여 사용자에게 가장 가까운 위치에서 낮은 지연 시간으로 제공합니다.",
+      "related_services": ["CloudFront"]
+    },
+    {
+      "id": "clf-42",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon Route 53은 어떤 기능을 제공합니까?",
+      "options": [
+        { "label": "A", "text": "웹 애플리케이션 방화벽 서비스" },
+        { "label": "B", "text": "도메인 이름 등록, DNS 라우팅, 상태 확인" },
+        { "label": "C", "text": "S3 버킷의 콘텐츠를 CDN으로 배포" },
+        { "label": "D", "text": "VPC 내 IP 주소 관리" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Amazon Route 53은 AWS의 확장 가능한 DNS 웹 서비스입니다. 도메인 이름 등록, DNS 레코드 관리, 상태 확인 기반 라우팅(장애 조치), 지연 시간 기반 라우팅, 가중치 기반 라우팅 등을 지원합니다.",
+      "related_services": ["Route 53"]
+    },
+    {
+      "id": "clf-43",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS Elastic Load Balancing(ELB)에서 HTTP/HTTPS 트래픽을 처리하고 URL 기반 라우팅이 가능한 로드 밸런서 유형은?",
+      "options": [
+        { "label": "A", "text": "Classic Load Balancer" },
+        { "label": "B", "text": "Network Load Balancer" },
+        { "label": "C", "text": "Application Load Balancer" },
+        { "label": "D", "text": "Gateway Load Balancer" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "Application Load Balancer(ALB)는 L7(HTTP/HTTPS) 레이어에서 동작하며 URL 경로, 호스트 헤더, HTTP 헤더 등을 기반으로 라우팅 결정을 내립니다. Network Load Balancer는 L4(TCP/UDP)에서 초고성능 처리에 최적화되어 있습니다.",
+      "related_services": ["ELB"]
+    },
+    {
+      "id": "clf-44",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon VPC(Virtual Private Cloud)를 사용하는 주요 목적은?",
+      "options": [
+        { "label": "A", "text": "AWS의 글로벌 CDN 네트워크 구성" },
+        { "label": "B", "text": "AWS 클라우드에서 논리적으로 격리된 가상 네트워크 환경 생성" },
+        { "label": "C", "text": "데이터베이스 서비스 프로비저닝" },
+        { "label": "D", "text": "서버리스 함수 실행 환경 제공" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "VPC를 사용하면 AWS 클라우드에서 자체 IP 주소 범위, 서브넷, 라우팅 테이블, 게이트웨이를 정의하여 논리적으로 격리된 가상 네트워크를 만들 수 있습니다. 온프레미스 네트워크와 유사하게 네트워크 환경을 제어할 수 있습니다.",
+      "related_services": ["VPC"]
+    },
+    {
+      "id": "clf-45",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS Auto Scaling의 주요 이점은?",
+      "options": [
+        { "label": "A", "text": "EC2 인스턴스를 자동으로 더 강력한 타입으로 업그레이드" },
+        { "label": "B", "text": "수요 변화에 따라 EC2 인스턴스 수를 자동으로 조정하여 가용성과 비용 최적화" },
+        { "label": "C", "text": "데이터베이스 쿼리를 자동으로 최적화" },
+        { "label": "D", "text": "코드를 자동으로 여러 서버에 배포" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Auto Scaling은 정의된 정책에 따라 EC2 인스턴스 수를 자동으로 늘리거나 줄입니다. 트래픽 급증 시 자동 확장으로 가용성을 보장하고, 트래픽 감소 시 자동 축소로 비용을 절감합니다.",
+      "related_services": ["Auto Scaling", "EC2"]
+    },
+    {
+      "id": "clf-46",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon ECS(Elastic Container Service)의 주요 용도는?",
+      "options": [
+        { "label": "A", "text": "가상 머신 관리" },
+        { "label": "B", "text": "Docker 컨테이너를 AWS에서 실행하고 관리하는 컨테이너 오케스트레이션" },
+        { "label": "C", "text": "서버리스 코드 실행" },
+        { "label": "D", "text": "데이터베이스 클러스터 관리" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Amazon ECS는 Docker 컨테이너를 확장 가능하게 실행하고 관리하는 완전 관리형 컨테이너 오케스트레이션 서비스입니다. EC2 기반 또는 서버리스(Fargate) 방식으로 컨테이너를 실행할 수 있습니다.",
+      "related_services": ["ECS"]
+    },
+    {
+      "id": "clf-47",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon SQS(Simple Queue Service)를 사용하는 주요 사례는?",
+      "options": [
+        { "label": "A", "text": "실시간 스트리밍 데이터 처리" },
+        { "label": "B", "text": "애플리케이션 컴포넌트 간 메시지를 비동기적으로 전달하여 느슨한 결합(Loose Coupling) 구현" },
+        { "label": "C", "text": "이메일 발송 서비스" },
+        { "label": "D", "text": "사용자 알림 멀티채널 전송" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "SQS는 완전 관리형 메시지 큐 서비스로, 애플리케이션 구성 요소 간 메시지를 버퍼링하여 비동기 통신을 가능하게 합니다. 생산자와 소비자를 분리(Decoupling)하여 시스템의 탄력성과 확장성을 향상시킵니다.",
+      "related_services": ["SQS"]
+    },
+    {
+      "id": "clf-48",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon SNS(Simple Notification Service)의 특징은?",
+      "options": [
+        { "label": "A", "text": "메시지를 큐에 저장하여 소비자가 순서대로 처리" },
+        { "label": "B", "text": "하나의 메시지를 이메일, SMS, HTTP, SQS 등 여러 구독자에게 동시에 전달하는 게시/구독(Pub/Sub) 서비스" },
+        { "label": "C", "text": "대용량 데이터 스트리밍 처리" },
+        { "label": "D", "text": "챗봇 서비스 구축" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "SNS는 완전 관리형 게시/구독(Pub/Sub) 알림 서비스입니다. 하나의 토픽에 메시지를 게시하면, 해당 토픽을 구독하는 모든 엔드포인트(이메일, SMS, Lambda, SQS, HTTP 등)에 동시에 메시지가 전달됩니다.",
+      "related_services": ["SNS"]
+    },
+    {
+      "id": "clf-49",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon CloudWatch는 어떤 기능을 제공합니까?",
+      "options": [
+        { "label": "A", "text": "AWS API 호출 로깅 및 감사" },
+        { "label": "B", "text": "AWS 리소스 구성 변경 추적" },
+        { "label": "C", "text": "AWS 리소스와 애플리케이션의 모니터링, 로그 수집, 경보 설정, 대시보드 제공" },
+        { "label": "D", "text": "위협 인텔리전스를 활용한 보안 위협 탐지" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "Amazon CloudWatch는 AWS 리소스(EC2, RDS, Lambda 등)의 메트릭을 수집하고 모니터링하는 서비스입니다. 지표 기반 경보 설정, 로그 수집 및 분석, 커스텀 대시보드, 자동 조치(Auto Scaling 트리거 등)를 지원합니다.",
+      "related_services": ["CloudWatch"]
+    },
+    {
+      "id": "clf-50",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS Elastic Beanstalk의 특징은?",
+      "options": [
+        { "label": "A", "text": "서버리스 코드 실행 서비스" },
+        { "label": "B", "text": "인프라 세부 사항을 직접 관리하지 않고 애플리케이션을 쉽게 배포하고 확장하는 PaaS 서비스" },
+        { "label": "C", "text": "인프라를 코드로 정의하는 IaC 서비스" },
+        { "label": "D", "text": "컨테이너 이미지를 저장하는 레지스트리 서비스" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Elastic Beanstalk는 애플리케이션 코드를 업로드하면 자동으로 EC2, 로드 밸런서, Auto Scaling, RDS 등을 프로비저닝하고 관리하는 PaaS 서비스입니다. 개발자는 인프라보다 코드에 집중할 수 있습니다.",
+      "related_services": ["Elastic Beanstalk", "EC2", "ELB"]
+    },
+    {
+      "id": "clf-51",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS CloudFormation을 사용하는 주요 이유는?",
+      "options": [
+        { "label": "A", "text": "AWS 비용을 자동으로 절감" },
+        { "label": "B", "text": "인프라를 코드(IaC)로 정의하여 반복 가능하고 일관된 방식으로 AWS 리소스를 프로비저닝" },
+        { "label": "C", "text": "애플리케이션 성능을 자동으로 최적화" },
+        { "label": "D", "text": "사용자 인터페이스를 자동으로 생성" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS CloudFormation은 YAML/JSON 템플릿으로 AWS 인프라를 코드로 정의하는 IaC(Infrastructure as Code) 서비스입니다. 동일한 환경을 반복적으로 일관되게 배포할 수 있으며, 드리프트 감지와 롤백도 지원합니다.",
+      "related_services": ["CloudFormation"]
+    },
+    {
+      "id": "clf-52",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon EBS(Elastic Block Store)와 Amazon EFS(Elastic File System)의 차이점으로 올바른 것은?",
+      "options": [
+        { "label": "A", "text": "EBS는 여러 EC2 인스턴스에서 동시에 공유 가능, EFS는 단일 EC2에만 연결" },
+        { "label": "B", "text": "EBS는 단일 EC2 인스턴스에 연결, EFS는 여러 EC2 인스턴스에서 동시에 마운트 가능한 공유 파일 시스템" },
+        { "label": "C", "text": "EBS는 객체 스토리지, EFS는 블록 스토리지" },
+        { "label": "D", "text": "EBS와 EFS 모두 S3와 동일한 객체 스토리지" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "EBS는 블록 스토리지로 기본적으로 단일 EC2에 연결됩니다(io1/io2는 Multi-Attach 가능). EFS는 NFS 기반 완전 관리형 파일 시스템으로 여러 EC2 인스턴스가 동시에 마운트하여 공유 파일에 접근할 수 있습니다.",
+      "related_services": ["EBS", "EFS"]
+    },
+    {
+      "id": "clf-53",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon S3 Glacier는 어떤 용도로 사용됩니까?",
+      "options": [
+        { "label": "A", "text": "자주 접근하는 데이터의 빠른 검색을 위한 고성능 스토리지" },
+        { "label": "B", "text": "장기 데이터 보관 및 아카이브를 위한 매우 저렴한 스토리지" },
+        { "label": "C", "text": "실시간 데이터베이스 쿼리를 위한 인메모리 스토리지" },
+        { "label": "D", "text": "멀티미디어 스트리밍을 위한 CDN 스토리지" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Amazon S3 Glacier는 매우 저렴한 비용으로 데이터를 장기 보관하는 아카이브 스토리지입니다. 데이터 검색 시 수 분에서 수 시간이 소요될 수 있으며, 규정 준수 아카이브, 미디어 자산 보관, 백업 데이터 아카이브에 사용됩니다.",
+      "related_services": ["S3"]
+    },
+    {
+      "id": "clf-54",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS Storage Gateway는 어떤 용도로 사용됩니까?",
+      "options": [
+        { "label": "A", "text": "AWS와 인터넷 간 고속 전용 네트워크 연결" },
+        { "label": "B", "text": "온프레미스 환경과 AWS 스토리지 서비스를 연결하는 하이브리드 스토리지 서비스" },
+        { "label": "C", "text": "S3 버킷 간 데이터 복제" },
+        { "label": "D", "text": "EC2 인스턴스용 고성능 블록 스토리지 제공" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Storage Gateway는 온프레미스 애플리케이션이 AWS 스토리지 서비스(S3, Glacier, EBS)를 마치 로컬 스토리지처럼 사용할 수 있게 해주는 하이브리드 스토리지 서비스입니다. 백업, 아카이브, DR에 활용됩니다.",
+      "related_services": ["Storage Gateway", "S3"]
+    },
+    {
+      "id": "clf-55",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon Lightsail은 어떤 경우에 가장 적합합니까?",
+      "options": [
+        { "label": "A", "text": "수천 개의 서버를 관리하는 대규모 엔터프라이즈 환경" },
+        { "label": "B", "text": "간단한 웹사이트, 블로그, 소규모 앱을 빠르게 시작하려는 개인 또는 소규모 팀" },
+        { "label": "C", "text": "머신러닝 모델 훈련을 위한 고성능 GPU 클러스터" },
+        { "label": "D", "text": "수십억 건의 IoT 데이터를 처리하는 실시간 시스템" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Amazon Lightsail은 간단하고 저렴한 가격으로 가상 서버, 스토리지, 데이터베이스, 네트워킹을 번들로 제공하는 서비스입니다. AWS 경험이 없는 개인 개발자나 소규모 팀이 간단한 웹사이트나 앱을 시작하기에 적합합니다.",
+      "related_services": ["Lightsail"]
+    },
+    {
+      "id": "clf-56",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "AWS Direct Connect의 주요 이점은?",
+      "options": [
+        { "label": "A", "text": "인터넷보다 더 높은 대역폭과 일관된 네트워크 성능, 낮은 지연 시간의 전용 네트워크 연결" },
+        { "label": "B", "text": "인터넷 VPN보다 빠른 설치 속도" },
+        { "label": "C", "text": "AWS에서 무료로 제공되는 네트워크 연결 서비스" },
+        { "label": "D", "text": "모바일 디바이스에서 AWS에 접근하기 위한 최적화된 연결" }
+      ],
+      "correct_answers": ["A"],
+      "explanation": "AWS Direct Connect는 온프레미스에서 AWS로의 전용 네트워크 연결을 제공합니다. 인터넷을 우회하여 일관된 네트워크 성능, 낮은 지연 시간, 높은 대역폭을 제공하며, 인터넷 데이터 전송 비용도 절감됩니다.",
+      "related_services": ["Direct Connect"]
+    },
+    {
+      "id": "clf-57",
+      "source": "clf",
+      "domain": "Technology",
+      "question_text": "Amazon ElastiCache는 어떤 역할을 합니까?",
+      "options": [
+        { "label": "A", "text": "S3에서 자주 사용하는 파일을 캐싱하여 접근 속도 향상" },
+        { "label": "B", "text": "Redis 또는 Memcached 기반의 인메모리 캐싱으로 애플리케이션 성능 향상" },
+        { "label": "C", "text": "데이터베이스 쿼리 결과를 디스크에 캐싱" },
+        { "label": "D", "text": "CDN 엣지에서 콘텐츠 캐싱" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "Amazon ElastiCache는 완전 관리형 인메모리 캐싱 서비스로 Redis와 Memcached를 지원합니다. 데이터베이스 앞단에 배치하여 자주 조회되는 데이터를 메모리에 저장하고 데이터베이스 부하를 줄이며 응답 속도를 마이크로초 단위로 향상시킵니다.",
+      "related_services": ["ElastiCache", "RDS"]
+    },
+    {
+      "id": "clf-58",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS 프리 티어(Free Tier)에 대한 설명으로 올바른 것은?",
+      "options": [
+        { "label": "A", "text": "모든 AWS 서비스를 무제한으로 무료 사용 가능" },
+        { "label": "B", "text": "신규 AWS 계정은 처음 12개월 동안 특정 서비스의 제한된 사용량을 무료로 제공" },
+        { "label": "C", "text": "엔터프라이즈 고객에게만 제공되는 무료 크레딧" },
+        { "label": "D", "text": "연간 구독 시 제공되는 할인 프로그램" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS 프리 티어는 신규 계정 생성 후 12개월 동안 EC2(750시간/월), S3(5GB), RDS(750시간/월) 등 특정 서비스를 제한된 사용량 내에서 무료로 사용할 수 있는 프로그램입니다. 일부 서비스(Lambda, DynamoDB 등)는 기간 제한 없이 매월 일정량 무료입니다.",
+      "related_services": ["AWS Cloud"]
+    },
+    {
+      "id": "clf-59",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "예측 가능한 워크로드를 위해 EC2 비용을 크게 절감할 수 있는 가장 적합한 구매 옵션은?",
+      "options": [
+        { "label": "A", "text": "온디맨드 인스턴스(On-Demand)" },
+        { "label": "B", "text": "예약 인스턴스(Reserved Instances)" },
+        { "label": "C", "text": "스팟 인스턴스(Spot Instances)" },
+        { "label": "D", "text": "전용 호스트(Dedicated Hosts)" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "예약 인스턴스는 1년 또는 3년 약정으로 특정 인스턴스 유형을 예약하면 온디맨드 대비 최대 72%까지 비용을 절감할 수 있습니다. 24시간 연중무휴 실행되는 데이터베이스, 웹 서버 같은 예측 가능하고 안정적인 워크로드에 적합합니다.",
+      "related_services": ["EC2"]
+    },
+    {
+      "id": "clf-60",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS Cost Explorer의 주요 기능은?",
+      "options": [
+        { "label": "A", "text": "미래 AWS 비용을 예측하고 예산 알림 설정" },
+        { "label": "B", "text": "과거 및 현재 AWS 비용과 사용량을 시각화하고 분석" },
+        { "label": "C", "text": "AWS 서비스 예상 비용 계산" },
+        { "label": "D", "text": "AWS 비용을 자동으로 최적화" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Cost Explorer는 AWS 비용과 사용량 데이터를 시각화하고 분석하는 도구입니다. 서비스별, 리전별, 시간별 비용 분석, 절감 기회 식별, 예약 인스턴스 권장 사항 등을 제공합니다.",
+      "related_services": ["Cost Explorer"]
+    },
+    {
+      "id": "clf-61",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS Budgets를 사용하면 무엇을 할 수 있습니까?",
+      "options": [
+        { "label": "A", "text": "AWS 비용을 자동으로 최적화하여 절감" },
+        { "label": "B", "text": "비용 또는 사용량이 정의한 임계값을 초과하거나 초과할 것으로 예상될 때 알림 전송" },
+        { "label": "C", "text": "AWS 계정의 보안 취약점 탐지" },
+        { "label": "D", "text": "여러 AWS 계정의 청구서를 통합 관리" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Budgets는 사용자 정의 비용 또는 사용량 예산을 설정하고, 실제 또는 예측 비용이 임계값을 넘으면 이메일, SNS로 알림을 보내는 서비스입니다. 비용 초과를 사전에 방지하는 데 효과적입니다.",
+      "related_services": ["AWS Budgets"]
+    },
+    {
+      "id": "clf-62",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS Trusted Advisor가 점검하는 영역에 해당하지 않는 것은?",
+      "options": [
+        { "label": "A", "text": "비용 최적화(Cost Optimization)" },
+        { "label": "B", "text": "보안(Security)" },
+        { "label": "C", "text": "애플리케이션 코드 품질(Code Quality)" },
+        { "label": "D", "text": "성능(Performance)" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "AWS Trusted Advisor는 비용 최적화, 보안, 내결함성, 성능, 서비스 한도의 5가지 범주에서 모범 사례를 확인하고 권장 사항을 제공합니다. '애플리케이션 코드 품질'은 Trusted Advisor의 점검 범위가 아닙니다.",
+      "related_services": ["Trusted Advisor"]
+    },
+    {
+      "id": "clf-63",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS 지원 플랜 중 24/7 기술 지원, TAM(Technical Account Manager), 비즈니스 크리티컬 워크로드를 위한 15분 응답 시간을 제공하는 플랜은?",
+      "options": [
+        { "label": "A", "text": "개발자(Developer) 플랜" },
+        { "label": "B", "text": "비즈니스(Business) 플랜" },
+        { "label": "C", "text": "엔터프라이즈(Enterprise) 플랜" },
+        { "label": "D", "text": "기본(Basic) 플랜" }
+      ],
+      "correct_answers": ["C"],
+      "explanation": "Enterprise 플랜은 전담 TAM(Technical Account Manager) 배정, 비즈니스 크리티컬 장애 15분 이내 응답, Well-Architected Review, 운영 검토 등을 제공합니다. Business 플랜은 TAM 없이 24/7 지원 및 1시간 응답을 제공합니다.",
+      "related_services": ["Support Plans"]
+    },
+    {
+      "id": "clf-64",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS Organizations의 통합 청구(Consolidated Billing) 기능의 이점은?",
+      "options": [
+        { "label": "A", "text": "모든 계정의 보안 정책을 중앙에서 통제" },
+        { "label": "B", "text": "여러 AWS 계정의 청구서를 하나로 통합하고 볼륨 기반 할인 혜택 공유" },
+        { "label": "C", "text": "각 계정의 IAM 사용자를 자동으로 생성" },
+        { "label": "D", "text": "여러 리전의 리소스를 자동으로 복제" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Organizations 통합 청구는 여러 AWS 계정의 요금을 하나의 청구서로 통합하여 관리 편의성을 높이고, 전체 사용량을 합산하여 볼륨 기반 티어 할인(Amazon S3, EC2 등)을 모든 계정이 공유할 수 있게 해줍니다.",
+      "related_services": ["Consolidated Billing"]
+    },
+    {
+      "id": "clf-65",
+      "source": "clf",
+      "domain": "Billing & Pricing",
+      "question_text": "AWS Pricing Calculator를 사용하는 목적은?",
+      "options": [
+        { "label": "A", "text": "현재 AWS 사용량에 대한 청구서 확인" },
+        { "label": "B", "text": "AWS 서비스 도입 전에 예상 비용을 사전에 계산하고 아키텍처 옵션을 비용 관점에서 비교" },
+        { "label": "C", "text": "AWS 비용을 자동으로 최적화하여 청구 금액 절감" },
+        { "label": "D", "text": "AWS 예약 인스턴스를 자동으로 구매" }
+      ],
+      "correct_answers": ["B"],
+      "explanation": "AWS Pricing Calculator는 AWS 서비스를 사용하기 전에 예상 월 비용을 계산할 수 있는 무료 웹 도구입니다. 다양한 서비스 구성 옵션을 비교하고 예산 계획을 수립하는 데 사용됩니다.",
+      "related_services": ["Pricing Calculator"]
+    }
+  ]
+}

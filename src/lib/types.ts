@@ -1,6 +1,6 @@
 export interface Question {
   id: string;
-  source: "nxtcloud" | "examtopics";
+  source: "nxtcloud" | "examtopics" | "clf";
   post_number?: number;
   question_number_in_post?: number;
   examtopics_number?: number;
@@ -72,6 +72,24 @@ export type {
   CorrectionRequest,
   CorrectionRequestInput,
 } from "./corrections";
+
+export type ExamType = "SAA-C03" | "CLF-C02";
+
+export interface ExamConfig {
+  type: ExamType;
+  label: string;
+  shortLabel: string;
+  totalQuestions: number;
+  examTimeMinutes: number;
+  passingScore: number;
+  domainWeights: Record<string, number>;
+}
+
+export interface ExamContextValue {
+  currentExam: ExamType;
+  examConfig: ExamConfig;
+  setExam: (exam: ExamType) => void;
+}
 
 export interface MockExam {
   id: string;

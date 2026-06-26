@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import fs from "fs";
 import path from "path";
 
-// 크롤링 데이터를 정적 JSON으로 로드
-function loadQuestions() {
+const VALID_EXAMS = ["SAA-C03", "CLF-C02"] as const;
+type ExamType = (typeof VALID_EXAMS)[number];
+
+function loadSAAQuestions() {
   const questions: Record<string, unknown>[] = [];
 
-  // public 디렉토리의 정적 데이터 또는 crawler 디렉토리
-  const possiblePaths = [
+  const nxtPaths = [
     path.join(process.cwd(), "public", "data", "nxtcloud_questions.json"),
     path.join(process.cwd(), "..", "crawler", "nxtcloud_questions.json"),
   ];
-
-  for (const filePath of possiblePaths) {
+  for (const filePath of nxtPaths) {
     if (fs.existsSync(filePath)) {
       try {
         const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
@@ -29,21 +30,20 @@ function loadQuestions() {
             detailed_explanation: q.detailed_explanation || "",
             related_services: q.related_services || [],
             source_url: q.source_url,
+            domain: q.domain,
           });
         }
-        break; // 첫 번째 발견된 파일 사용
+        break;
       } catch (e) {
         console.error("Failed to load nxtcloud data:", e);
       }
     }
   }
 
-  // Examtopics 데이터
   const etPaths = [
     path.join(process.cwd(), "public", "data", "examtopics_questions.json"),
     path.join(process.cwd(), "..", "crawler", "examtopics_questions.json"),
   ];
-
   for (const filePath of etPaths) {
     if (fs.existsSync(filePath)) {
       try {
@@ -58,6 +58,7 @@ function loadQuestions() {
             correct_answers: q.correct_answers || q.marked_answer || [],
             explanation: "",
             related_services: q.related_services || [],
+            domain: q.domain,
           });
         }
         break;
@@ -70,10 +71,26 @@ function loadQuestions() {
   return questions;
 }
 
-export async function GET() {
-  const questions = loadQuestions();
-  return NextResponse.json({
-    total: questions.length,
-    questions,
-  });
+function loadCLFQuestions() {
+  const filePath = path.join(process.cwd(), "public", "data", "clf_questions.json");
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    return data.questions || [];
+  } catch (e) {
+    console.error("Failed to load CLF data:", e);
+    return [];
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const exam = (searchParams.get("exam") ?? "SAA-C03") as ExamType;
+
+  if (!VALID_EXAMS.includes(exam)) {
+    return NextResponse.json({ error: "Invalid exam type" }, { status: 400 });
+  }
+
+  const questions = exam === "CLF-C02" ? loadCLFQuestions() : loadSAAQuestions();
+  return NextResponse.json({ total: questions.length, questions });
 }

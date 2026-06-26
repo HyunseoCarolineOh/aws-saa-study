@@ -12,6 +12,7 @@ import {
   type CorrectionType,
 } from "@/lib/corrections";
 import Link from "next/link";
+import { useExam } from "@/contexts/ExamContext";
 
 const TYPE_BADGE_CLASS: Record<CorrectionType, string> = {
   translation_needed: "bg-info-bg text-info-fg border border-info-border",
@@ -23,6 +24,7 @@ const TYPE_BADGE_CLASS: Record<CorrectionType, string> = {
 };
 
 export default function ReviewPage() {
+  const { currentExam } = useExam();
   const [activeTab, setActiveTab] = useState<"review" | "notes" | "corrections">("review");
   const [reviewIds, setReviewIds] = useState<string[]>([]);
   const [wrongSummary, setWrongSummary] = useState<{ questionId: string; lastAttemptAt: string; attemptCount: number }[]>([]);
@@ -58,7 +60,7 @@ export default function ReviewPage() {
     setWrongSummary(summary);
     setNotes(getStudyNotes());
 
-    fetch("/api/questions")
+    fetch(`/api/questions?exam=${currentExam}`)
       .then((res) => res.json())
       .then((data) => setQuestions(data.questions))
       .catch(() => {})
