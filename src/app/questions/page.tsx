@@ -325,23 +325,13 @@ function QuestionsContent() {
             onClick={() => startQuiz("normal")}
             className="flex-1 bg-gray-800 border-2 border-gray-700 hover:border-blue-500 rounded-2xl p-5 text-left transition-all"
           >
-            <div className="text-base font-semibold text-white mb-2">랜덤 풀기</div>
-            <div className="text-xs text-gray-400 leading-relaxed">
-              안 푼 문제 우선<br />
-              SM-2 복습 스케줄<br />
-              {examConfig.shortLabel} 전체 문제
-            </div>
+            <div className="text-base font-semibold text-white">랜덤 풀기</div>
           </button>
           <button
             onClick={startMock}
             className="flex-1 bg-gray-800 border-2 border-gray-700 hover:border-blue-500 rounded-2xl p-5 text-left transition-all"
           >
-            <div className="text-base font-semibold text-white mb-2">모의고사</div>
-            <div className="text-xs text-gray-400 leading-relaxed">
-              {examConfig.totalQuestions}문제 · {examConfig.examTimeMinutes}분<br />
-              도메인별 가중 출제<br />
-              합격 {examConfig.passingScore}점↑
-            </div>
+            <div className="text-base font-semibold text-white">모의고사</div>
           </button>
         </div>
       </div>
