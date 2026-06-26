@@ -15,6 +15,9 @@ export default function MyPage() {
   const [newNickname, setNewNickname] = useState(nickname || "");
   const [nicknameError, setNicknameError] = useState("");
   const [savingNickname, setSavingNickname] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
   const stats = getDailyStats();
   const streak = getStreak();
@@ -41,6 +44,19 @@ export default function MyPage() {
       setNicknameError("");
     }
     setSavingNickname(false);
+  }
+
+  async function handleFeedbackSubmit() {
+    const trimmed = feedback.trim();
+    if (!trimmed || !user) return;
+    setFeedbackLoading(true);
+    const { createClient } = await import("@/lib/supabase");
+    const supabase = createClient();
+    await supabase.from("saa_feedback").insert({ user_id: user.id, message: trimmed });
+    setFeedback("");
+    setFeedbackSent(true);
+    setFeedbackLoading(false);
+    setTimeout(() => setFeedbackSent(false), 3000);
   }
 
   async function handleSignOut() {
@@ -113,6 +129,29 @@ export default function MyPage() {
       {/* 시험 전환 */}
       <div className="bg-gray-800/50 rounded-2xl p-5 mb-4">
         <ExamSelector mode="switch" />
+      </div>
+
+      {/* 건의사항 */}
+      <div className="bg-gray-800/50 rounded-2xl p-5 mb-4">
+        <h2 className="text-sm font-semibold text-white mb-3">개발자에게 건의사항</h2>
+        <textarea
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          placeholder="불편한 점, 개선 사항을 알려주세요"
+          maxLength={500}
+          rows={4}
+          className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-blue-500"
+        />
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-xs text-gray-500">{feedback.length}/500</span>
+          <button
+            onClick={handleFeedbackSubmit}
+            disabled={feedbackLoading || feedback.trim().length === 0}
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-40 transition-colors"
+          >
+            {feedbackLoading ? "전송 중..." : feedbackSent ? "전송됐습니다" : "전송"}
+          </button>
+        </div>
       </div>
 
       {/* 로그아웃 */}
