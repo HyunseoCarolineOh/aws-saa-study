@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -33,10 +31,10 @@ export default function SignupPage() {
     });
     if (error) {
       setError(error.message);
+      setLoading(false);
     } else {
-      router.push("/nickname");
+      window.location.href = "/nickname";
     }
-    setLoading(false);
   }
 
   return (
