@@ -19,8 +19,8 @@ export const EXAM_CONFIGS: Record<ExamType, ExamConfig> = {
     type: "CLF-C02",
     label: "AWS Cloud Practitioner",
     shortLabel: "CLF-C02",
-    totalQuestions: 65,
-    examTimeMinutes: 90,
+    totalQuestions: 10,
+    examTimeMinutes: 15,
     passingScore: 700,
     domainWeights: {
       "Cloud Concepts": 24,
