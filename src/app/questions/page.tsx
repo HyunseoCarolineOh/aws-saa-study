@@ -316,17 +316,46 @@ function QuestionsContent() {
 
   // ── SELECT SCREEN ──
   if (pageMode === "select") {
+    const savedProgress = getQuizProgress();
+    const hasSavedProgress = savedProgress && savedProgress.mode === "normal" && savedProgress.questionIds.length > 0;
+
     return (
       <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
         <h1 className="text-xl font-bold text-white mb-1">문제</h1>
         <p className="text-sm text-gray-400 mb-6">{examConfig.label}</p>
         <div className="flex gap-4">
-          <button
-            onClick={() => startQuiz("normal")}
-            className="flex-1 bg-gray-800 border-2 border-gray-700 hover:border-blue-500 rounded-2xl p-5 text-left transition-all"
-          >
-            <div className="text-base font-semibold text-white">랜덤 풀기</div>
-          </button>
+          <div className="flex-1 bg-gray-800 border-2 border-gray-700 rounded-2xl p-5">
+            <div className="text-base font-semibold text-white mb-3">랜덤 풀기</div>
+            {hasSavedProgress ? (
+              <div className="space-y-2">
+                <button
+                  onClick={() => startQuiz("normal")}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-xl transition-colors"
+                >
+                  이어서 풀기
+                  <span className="block text-xs font-normal text-blue-200 mt-0.5">
+                    {savedProgress.currentIndex + 1} / {savedProgress.questionIds.length}번째 문제
+                  </span>
+                </button>
+                <button
+                  onClick={async () => {
+                    clearQuizProgress();
+                    await startQuiz("normal");
+                  }}
+                  className="w-full border border-gray-600 text-gray-300 hover:text-white text-sm py-2 rounded-xl transition-colors"
+                >
+                  새로 시작
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => startQuiz("normal")}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-xl transition-colors"
+              >
+                시작
+              </button>
+            )}
+          </div>
           <button
             onClick={startMock}
             className="flex-1 bg-gray-800 border-2 border-gray-700 hover:border-blue-500 rounded-2xl p-5 text-left transition-all"

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/questions", label: "문제", icon: QuestionIcon },
   { href: "/concepts", label: "개념", icon: BookIcon },
-  { href: "/review", label: "오답", icon: ReviewIcon },
+  { href: "/review", label: "복습", icon: ReviewIcon },
   { href: "/mypage", label: "마이페이지", icon: UserIcon },
 ];
 
