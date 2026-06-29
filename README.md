@@ -51,6 +51,18 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
   <img src="./public/screenshots/questions.png" alt="문제풀기 화면" width="300" />
 </p>
 
+<p align="center">
+  <img src="./public/screenshots/questions-result.png" alt="정답 확인 후" width="300" />
+</p>
+
+<p align="center">
+  <img src="./public/screenshots/questions-explanation.png" alt="해설 보기" width="300" />
+</p>
+
+<p align="center">
+  <img src="./public/screenshots/questions-report.png" alt="수정 요청 시트" width="300" />
+</p>
+
 ---
 
 ### 📋 모의고사
@@ -151,6 +163,7 @@ AWS 서비스 사전으로, 카테고리별로 서비스를 탐색할 수 있습
 |---|------|------|
 | 1 | CLF 개념 탭 상세 정보 | 서비스별 설명, 주요 특징, 유스케이스, 시험 팁, 과금 방식 추가 |
 | 2 | CLF 서비스 빈출도 표시 | CLF 문제 데이터 기반 빈출도 집계 및 개념 탭에 표시 |
+| 3 | CLF 문제 한국어 번역 | 현재 영문으로만 제공되는 CLF 문제들의 지문, 선지, 해설 한국어 번역 |
 
 ### 🟡 P1 — 미완성 기능
 
