@@ -6,18 +6,6 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 
 ---
 
-## 스크린샷
-
-| 문제풀기 | 모의고사 | 오답 |
-|:---:|:---:|:---:|
-| ![문제풀기](./public/screenshots/questions.png) | ![모의고사](./public/screenshots/mock-exam.png) | ![오답](./public/screenshots/review.png) |
-
-| 개념 | 마이페이지 |
-|:---:|:---:|
-| ![개념](./public/screenshots/concepts.png) | ![마이페이지](./public/screenshots/mypage.png) |
-
----
-
 ## 시작하기
 
 ### 첫 접속 흐름
@@ -62,6 +50,10 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 - 번역 필요 / 해설 오류 / 선지 오류 / 정답 오류 / 서비스 분류 오류 / 지문 오류
 - 신고 내용은 Supabase에 저장되어 관리자가 처리합니다.
 
+<p align="center">
+  <img src="./public/screenshots/questions.png" alt="문제풀기 화면" width="300" />
+</p>
+
 ---
 
 ### 📋 모의고사
@@ -101,6 +93,10 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 
 - 내가 신고한 문제 오류 목록을 확인하고 삭제할 수 있습니다.
 
+<p align="center">
+  <img src="./public/screenshots/review.png" alt="오답 화면" width="300" />
+</p>
+
 ---
 
 ### 📖 개념
@@ -112,6 +108,10 @@ AWS 서비스 사전으로, 카테고리별로 서비스를 탐색할 수 있습
 - 문제가 있는 서비스는 **"관련 문제 풀기"** 링크로 바로 해당 서비스 문제를 풀 수 있습니다.
 - 서비스명이나 키워드로 검색 가능합니다.
 
+<p align="center">
+  <img src="./public/screenshots/concepts.png" alt="개념 화면" width="300" />
+</p>
+
 ---
 
 ### 👤 마이페이지
@@ -121,6 +121,10 @@ AWS 서비스 사전으로, 카테고리별로 서비스를 탐색할 수 있습
 - **시험 종류 변경**: SAA-C03 ↔ CLF-C02 전환
 - **닉네임 수정**: 2~12자, 한글/영문/숫자
 - **개발자에게 메시지 보내기**: 건의사항이나 버그 제보
+
+<p align="center">
+  <img src="./public/screenshots/mypage.png" alt="마이페이지 화면" width="300" />
+</p>
 
 ---
 
