@@ -2,7 +2,7 @@
 
 AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시험 준비를 위한 모바일 최적화 웹앱입니다.
 
-🔗 **배포 URL**: https://app-hyunseocarolineohs-projects.vercel.app
+🔗 **배포 URL**: https://app-ten-gamma-25.vercel.app/
 
 ---
 
