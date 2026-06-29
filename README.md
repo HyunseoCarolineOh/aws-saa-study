@@ -37,6 +37,12 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 3. **풀이 보기**를 누르면 정답 해설 / 상세 풀이 / 관련 서비스 탭을 확인할 수 있습니다.
 4. **다음 문제** 버튼으로 넘어갑니다.
 
+<p align="center">
+  <img src="./public/screenshots/questions.png" alt="문제풀기 화면" width="300" />
+  <img src="./public/screenshots/questions-result.png" alt="정답 확인 후" width="300" />
+  <img src="./public/screenshots/questions-explanation.png" alt="해설 보기" width="300" />
+</p>
+
 #### 오답노트 저장 (텍스트 드래그)
 
 문제 지문이나 해설에서 **텍스트를 드래그(길게 누르기)**하면 팝오버가 뜨고, "오답노트에 저장"을 선택할 수 있습니다. 메모를 추가하면 오답 탭의 오답노트에 저장됩니다.
@@ -46,18 +52,6 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 문제에 오류가 있을 때 상단의 ⚠ **수정 요청** 버튼을 누르면 신고할 수 있습니다.
 - 번역 필요 / 해설 오류 / 선지 오류 / 정답 오류 / 서비스 분류 오류 / 지문 오류
 - 신고 내용은 Supabase에 저장되어 관리자가 처리합니다.
-
-<p align="center">
-  <img src="./public/screenshots/questions.png" alt="문제풀기 화면" width="300" />
-</p>
-
-<p align="center">
-  <img src="./public/screenshots/questions-result.png" alt="정답 확인 후" width="300" />
-</p>
-
-<p align="center">
-  <img src="./public/screenshots/questions-explanation.png" alt="해설 보기" width="300" />
-</p>
 
 <p align="center">
   <img src="./public/screenshots/questions-report.png" alt="수정 요청 시트" width="300" />
