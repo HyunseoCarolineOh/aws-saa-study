@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Question } from "@/lib/types";
 import QuestionCard from "@/components/QuestionCard";
-import MarkdownContent from "@/components/MarkdownContent";
 import {
   getQuizProgress,
   saveQuizProgress,
@@ -14,16 +13,12 @@ import {
   clearServiceQuizProgress,
   getTodayReviewQuestionIds,
   getAttemptedQuestionIds,
-  addAttempt,
-  saveMockExamResult,
 } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
 import CorrectionReportSheet from "@/components/CorrectionReportSheet";
 import { isCorrectionsEnabled } from "@/lib/corrections";
 import { useExam } from "@/contexts/ExamContext";
 import Link from "next/link";
-
-type PageMode = "select" | "quiz" | "mock" | "mock-result";
 
 function buildPrioritizedOrder(questions: Question[]): Question[] {
   const attempted = getAttemptedQuestionIds();
@@ -36,129 +31,102 @@ function buildPrioritizedOrder(questions: Question[]): Question[] {
   return [...shuffle(unsolved), ...shuffle(solved)];
 }
 
-function buildDomainQuota(
-  weights: Record<string, number>,
-  total: number
-): Record<string, number> {
-  const weightSum = Object.values(weights).reduce((a, b) => a + b, 0);
-  const quota: Record<string, number> = {};
-  let assigned = 0;
-  const entries = Object.entries(weights);
-  entries.forEach(([domain, w], i) => {
-    const count = i === entries.length - 1
-      ? total - assigned
-      : Math.round((w / weightSum) * total);
-    quota[domain] = count;
-    assigned += count;
-  });
-  return quota;
-}
-
-function detectMultiSelectCount(text: string): number {
-  if (/3개를?\s*선택|세\s*가지를?\s*선택|choose\s*3|select\s*3/i.test(text)) return 3;
-  if (/2개를?\s*선택|두\s*(?:개를?|가지를?)\s*선택|choose\s*2|select\s*2/i.test(text)) return 2;
-  return 1;
-}
-
-function guessDomainSAA(q: Question): string {
-  const combined = (
-    q.question_text + " " + q.options.map((o) => o.text).join(" ") + " " +
-    (q.related_services || []).join(" ")
-  ).toLowerCase();
-  if (/iam|cognito|kms|waf|shield|guard|encrypt|보안|인증|암호|acm|secret/.test(combined))
-    return "보안 아키텍처";
-  if (/auto scaling|multi.?az|failover|disaster|복원|가용성|백업|replica|aurora.*read/.test(combined))
-    return "복원력 아키텍처";
-  if (/cost|비용|절감|예산|saving|budget|reserved|spot|glacier/.test(combined))
-    return "비용 최적화";
-  return "고성능 아키텍처";
-}
-
-function guessDomainCLF(q: Question): string {
-  const combined = (
-    q.question_text + " " + q.options.map((o) => o.text).join(" ") + " " +
-    (q.related_services || []).join(" ")
-  ).toLowerCase();
-  if (q.domain) return q.domain;
-  if (/iam|cognito|kms|waf|shield|guard|encrypt|보안|인증|암호/.test(combined)) return "Security";
-  if (/ec2|lambda|s3|rds|vpc|network|storage|database|컴퓨|스토리|네트워/.test(combined)) return "Technology";
-  if (/cost|비용|billing|pricing|budget|절감|요금/.test(combined)) return "Billing & Pricing";
-  return "Cloud Concepts";
-}
-
 function QuestionsContent() {
   const searchParams = useSearchParams();
   const service = searchParams.get("service");
-  const urlMode = service ? "quiz" : searchParams.get("mode") === "review" ? "quiz" : null;
+  const singleId = searchParams.get("id");
+  const mode = singleId ? "single" : service ? "service" : searchParams.get("mode") === "review" ? "review" : "normal";
+  const examContext = useExam();
+  const currentExam = examContext?.currentExam ?? "SAA-C03";
 
-  const { currentExam, examConfig } = useExam();
-  const [pageMode, setPageMode] = useState<PageMode>(urlMode ?? "select");
-  const [quizSubMode, setQuizSubMode] = useState<"normal" | "review" | "service">(
-    service ? "service" : searchParams.get("mode") === "review" ? "review" : "normal"
-  );
-
-  // Quiz state
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [quizLoading, setQuizLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportToast, setReportToast] = useState<string | null>(null);
-
-  // Mock exam state
-  const [mockQuestions, setMockQuestions] = useState<Question[]>([]);
-  const [mockAnswers, setMockAnswers] = useState<Record<number, string[]>>({});
-  const [mockIndex, setMockIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(examConfig.examTimeMinutes * 60);
-  const [mockLoading, setMockLoading] = useState(false);
-  const [mockResults, setMockResults] = useState<{
-    correct: number; total: number;
-    domainScores: Record<string, { correct: number; total: number }>;
-    wrongQuestions: { index: number; question: Question; selected: string[] }[];
-  } | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const startedAtRef = useRef<string>(new Date().toISOString());
 
   function showReportToast(msg: string) {
     setReportToast(msg);
     window.setTimeout(() => setReportToast(null), 2500);
   }
 
-  // Quiz logic
-  async function startQuiz(subMode: "normal" | "service") {
-    setQuizLoading(true);
-    setQuizSubMode(subMode);
+  function handleOpenReport() {
+    if (!isCorrectionsEnabled()) {
+      showReportToast("Supabase ?ㅼ젙???꾩슂?⑸땲??);
+      return;
+    }
+    setReportOpen(true);
+  }
+
+  useEffect(() => {
+    loadQuestions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, service, currentExam]);
+
+  async function loadQuestions() {
     try {
       const res = await fetch(`/api/questions?exam=${currentExam}`);
       const data = await res.json();
-      const allQuestions = data.questions as Question[];
 
-      if (subMode === "service" && service) {
+      if (mode === "single" && singleId) {
+        // ?⑥씪 臾몄젣 紐⑤뱶: ?뱀젙 臾몄젣 ?섎굹留??쒖떆
+        const target = (data.questions as Question[]).find((q) => q.id === singleId);
+        if (target) {
+          setQuestions([target]);
+          setCurrentIndex(0);
+        } else {
+          setQuestions([]);
+        }
+      } else if (mode === "service" && service) {
+        // ?쒕퉬??紐⑤뱶: ?뱀젙 ?쒕퉬??愿??臾몄젣留??꾪꽣留?
         const dataNames = getDataServiceNames(service);
-        const svcQ = allQuestions.filter((q) =>
+        const serviceQuestions = (data.questions as Question[]).filter((q) =>
           q.related_services.some((s) => dataNames.includes(s))
         );
+
+        // ??λ맂 吏꾪뻾 ?곹깭 蹂듭썝 ?쒕룄
         const saved = getServiceQuizProgress();
         if (saved && saved.mode === "service" && saved.serviceName === service && saved.questionIds.length > 0) {
-          const qMap = new Map(svcQ.map((q) => [q.id, q]));
-          const restored = saved.questionIds.map((id) => qMap.get(id)).filter((q): q is Question => !!q);
+          const questionMap = new Map(serviceQuestions.map((q) => [q.id, q]));
+          const restored = saved.questionIds
+            .map((id) => questionMap.get(id))
+            .filter((q): q is Question => !!q);
+
           if (restored.length > 0) {
             setQuestions(restored);
             setCurrentIndex(Math.min(saved.currentIndex, restored.length - 1));
           } else {
-            startServiceFresh(svcQ, service);
+            startServiceFresh(serviceQuestions, service);
           }
         } else {
-          startServiceFresh(svcQ, service);
+          startServiceFresh(serviceQuestions, service);
         }
+      } else if (mode === "review") {
+        // 蹂듭뒿 紐⑤뱶: ?ㅻ뒛 蹂듭뒿??臾몄젣留??꾪꽣留?
+        const reviewIds = getTodayReviewQuestionIds();
+        const reviewQuestions = (data.questions as Question[]).filter((q) =>
+          reviewIds.includes(q.id)
+        );
+        const shuffled = [...reviewQuestions].sort(() => Math.random() - 0.5);
+        setQuestions(shuffled);
+        setCurrentIndex(0);
       } else {
+        // ?쇰컲 紐⑤뱶: ??λ맂 吏꾪뻾 ?곹깭 蹂듭썝 or ?덈줈 ?뷀뵆
         const saved = getQuizProgress();
+        const allQuestions = data.questions as Question[];
+
         if (saved && saved.mode === "normal" && saved.questionIds.length > 0) {
-          const qMap = new Map(allQuestions.map((q) => [q.id, q]));
-          const restored = saved.questionIds.map((id) => qMap.get(id)).filter((q): q is Question => !!q);
+          // ??λ맂 ?쒖꽌濡?臾몄젣 蹂듭썝
+          const questionMap = new Map(allQuestions.map((q) => [q.id, q]));
+          const restored = saved.questionIds
+            .map((id) => questionMap.get(id))
+            .filter((q): q is Question => !!q);
+
           if (restored.length > 0) {
             setQuestions(restored);
             setCurrentIndex(Math.min(saved.currentIndex, restored.length - 1));
           } else {
+            // ??λ맂 ID媛 ?꾩옱 ?곗씠?곗? ??留욎쑝硫??덈줈 ?뷀뵆
             startFresh(allQuestions);
           }
         } else {
@@ -166,445 +134,217 @@ function QuestionsContent() {
         }
       }
     } catch {
-      setQuestions([]);
+      setQuestions(getSampleQuestions());
     }
-    setQuizLoading(false);
-    setPageMode("quiz");
+    setLoading(false);
   }
 
-  async function startReviewQuiz() {
-    setQuizLoading(true);
-    setQuizSubMode("review");
-    try {
-      const res = await fetch(`/api/questions?exam=${currentExam}`);
-      const data = await res.json();
-      const reviewIds = getTodayReviewQuestionIds();
-      const reviewQ = (data.questions as Question[]).filter((q) => reviewIds.includes(q.id));
-      setQuestions([...reviewQ].sort(() => Math.random() - 0.5));
-      setCurrentIndex(0);
-    } catch { setQuestions([]); }
-    setQuizLoading(false);
-    setPageMode("quiz");
-  }
-
-  function startFresh(allQ: Question[]) {
-    const ordered = buildPrioritizedOrder(allQ);
+  function startFresh(allQuestions: Question[]) {
+    const ordered = buildPrioritizedOrder(allQuestions);
     setQuestions(ordered);
     setCurrentIndex(0);
-    saveQuizProgress({ questionIds: ordered.map((q) => q.id), currentIndex: 0, mode: "normal" });
+    saveQuizProgress({
+      questionIds: ordered.map((q) => q.id),
+      currentIndex: 0,
+      mode: "normal",
+    });
   }
 
-  function startServiceFresh(svcQ: Question[], svcName: string) {
-    const ordered = buildPrioritizedOrder(svcQ);
+  function startServiceFresh(serviceQuestions: Question[], serviceName: string) {
+    const ordered = buildPrioritizedOrder(serviceQuestions);
     setQuestions(ordered);
     setCurrentIndex(0);
-    saveServiceQuizProgress({ questionIds: ordered.map((q) => q.id), currentIndex: 0, mode: "service", serviceName: svcName });
+    saveServiceQuizProgress({
+      questionIds: ordered.map((q) => q.id),
+      currentIndex: 0,
+      mode: "service",
+      serviceName,
+    });
+  }
+
+  function handleRestart() {
+    if (mode === "service") {
+      clearServiceQuizProgress();
+    } else {
+      clearQuizProgress();
+    }
+    loadQuestions();
   }
 
   const handleNext = useCallback(() => {
+    if (mode === "single") return; // ?⑥씪 臾몄젣 紐⑤뱶?먯꽌???ㅼ쓬 臾몄젣 鍮꾪솢?깊솕
     if (currentIndex < questions.length - 1) {
-      const next = currentIndex + 1;
-      setCurrentIndex(next);
-      if (quizSubMode === "normal") {
-        saveQuizProgress({ questionIds: questions.map((q) => q.id), currentIndex: next, mode: "normal" });
-      } else if (quizSubMode === "service" && service) {
-        saveServiceQuizProgress({ questionIds: questions.map((q) => q.id), currentIndex: next, mode: "service", serviceName: service });
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      if (mode === "normal") {
+        saveQuizProgress({
+          questionIds: questions.map((q) => q.id),
+          currentIndex: nextIndex,
+          mode: "normal",
+        });
+      } else if (mode === "service" && service) {
+        saveServiceQuizProgress({
+          questionIds: questions.map((q) => q.id),
+          currentIndex: nextIndex,
+          mode: "service",
+          serviceName: service,
+        });
       }
     }
-  }, [currentIndex, questions, quizSubMode, service]);
+  }, [currentIndex, questions, mode, service]);
 
-  // Mock exam logic
-  async function startMock() {
-    setMockLoading(true);
-    setMockAnswers({});
-    setMockIndex(0);
-    const newTime = examConfig.examTimeMinutes * 60;
-    setTimeLeft(newTime);
-
-    try {
-      const res = await fetch(`/api/questions?exam=${currentExam}`);
-      const data = await res.json();
-      const allQ = data.questions as Question[];
-      const domainQuota = buildDomainQuota(examConfig.domainWeights, examConfig.totalQuestions);
-      const guessDomain = currentExam === "CLF-C02" ? guessDomainCLF : guessDomainSAA;
-
-      const buckets: Record<string, Question[]> = {};
-      for (const domain of Object.keys(domainQuota)) buckets[domain] = [];
-      for (const q of allQ) {
-        const d = guessDomain(q);
-        if (buckets[d]) buckets[d].push(q);
-      }
-      for (const d of Object.keys(buckets)) buckets[d].sort(() => Math.random() - 0.5);
-
-      const selected: Question[] = [];
-      const remaining: Question[] = [];
-      for (const [domain, quota] of Object.entries(domainQuota)) {
-        const bucket = buckets[domain] || [];
-        selected.push(...bucket.slice(0, quota));
-        remaining.push(...bucket.slice(quota));
-      }
-      if (selected.length < examConfig.totalQuestions) {
-        remaining.sort(() => Math.random() - 0.5);
-        selected.push(...remaining.slice(0, examConfig.totalQuestions - selected.length));
-      }
-      selected.sort(() => Math.random() - 0.5);
-      setMockQuestions(selected.slice(0, examConfig.totalQuestions));
-      startedAtRef.current = new Date().toISOString();
-    } catch { setMockQuestions([]); }
-
-    setMockLoading(false);
-    setPageMode("mock");
-  }
-
-  useEffect(() => {
-    if (pageMode !== "mock") return;
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) { handleMockFinish(); return 0; }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageMode]);
-
-  const handleMockFinish = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    const guessDomain = currentExam === "CLF-C02" ? guessDomainCLF : guessDomainSAA;
-    let correct = 0;
-    const domainScores: Record<string, { correct: number; total: number }> = {};
-    const wrongQuestions: { index: number; question: Question; selected: string[] }[] = [];
-
-    mockQuestions.forEach((q, i) => {
-      const selected = mockAnswers[i] || [];
-      const isCorrect = selected.length === q.correct_answers.length &&
-        selected.every((a) => q.correct_answers.includes(a));
-      if (isCorrect) correct++;
-      const domain = guessDomain(q);
-      if (!domainScores[domain]) domainScores[domain] = { correct: 0, total: 0 };
-      domainScores[domain].total++;
-      if (isCorrect) domainScores[domain].correct++;
-      if (!isCorrect) wrongQuestions.push({ index: i, question: q, selected });
-      addAttempt({ question_id: q.id, selected_answers: selected, is_correct: isCorrect, time_spent_seconds: 0 });
-    });
-
-    const score = mockQuestions.length > 0 ? Math.round((correct / mockQuestions.length) * 1000) : 0;
-    saveMockExamResult({
-      id: crypto.randomUUID(), started_at: startedAtRef.current,
-      finished_at: new Date().toISOString(), question_ids: mockQuestions.map((q) => q.id),
-      answers: mockAnswers, total_questions: mockQuestions.length, correct_count: correct,
-      score, passed: score >= examConfig.passingScore, domain_scores: domainScores,
-    });
-    setMockResults({ correct, total: mockQuestions.length, domainScores, wrongQuestions });
-    setPageMode("mock-result");
-  }, [mockQuestions, mockAnswers, examConfig, currentExam]);
-
-  // Auto-start for url-driven modes
-  useEffect(() => {
-    if (urlMode === "quiz") {
-      if (service) startQuiz("service");
-      else if (searchParams.get("mode") === "review") startReviewQuiz();
-      else startQuiz("normal");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function formatTime(s: number) {
-    const m = Math.floor(s / 60);
-    return `${m}:${String(s % 60).padStart(2, "0")}`;
-  }
-
-  // ── SELECT SCREEN ──
-  if (pageMode === "select") {
-    const savedProgress = getQuizProgress();
-    const hasSavedProgress = savedProgress && savedProgress.mode === "normal" && savedProgress.questionIds.length > 0;
-
+  if (loading) {
     return (
-      <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
-        <h1 className="text-xl font-bold text-white mb-1">문제</h1>
-        <p className="text-sm text-gray-400 mb-6">{examConfig.label}</p>
-        <div className="flex gap-4">
-          <div className="flex-1 bg-gray-800 border-2 border-gray-700 rounded-2xl p-5">
-            <div className="text-base font-semibold text-white mb-3">랜덤 풀기</div>
-            {hasSavedProgress ? (
-              <div className="space-y-2">
-                <button
-                  onClick={() => startQuiz("normal")}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-xl transition-colors"
-                >
-                  이어서 풀기
-                  <span className="block text-xs font-normal text-blue-200 mt-0.5">
-                    {savedProgress.currentIndex + 1} / {savedProgress.questionIds.length}번째 문제
-                  </span>
-                </button>
-                <button
-                  onClick={async () => {
-                    clearQuizProgress();
-                    await startQuiz("normal");
-                  }}
-                  className="w-full border border-gray-600 text-gray-300 hover:text-white text-sm py-2 rounded-xl transition-colors"
-                >
-                  새로 시작
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => startQuiz("normal")}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-xl transition-colors"
-              >
-                시작
-              </button>
-            )}
+      <div className="max-w-lg mx-auto px-4 pt-20 text-center">
+        <p className="text-muted">臾몄젣 濡쒕뵫 以?..</p>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-lg mx-auto px-4 pt-20 text-center">
+        {mode === "single" ? (
+          <>
+            <p className="text-lg mb-2">臾몄젣瑜?李얠쓣 ???놁뒿?덈떎</p>
+            <p className="text-sm text-muted mb-4">?대떦 ID??臾몄젣媛 議댁옱?섏? ?딆뒿?덈떎.</p>
+            <Link href="/review" className="text-primary font-medium text-sm">
+              ?ㅻ떟?명듃濡??뚯븘媛湲?&rarr;
+            </Link>
+          </>
+        ) : mode === "service" && service ? (
+          <>
+            <p className="text-lg mb-2">{service} 愿??臾몄젣媛 ?놁뒿?덈떎</p>
+            <p className="text-sm text-muted mb-4">???쒕퉬?ㅼ? ?곌껐??臾몄젣媛 ?꾩쭅 ?놁뒿?덈떎.</p>
+            <Link href="/concepts" className="text-primary font-medium text-sm">
+              ?쒕퉬???ъ쟾?쇰줈 ?뚯븘媛湲?&rarr;
+            </Link>
+          </>
+        ) : mode === "review" ? (
+          <>
+            <p className="text-lg mb-2">蹂듭뒿??臾몄젣媛 ?놁뒿?덈떎</p>
+            <p className="text-sm text-muted mb-4">?ㅻ뒛 蹂듭뒿 ?덉젙??臾몄젣媛 ?녾굅?? ?꾩쭅 ?由?臾몄젣媛 ?놁뒿?덈떎.</p>
+            <Link href="/review" className="text-primary font-medium text-sm">
+              ?ㅻ떟?명듃濡??뚯븘媛湲?&rarr;
+            </Link>
+          </>
+        ) : (
+          <p className="text-muted">臾몄젣媛 ?놁뒿?덈떎.</p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* ?⑥씪 臾몄젣 紐⑤뱶 諛곕꼫 */}
+      {mode === "single" && (
+        <div className="max-w-lg mx-auto px-4 pt-2">
+          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
+            <Link href="/review" className="hover:underline">&larr; ?ㅻ떟?명듃濡??뚯븘媛湲?/Link>
           </div>
+        </div>
+      )}
+
+      {/* ?쒕퉬??紐⑤뱶 諛곕꼫 */}
+      {mode === "service" && service && (
+        <div className="max-w-lg mx-auto px-4 pt-2">
+          <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
+            <Link href="/concepts" className="hover:underline">&larr; {service}</Link>
+            <span>{currentIndex + 1} / {questions.length}臾몄젣</span>
+          </div>
+        </div>
+      )}
+
+      {/* 蹂듭뒿 紐⑤뱶 諛곕꼫 */}
+      {mode === "review" && (
+        <div className="max-w-lg mx-auto px-4 pt-2">
+          <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
+            <span>蹂듭뒿 紐⑤뱶</span>
+            <span>{questions.length}臾몄젣</span>
+          </div>
+        </div>
+      )}
+
+      {/* ?대컮: 泥섏쓬遺???ㅼ떆 ?湲?+ ?섏젙 ?붿껌 */}
+      <div className="max-w-lg mx-auto px-4 pt-2 flex justify-end items-center gap-3">
+        {(mode === "normal" || mode === "service") && currentIndex > 0 && (
           <button
-            onClick={startMock}
-            className="flex-1 bg-gray-800 border-2 border-gray-700 hover:border-blue-500 rounded-2xl p-5 text-left transition-all"
+            onClick={handleRestart}
+            className="text-xs text-muted hover:text-primary transition-colors px-2 py-1"
           >
-            <div className="text-base font-semibold text-white">모의고사</div>
+            泥섏쓬遺???ㅼ떆 ?湲?
           </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ── QUIZ MODE ──
-  if (pageMode === "quiz") {
-    if (quizLoading) {
-      return <div className="max-w-lg mx-auto px-4 pt-20 text-center"><p className="text-muted">로딩 중...</p></div>;
-    }
-    if (questions.length === 0) {
-      return (
-        <div className="max-w-lg mx-auto px-4 pt-20 text-center">
-          {quizSubMode === "service" && service ? (
-            <>
-              <p className="text-lg mb-2">{service} 관련 문제가 없습니다</p>
-              <Link href="/concepts" className="text-primary font-medium text-sm">서비스 사전으로 돌아가기 →</Link>
-            </>
-          ) : quizSubMode === "review" ? (
-            <>
-              <p className="text-lg mb-2">복습할 문제가 없습니다</p>
-              <Link href="/review" className="text-primary font-medium text-sm">오답노트로 돌아가기 →</Link>
-            </>
-          ) : (
-            <p className="text-muted">문제가 없습니다.</p>
-          )}
-        </div>
-      );
-    }
-    return (
-      <div>
-        {quizSubMode === "service" && service && (
-          <div className="max-w-lg mx-auto px-4 pt-2">
-            <div className="bg-info-bg border border-info-border rounded-xl px-4 py-2 text-sm text-info-fg flex justify-between items-center">
-              <Link href="/concepts" className="hover:underline">← {service}</Link>
-              <span>{currentIndex + 1} / {questions.length}문제</span>
-            </div>
-          </div>
         )}
-        {quizSubMode === "review" && (
-          <div className="max-w-lg mx-auto px-4 pt-2">
-            <div className="bg-accent-bg border border-accent-border rounded-xl px-4 py-2 text-sm text-accent-fg flex justify-between items-center">
-              <span>복습 모드</span>
-              <span>{questions.length}문제</span>
-            </div>
-          </div>
-        )}
-        <div className="max-w-lg mx-auto px-4 pt-2 flex justify-between items-center gap-3">
-          <button onClick={() => setPageMode("select")} className="text-xs text-muted hover:text-primary px-2 py-1">
-            ← 문제 선택
-          </button>
-          <div className="flex items-center gap-3">
-            {(quizSubMode === "normal" || quizSubMode === "service") && currentIndex > 0 && (
-              <button
-                onClick={() => { if (quizSubMode === "service") clearServiceQuizProgress(); else clearQuizProgress(); startQuiz(quizSubMode); }}
-                className="text-xs text-muted hover:text-primary px-2 py-1"
-              >
-                처음부터
-              </button>
-            )}
-            <button
-              onClick={() => { if (!isCorrectionsEnabled()) { showReportToast("Supabase 설정 필요"); return; } setReportOpen(true); }}
-              className="text-xs text-danger-fg hover:text-danger px-2 py-1 flex items-center gap-1"
-            >
-              <span aria-hidden>⚠</span> 수정 요청
-            </button>
-          </div>
-        </div>
-        <QuestionCard
-          question={questions[currentIndex]}
-          questionIndex={currentIndex}
-          totalQuestions={questions.length}
-          onNext={handleNext}
-        />
-        {reportOpen && questions[currentIndex] && (
-          <CorrectionReportSheet
-            isOpen question={questions[currentIndex]}
-            onClose={() => setReportOpen(false)}
-            onSubmitted={(msg) => { setReportOpen(false); showReportToast(msg); }}
-          />
-        )}
-        {reportToast && (
-          <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 whitespace-nowrap">
-            {reportToast}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // ── MOCK EXAM ──
-  if (pageMode === "mock") {
-    if (mockLoading || mockQuestions.length === 0) {
-      return <div className="max-w-lg mx-auto px-4 pt-20 text-center"><p className="text-muted">모의고사 준비 중...</p></div>;
-    }
-    const q = mockQuestions[mockIndex];
-    const selected = mockAnswers[mockIndex] || [];
-    const expectedCount = detectMultiSelectCount(q.question_text);
-    const isMulti = expectedCount > 1 || q.correct_answers.length > 1;
-    const selectCount = Math.max(expectedCount, q.correct_answers.length);
-    const isTimeWarning = timeLeft < 180;
-
-    function handleMockSelect(label: string) {
-      setMockAnswers((prev) => {
-        const cur = prev[mockIndex] || [];
-        if (isMulti) {
-          if (cur.includes(label)) return { ...prev, [mockIndex]: cur.filter((a) => a !== label) };
-          if (cur.length >= selectCount) return { ...prev, [mockIndex]: [...cur.slice(1), label] };
-          return { ...prev, [mockIndex]: [...cur, label] };
-        }
-        return { ...prev, [mockIndex]: [label] };
-      });
-    }
-
-    return (
-      <div className="max-w-lg mx-auto px-4 pt-2 pb-24">
-        <div className="sticky top-0 bg-background z-10 pb-2 pt-2">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">{mockIndex + 1} / {mockQuestions.length}</span>
-            <span className={`text-sm font-mono font-bold ${isTimeWarning ? "text-danger" : "text-muted"}`}>
-              {formatTime(timeLeft)}
-            </span>
-          </div>
-          <div className="bg-border rounded-full h-1.5">
-            <div className="bg-primary rounded-full h-1.5 transition-all" style={{ width: `${((mockIndex + 1) / mockQuestions.length) * 100}%` }} />
-          </div>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4 mb-3 mt-2">
-          {isMulti && <span className="inline-block text-xs bg-warning-bg text-warning-fg border border-warning-border px-2 py-0.5 rounded mb-2">{selectCount}개 선택</span>}
-          <p className="text-sm leading-relaxed whitespace-pre-line">{q.question_text}</p>
-        </div>
-        <div className="space-y-2 mb-3">
-          {q.options.map((opt) => {
-            const isSel = selected.includes(opt.label);
-            return (
-              <button key={opt.label} onClick={() => handleMockSelect(opt.label)}
-                className={`w-full text-left rounded-xl border-2 p-3 transition-all active:scale-[0.99] ${isSel ? "border-primary bg-info-bg" : "border-border bg-card"}`}>
-                <div className="flex gap-3">
-                  <span className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${isSel ? "bg-primary text-on-primary" : "bg-muted-bg text-muted"}`}>{opt.label}</span>
-                  <span className="text-sm leading-relaxed">{opt.text}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => setMockIndex((p) => Math.max(0, p - 1))} disabled={mockIndex === 0}
-            className="flex-1 py-3 rounded-xl border border-border text-sm font-medium disabled:opacity-30">이전</button>
-          {mockIndex < mockQuestions.length - 1 ? (
-            <button onClick={() => setMockIndex((p) => p + 1)} className="flex-1 py-3 rounded-xl bg-primary text-on-primary text-sm font-medium">다음</button>
-          ) : (
-            <button onClick={handleMockFinish} className="flex-1 py-3 rounded-xl bg-danger text-on-primary text-sm font-medium">시험 종료</button>
-          )}
-        </div>
-        <div className="mt-4">
-          <p className="text-xs text-muted mb-2">문제 번호</p>
-          <div className="flex gap-1 flex-wrap">
-            {mockQuestions.map((_, i) => (
-              <button key={i} onClick={() => setMockIndex(i)}
-                className={`w-8 h-8 rounded text-xs font-medium ${i === mockIndex ? "bg-primary text-on-primary" : mockAnswers[i] ? "bg-info-bg text-info-fg" : "bg-muted-bg text-muted"}`}>
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── MOCK RESULT ──
-  if (pageMode === "mock-result" && mockResults) {
-    const score = mockResults.total > 0 ? Math.round((mockResults.correct / mockResults.total) * 1000) : 0;
-    const passed = score >= examConfig.passingScore;
-    return (
-      <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-        <h1 className="text-xl font-bold mb-4">모의고사 결과</h1>
-        <div className={`rounded-2xl p-6 mb-4 text-on-primary text-center ${passed ? "bg-success" : "bg-danger"}`}>
-          <p className="text-sm opacity-80 mb-1">{passed ? "합격!" : "불합격"}</p>
-          <p className="text-4xl font-bold mb-1">{score} / 1000</p>
-          <p className="text-sm opacity-80">정답 {mockResults.correct} / {mockResults.total}문제 (합격 기준: {examConfig.passingScore}점)</p>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4 mb-4">
-          <h2 className="font-semibold mb-3">도메인별 정답률</h2>
-          <div className="space-y-3">
-            {Object.entries(mockResults.domainScores).map(([domain, s]) => {
-              const pct = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-              return (
-                <div key={domain}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>{domain}</span>
-                    <span className="text-muted">{s.correct}/{s.total} ({pct}%)</span>
-                  </div>
-                  <div className="bg-border rounded-full h-2">
-                    <div className={`rounded-full h-2 ${pct >= 70 ? "bg-success" : "bg-danger"}`} style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        {mockResults.wrongQuestions.length > 0 && (
-          <div className="bg-card rounded-xl border border-border p-4 mb-4">
-            <h2 className="font-semibold mb-3">오답 해설 ({mockResults.wrongQuestions.length}문제)</h2>
-            <div className="space-y-4">
-              {mockResults.wrongQuestions.map(({ index, question, selected }) => (
-                <div key={question.id} className="border-b border-border pb-4 last:border-0 last:pb-0">
-                  <p className="text-xs text-muted mb-1">문제 {index + 1}</p>
-                  <p className="text-sm leading-relaxed mb-2 whitespace-pre-line">{question.question_text}</p>
-                  <div className="space-y-1 mb-2">
-                    {question.options.map((opt) => {
-                      const isSel = selected.includes(opt.label);
-                      const isCorr = question.correct_answers.includes(opt.label);
-                      return (
-                        <p key={opt.label} className={`text-xs ${isCorr ? "text-success-fg font-medium" : isSel ? "text-danger-fg line-through" : "text-muted"}`}>
-                          {opt.label}. {opt.text}{isCorr && " ✓"}{isSel && !isCorr && " (내 답)"}
-                        </p>
-                      );
-                    })}
-                  </div>
-                  {question.explanation && (
-                    <div className="bg-info-bg border border-info-border rounded-lg p-3 mt-2">
-                      <MarkdownContent className="text-info-fg">{question.explanation}</MarkdownContent>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        <button onClick={() => setPageMode("select")} className="w-full py-3 rounded-xl bg-primary text-on-primary text-sm font-medium">
-          문제 선택으로 돌아가기
+        <button
+          type="button"
+          onClick={handleOpenReport}
+          className="text-xs text-danger-fg hover:text-danger transition-colors px-2 py-1 flex items-center gap-1"
+        >
+          <span aria-hidden>??/span>
+          <span>?섏젙 ?붿껌</span>
         </button>
       </div>
-    );
-  }
 
-  return null;
+      <QuestionCard
+        question={questions[currentIndex]}
+        questionIndex={currentIndex}
+        totalQuestions={questions.length}
+        onNext={handleNext}
+      />
+
+      {reportOpen && questions[currentIndex] && (
+        <CorrectionReportSheet
+          isOpen
+          question={questions[currentIndex]}
+          onClose={() => setReportOpen(false)}
+          onSubmitted={(msg) => {
+            setReportOpen(false);
+            showReportToast(msg);
+          }}
+        />
+      )}
+
+      {reportToast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-card-elevated border border-border text-foreground text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-fade-in whitespace-nowrap">
+          {reportToast}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function QuestionsPage() {
   return (
-    <Suspense fallback={<div className="max-w-lg mx-auto px-4 pt-20 text-center"><p className="text-muted">로딩 중...</p></div>}>
+    <Suspense
+      fallback={
+        <div className="max-w-lg mx-auto px-4 pt-20 text-center">
+          <p className="text-muted">臾몄젣 濡쒕뵫 以?..</p>
+        </div>
+      }
+    >
       <QuestionsContent />
     </Suspense>
   );
+}
+
+function getSampleQuestions(): Question[] {
+  return [
+    {
+      id: "sample-1",
+      source: "nxtcloud",
+      question_text:
+        "???뚯궗媛 AWS?먯꽌 寃곗젣 ?좏뵆由ъ??댁뀡???ㅽ뻾?섎젮怨??⑸땲?? ?좏뵆由ъ??댁뀡? 紐⑤컮???μ튂濡쒕???寃곗젣 ?뚮┝??諛쏆뒿?덈떎. 寃곗젣 ?뚮┝? 異붽? 泥섎━瑜??꾪빐 ?꾩넚?섍린 ?꾩뿉 湲곕낯?곸씤 ?뺤씤???꾩슂?⑸땲?? 諛깆뿏??泥섎━ ?좏뵆由ъ??댁뀡? ?κ린媛??ㅽ뻾?섎ŉ 而댄벂??諛?硫붾え由щ? 議곗젙?댁빞 ?⑸땲?? ?뚯궗???명봽??愿由щ? ?먰븯吏 ?딆뒿?덈떎.\n\n理쒖냼?쒖쓽 ?댁쁺 ?ㅻ쾭?ㅻ뱶濡??대윭???붽뎄 ?ы빆??異⑹”?섎뒗 ?붾（?섏? 臾댁뾿?낅땲源?",
+      options: [
+        { label: "A", text: "Amazon SQS ?湲곗뿴???앹꽦?⑸땲?? ?湲곗뿴??Amazon EventBridge 洹쒖튃怨??듯빀?섏뿬 紐⑤컮???μ튂?먯꽌 寃곗젣 ?뚮┝??諛쏆뒿?덈떎. Amazon EKS??諛깆뿏???좏뵆由ъ??댁뀡??諛고룷?⑸땲??" },
+        { label: "B", text: "Amazon API Gateway API瑜??앹꽦?⑸땲?? API瑜?AWS Step Functions ?곹깭 癒몄떊怨??듯빀?⑸땲?? Amazon EKS???먯껜 愿由ы삎 ?몃뱶濡?諛깆뿏?쒕? 諛고룷?⑸땲??" },
+        { label: "C", text: "Amazon SQS ?湲곗뿴???앹꽦?⑸땲?? Amazon EC2 ?ㅽ뙚 ?몄뒪?댁뒪??諛깆뿏???좏뵆由ъ??댁뀡??諛고룷?⑸땲??" },
+        { label: "D", text: "Amazon API Gateway API瑜??앹꽦?⑸땲?? API瑜?AWS Lambda? ?듯빀?섏뿬 寃곗젣 ?뚮┝??寃利앺빀?덈떎. Amazon ECS??AWS Fargate濡?諛깆뿏?쒕? 諛고룷?⑸땲??" },
+      ],
+      correct_answers: ["D"],
+      explanation:
+        "紐⑤컮???μ튂? 媛숈? ?몃? ?대씪?댁뼵?몃줈遺???곗씠?곕? ?섏떊???뚮뒗 Amazon API Gateway媛 媛???쒖??곸씤 吏꾩엯?먯엯?덈떎. 媛꾨떒???좏슚??寃?щ뒗 AWS Lambda濡?泥섎━?섍퀬, ?명봽??愿由??놁씠 ?μ떆媛??ㅽ뻾?섎뒗 而⑦뀒?대꼫??AWS Fargate(Amazon ECS)瑜??ъ슜?섎뒗 寃껋씠 ?뺣떟?낅땲??",
+      related_services: ["API Gateway", "Lambda", "ECS", "Fargate"],
+    },
+  ];
 }
