@@ -37,12 +37,6 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 3. **풀이 보기**를 누르면 정답 해설 / 상세 풀이 / 관련 서비스 탭을 확인할 수 있습니다.
 4. **다음 문제** 버튼으로 넘어갑니다.
 
-<p align="center">
-  <img src="./public/screenshots/questions.png" alt="문제풀기 화면" width="300" />
-  <img src="./public/screenshots/questions-result.png" alt="정답 확인 후" width="300" />
-  <img src="./public/screenshots/questions-explanation.png" alt="해설 보기" width="300" />
-</p>
-
 #### 오답노트 저장 (텍스트 드래그)
 
 문제 지문이나 해설에서 **텍스트를 드래그(길게 누르기)**하면 팝오버가 뜨고, "오답노트에 저장"을 선택할 수 있습니다. 메모를 추가하면 오답 탭의 오답노트에 저장됩니다.
@@ -175,25 +169,3 @@ AWS 서비스 사전으로, 카테고리별로 서비스를 탐색할 수 있습
 | 7 | 모의고사 결과에서 문제 바로가기 | 결과 화면의 오답 문제 클릭 시 해당 문제로 이동 |
 | 8 | 학습 통계 시각화 강화 | 주간/월간 그래프, 서비스별 약점 분석 차트 |
 | 9 | 다크/라이트 모드 토글 | 현재 시스템 테마만 따름. 수동 전환 UI 추가 |
-
----
-
-## 개발 환경 설정
-
-```bash
-npm install
-npm run dev
-```
-
-`http://localhost:3000`에서 확인할 수 있습니다.
-
-### 환경 변수
-
-`.env.local` 파일을 생성하고 아래 값을 설정합니다:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-Supabase 없이도 앱의 기본 기능(문제풀기, 로컬 통계)은 작동하지만, 회원가입/로그인/수정 요청/메시지 기능은 Supabase가 필요합니다.
