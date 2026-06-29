@@ -6,7 +6,7 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 
 ---
 
-## 👋 만든 이유
+## 👋 
 
 이 앱은 제가 SAA를 준비하면서 직접 쓰려고 만들기 시작했어요.
 
@@ -62,10 +62,6 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 문제에 오류가 있을 때 상단의 ⚠ **수정 요청** 버튼을 누르면 신고할 수 있습니다.
 - 번역 필요 / 해설 오류 / 선지 오류 / 정답 오류 / 서비스 분류 오류 / 지문 오류
 
-<p align="center">
-  <img src="./public/screenshots/questions-report.png" alt="수정 요청 시트" width="300" />
-</p>
-
 ---
 
 ### 📋 모의고사
@@ -104,10 +100,6 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 #### 수정 요청
 
 - 내가 신고한 문제 오류 목록을 확인하고 삭제할 수 있습니다.
-
-<p align="center">
-  <img src="./public/screenshots/review.png" alt="오답 화면" width="300" />
-</p>
 
 ---
 
