@@ -1,36 +1,186 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AWS 자격증 학습 앱
 
-## Getting Started
+AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시험 준비를 위한 모바일 최적화 웹앱입니다.
 
-First, run the development server:
+🔗 **배포 URL**: https://app-hyunseocarolineohs-projects.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 👋 만든 이유
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+이 앱은 제가 SAA를 준비하면서 직접 쓰려고 만들기 시작했어요.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+기존에 문제 사이트들이 있긴 한데, 모바일에서 보기 불편하거나, 틀린 문제를 다시 찾아보기 번거롭거나, 어떤 서비스 개념이 약한지 한눈에 파악이 안 되더라고요. 출퇴근할 때 틈새시간을 활용하고 싶었는데, 모바일 친화적인 웹은 없어서 아쉬웠어요.
 
-## Learn More
+그래서 그냥 제가 원하는 방식으로 만들었습니다 ㅎㅎ
 
-To learn more about Next.js, take a look at the following resources:
+만들다 보니 주변에 같이 공부하는 분들도 쓸 수 있으면 좋겠다 싶어서 누구나 쓸 수 있게 열어뒀습니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+아직 부족한 부분이 많습니다. 문제 해설이 어색하거나, 오류가 보이거나, 기능이 불편하면 문제 화면 하단의 ⚠ 버튼이나 마이페이지 건의사항으로 바로 알려주세요. 하나하나 다 읽고 반영하겠습니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+공부하느라 수고 많으세요. 한 방에 합격하시길 바랍니다. 🍀
 
-## Deploy on Vercel
+*오현서 드림.*
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 시작하기
+
+### 첫 접속 흐름
+
+1. 앱에 접속하면 **로그인 / 회원가입** 화면이 표시됩니다.
+2. 이메일로 회원가입 후 **시험 선택** 화면에서 학습할 시험을 고릅니다.
+   - 🏗️ SAA-C03 (Solutions Architect Associate)
+   - ☁️ CLF-C02 (Cloud Practitioner)
+3. **닉네임**을 설정하면 메인 화면(문제풀기)으로 진입합니다.
+
+시험 종류는 나중에 마이페이지에서 언제든 변경할 수 있습니다.
+
+---
+
+## 탭별 기능 가이드
+
+하단 내비게이션에 5개 탭이 있습니다.
+
+### 📝 문제풀기
+
+선택한 시험에 해당하는 문제를 랜덤 순서로 풀 수 있는 메인 학습 공간입니다. 아직 풀지 않은 문제가 우선 배치됩니다.
+
+#### 문제 풀이 흐름
+
+1. 선지를 선택하고 **정답 확인** 버튼을 누릅니다.
+2. 정답/오답 결과가 표시됩니다. 정답이면 축하 효과가 나옵니다.
+3. **풀이 보기**를 누르면 정답 해설 / 상세 풀이 / 관련 서비스 탭을 확인할 수 있습니다.
+4. **다음 문제** 버튼으로 넘어갑니다.
+
+#### 오답노트 저장 (텍스트 드래그)
+
+문제 지문이나 해설에서 텍스트를 드래그(길게 누르기)하면 팝오버가 뜨고, "오답노트에 저장"을 선택할 수 있습니다. 메모를 추가하면 오답 탭의 오답노트에 저장됩니다.
+
+#### 수정 요청 (문제 오류 신고)
+
+문제에 오류가 있을 때 상단의 ⚠ **수정 요청** 버튼을 누르면 신고할 수 있습니다.
+- 번역 필요 / 해설 오류 / 선지 오류 / 정답 오류 / 서비스 분류 오류 / 지문 오류
+
+<p align="center">
+  <img src="./public/screenshots/questions-report.png" alt="수정 요청 시트" width="300" />
+</p>
+
+---
+
+### 📋 모의고사
+
+실제 시험과 유사한 환경에서 미니 모의고사를 볼 수 있습니다.
+
+| 항목 | SAA-C03 | CLF-C02 |
+|------|---------|---------|
+| 문제 수 | 10문제 | 65문제 |
+| 시간 제한 | 15분 | 90분 |
+| 합격 기준 | 720점 (1000점 만점) | 700점 (1000점 만점) |
+
+- 도메인별 실제 출제 비중에 따라 문제가 선별됩니다.
+- 시간 초과 시 자동 제출됩니다.
+- 결과 화면에서 도메인별 점수, 합격/불합격 여부, 틀린 문제를 확인할 수 있습니다.
+- 이전 시험 기록이 목록으로 저장되어 추이를 볼 수 있습니다.
+
+---
+
+### 🔄 오답
+
+오답 관리를 위한 3개의 서브탭으로 구성됩니다.
+
+#### 오답 복습
+
+- 복습 일정이 자동 계산됩니다.
+- 오늘 복습할 문제가 있으면 **"복습 시작"** 버튼이 활성화되며, 누르면 복습 예정 문제만 모아서 풀 수 있습니다.
+- 틀린 문제 목록이 카드로 나열되며, **카드를 터치하면 해당 문제 하나만 바로 확인**할 수 있습니다 (단일 문제 보기).
+
+#### 오답노트
+
+- 문제 풀이 중 텍스트 드래그로 저장한 노트가 최신순으로 표시됩니다.
+- 검색, 메모 수정, 삭제가 가능합니다.
+- 각 노트에서 **"문제보기"** 링크를 터치하면 해당 문제를 바로 확인할 수 있습니다 (단일 문제 보기).
+
+#### 수정 요청
+
+- 내가 신고한 문제 오류 목록을 확인하고 삭제할 수 있습니다.
+
+<p align="center">
+  <img src="./public/screenshots/review.png" alt="오답 화면" width="300" />
+</p>
+
+---
+
+### 📖 개념
+
+AWS 서비스 사전으로, 카테고리별로 서비스를 탐색할 수 있습니다.
+
+- 서비스별 요약, 비교 대상, 빈출도가 한눈에 보입니다.
+- 상세 정보가 있는 서비스는 터치하면 펼쳐져서 설명 / 주요 특징 / 유스케이스 / 시험 팁 / 과금 방식을 볼 수 있습니다.
+- 문제가 있는 서비스는 **"관련 문제 풀기"** 링크로 해당 서비스 관련 문제만 필터링하여 풀 수 있습니다 (서비스별 모드).
+- 서비스명이나 키워드로 검색 가능합니다.
+
+<p align="center">
+  <img src="./public/screenshots/concepts.png" alt="개념 화면" width="300" />
+</p>
+
+---
+
+### 👤 마이페이지
+
+- **학습 통계**: 총 풀이 수, 정답률, 연속 학습일, 평균 풀이 시간
+- **시험 종류 변경**: SAA-C03 ↔ CLF-C02 전환
+- **수정 요청 관리**: 내가 신고한 문제 오류 목록 확인/삭제
+- **업데이트 로그**: 앱 변경 이력 확인
+- **개발자에게 건의사항**: 버그 제보, 기능 요청, 응원의 메시지(^^)보내기
+
+<p align="center">
+  <img src="./public/screenshots/mypage.png" alt="마이페이지 화면" width="300" />
+</p>
+
+---
+
+## SAA-C03 vs CLF-C02 기능 차이
+
+> 📅 2025년 6월 29일 기준
+
+| 기능 | SAA-C03 | CLF-C02 |
+|------|---------|---------|
+| 문제풀기 | ✅ | ✅ |
+| 모의고사 | ✅ (10문제/15분) | ✅ (65문제/90분) |
+| 오답 복습 (SM-2) | ✅ | ✅ |
+| 오답노트 | ✅ | ✅ |
+| 수정 요청 | ✅ | ✅ |
+| 개념 탭 - 상세 정보 (설명/특징/유스케이스/시험팁/과금) | ✅ | ❌ (기본 요약만 표시) |
+| 개념 탭 - 서비스별 문제 풀기 | ✅ | ✅ |
+| 개념 탭 - 서비스 빈출도 표시 | ✅ | ❌ |
+| 개념 탭 - 서비스 카테고리 | 컴퓨팅/스토리지/데이터베이스/네트워킹/보안/분석·통합/관리·모니터링 | Cloud Concepts/Security and Compliance/Cloud Technology and Services/Billing, Pricing and Support |
+
+---
+
+## 개발 백로그
+
+### 🔴 P0 — CLF-C02 기능 동등화
+
+| # | 항목 | 설명 |
+|---|------|------|
+| 1 | CLF 개념 탭 상세 정보 | 서비스별 설명, 주요 특징, 유스케이스, 시험 팁, 과금 방식 추가 |
+| 2 | CLF 서비스 빈출도 표시 | CLF 문제 데이터 기반 빈출도 집계 및 개념 탭에 표시 |
+| 3 | CLF 문제 한국어 번역 | 현재 영문으로만 제공되는 CLF 문제들의 지문, 선지, 해설 한국어 번역 |
+
+### 🟡 P1 — 미완성 기능
+
+| # | 항목 | 설명 |
+|---|------|------|
+| 3 | 동기화 연결 | sync.ts에 서버 동기화 로직이 구현되어 있으나 앱에서 실제 호출하지 않음. 로그인/문제 풀이 시 sync 함수 연결 필요 |
+| 4 | 모의고사 CLF 도메인 선별 로직 | CLF 모의고사 시 도메인별 비중에 맞춘 문제 선별 구현 (현재 SAA 도메인 로직만 하드코딩) |
+| 5 | 개념 탭 CLF/SAA 분기 렌더링 | 시험 종류에 따라 개념 페이지가 다른 카테고리/서비스 목록을 표시하도록 분기 (import만 존재, 렌더링 미구현) |
+| 6 | 오프라인 지원 (PWA) | next-pwa 설치되어 있으나 서비스 워커 설정 미완성 |
+
+### 🟢 P2 — 개선 사항
+
+| # | 항목 | 설명 |
+|---|------|------|
+| 7 | 모의고사 결과에서 문제 바로가기 | 결과 화면의 오답 문제 클릭 시 해당 문제로 이동 |
+| 8 | 학습 통계 시각화 강화 | 주간/월간 그래프, 서비스별 약점 분석 차트 |
+| 9 | 다크/라이트 모드 토글 | 현재 시스템 테마만 따름. 수동 전환 UI 추가 |
