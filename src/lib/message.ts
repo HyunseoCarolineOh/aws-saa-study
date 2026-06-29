@@ -1,4 +1,4 @@
-import { createBrowserClient } from './supabase';
+import { createClient } from './supabase';
 
 /**
  * 메시지 유효성 검증
@@ -25,7 +25,7 @@ export async function sendMessage(content: string): Promise<{ success: boolean; 
     return { success: false, error: '메시지는 500자 이내로 입력해주세요' };
   }
 
-  const supabase = createBrowserClient();
+  const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

@@ -1,4 +1,4 @@
-import { createBrowserClient } from './supabase';
+import { createClient } from './supabase';
 import type { NicknameValidation } from './types';
 
 const NICKNAME_REGEX = /^[가-힣a-zA-Z0-9]{2,12}$/;
@@ -27,7 +27,7 @@ export function validateNickname(nickname: string): NicknameValidation {
  * Returns true if the nickname is available (not taken)
  */
 export async function checkNicknameAvailability(nickname: string): Promise<boolean> {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
   const { data, error } = await supabase
     .from('profiles')
     .select('id')
@@ -62,7 +62,7 @@ export async function saveNickname(nickname: string): Promise<{ success: boolean
     return { success: false, error: '이미 사용 중인 닉네임입니다' };
   }
 
-  const supabase = createBrowserClient();
+  const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
