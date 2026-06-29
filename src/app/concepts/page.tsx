@@ -6,7 +6,6 @@ import type { Question, ServiceStats } from "@/lib/types";
 import { getAllServiceStats } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
 import { CLF_CATEGORIES, CLF_SERVICE_NAMES, getClfDataServiceNames } from "@/lib/clfServiceMap";
-import { CLF_CONCEPT_DATA } from "@/lib/clfConceptData";
 import { useExam } from "@/contexts/ExamContext";
 
 interface AWSService {
@@ -1268,7 +1267,7 @@ const ALL_CONCEPT_NAMES = AWS_SERVICES.flatMap((cat) =>
 export default function ConceptsPage() {
   const { currentExam } = useExam();
   const isCLF = currentExam === "CLF-C02";
-  const activeCategories = (isCLF ? CLF_CONCEPT_DATA : AWS_SERVICES) as AWSCategory[];
+  const activeCategories = (isCLF ? CLF_CATEGORIES : AWS_SERVICES) as AWSCategory[];
   const activeServiceNames = isCLF ? CLF_SERVICE_NAMES : ALL_CONCEPT_NAMES;
   const activeGetNames = isCLF ? getClfDataServiceNames : getDataServiceNames;
 
