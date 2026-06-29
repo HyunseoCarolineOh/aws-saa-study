@@ -91,6 +91,12 @@ export interface ExamContextValue {
   setExam: (exam: ExamType) => void;
 }
 
+export type NicknameValidationError = 'too_short' | 'too_long' | 'invalid_chars' | 'already_taken';
+
+export type NicknameValidation =
+  | { isValid: true; error?: undefined }
+  | { isValid: false; error: NicknameValidationError };
+
 export interface MockExam {
   id: string;
   started_at: string;
