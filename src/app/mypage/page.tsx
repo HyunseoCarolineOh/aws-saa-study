@@ -9,7 +9,9 @@ import { createBrowserClient } from "@/lib/supabase";
 import { validateNickname, checkNicknameAvailability, saveNickname } from "@/lib/nickname";
 import MessageForm from "@/components/MessageForm";
 import ExamSelector from "@/components/ExamSelector";
+import Link from "next/link";
 import type { Attempt, DailyStats } from "@/lib/types";
+import { isCorrectionsEnabled, listPendingCorrections, deleteCorrection, type CorrectionRequest } from "@/lib/corrections";
 
 export default function MyPage() {
   const { user, signOut } = useAuth();
@@ -339,9 +341,61 @@ export default function MyPage() {
         <ExamSelector mode="switch" />
       </section>
 
+      {/* 수정 요청 관리 섹션 */}
+      <section className="bg-card rounded-lg border border-border p-4">
+        <h2 className="font-semibold mb-3">수정 요청 관리</h2>
+        <p className="text-sm text-muted mb-3">문제 오류를 신고한 내역을 확인할 수 있습니다.</p>
+        <Link
+          href="/review"
+          className="inline-block text-sm text-primary font-medium hover:underline"
+        >
+          오답 탭에서 확인하기 &rarr;
+        </Link>
+      </section>
+
+      {/* 업데이트 로그 섹션 */}
+      <section className="bg-card rounded-lg border border-border p-4">
+        <h2 className="font-semibold mb-3">업데이트 로그</h2>
+        <div className="space-y-3 text-sm">
+          <div className="border-b border-border pb-2">
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-medium">v1.3 — CLF 기능 강화</span>
+              <span className="text-xs text-muted">2025.06.29</span>
+            </div>
+            <ul className="text-xs text-muted space-y-0.5">
+              <li>• CLF 개념 탭 상세 정보 추가 (설명/특징/시험팁)</li>
+              <li>• CLF 문제 100문제 한국어 번역 완료</li>
+              <li>• CLF 서비스 빈출도 배지 표시</li>
+            </ul>
+          </div>
+          <div className="border-b border-border pb-2">
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-medium">v1.2 — 오답 바로가기</span>
+              <span className="text-xs text-muted">2025.06.29</span>
+            </div>
+            <ul className="text-xs text-muted space-y-0.5">
+              <li>• 복습 탭에서 문제 바로가기 기능 추가</li>
+              <li>• 모의고사 결과에서 오답 문제 바로가기</li>
+              <li>• 데이터 동기화 연결</li>
+            </ul>
+          </div>
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-medium">v1.1 — 멀티 시험 지원</span>
+              <span className="text-xs text-muted">2025.06</span>
+            </div>
+            <ul className="text-xs text-muted space-y-0.5">
+              <li>• SAA-C03 / CLF-C02 듀얼 시험 지원</li>
+              <li>• 회원가입/로그인 기능</li>
+              <li>• 오답노트 텍스트 드래그 저장</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* 개발자에게 메시지 보내기 섹션 */}
       <section className="bg-card rounded-lg border border-border p-4">
-        <h2 className="font-semibold mb-3">개발자에게 메시지 보내기</h2>
+        <h2 className="font-semibold mb-3">개발자에게 건의사항</h2>
         <MessageForm />
       </section>
     </div>
