@@ -1404,7 +1404,7 @@ export default function ConceptsPage() {
                           {/* 시험 팁 */}
                           {svc.examTips && (
                             <div className="bg-warning-bg border border-warning-border rounded-lg p-3">
-                              <p className="text-xs font-bold text-warning-fg mb-1.5">SAA 시험 팁</p>
+                              <p className="text-xs font-bold text-warning-fg mb-1.5">시험 팁</p>
                               <ul className="space-y-1">
                                 {svc.examTips.map((tip, i) => (
                                   <li key={i} className="text-xs text-warning-fg leading-relaxed flex gap-1.5">
