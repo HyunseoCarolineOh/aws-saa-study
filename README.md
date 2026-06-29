@@ -1,4 +1,4 @@
-# AWS 자격증 학습 앱
+# AWS Study
 
 AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시험 준비를 위한 모바일 최적화 웹앱입니다.
 
