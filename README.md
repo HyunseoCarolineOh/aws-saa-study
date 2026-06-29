@@ -6,6 +6,18 @@ AWS SAA-C03 (Solutions Architect Associate) 및 CLF-C02 (Cloud Practitioner) 시
 
 ---
 
+## 스크린샷
+
+| 문제풀기 | 모의고사 | 오답 |
+|:---:|:---:|:---:|
+| ![문제풀기](/screenshots/questions.png) | ![모의고사](/screenshots/mock-exam.png) | ![오답](/screenshots/review.png) |
+
+| 개념 | 마이페이지 |
+|:---:|:---:|
+| ![개념](/screenshots/concepts.png) | ![마이페이지](/screenshots/mypage.png) |
+
+---
+
 ## 시작하기
 
 ### 첫 접속 흐름

@@ -44,3 +44,6 @@ next-env.d.ts
 
 # data backups
 public/data/*_backup_*.json
+
+# screenshots tool (temp)
+.screenshots-tool/
