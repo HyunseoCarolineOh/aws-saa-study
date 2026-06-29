@@ -1351,7 +1351,7 @@ export default function ConceptsPage() {
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-sm text-primary">{svc.name}</p>
-                            {svc.frequency && svc.frequency >= 30 && (
+                            {svc.frequency && svc.frequency >= (isCLF ? 2 : 30) && (
                               <span className="text-[10px] bg-danger-bg text-danger-fg border border-danger-border px-1.5 py-0.5 rounded font-medium">
                                 빈출 {svc.frequency}문제
                               </span>
