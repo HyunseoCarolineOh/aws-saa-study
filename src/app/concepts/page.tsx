@@ -5,8 +5,9 @@ import Link from "next/link";
 import type { Question, ServiceStats } from "@/lib/types";
 import { getAllServiceStats } from "@/lib/store";
 import { getDataServiceNames } from "@/lib/serviceMap";
-import { CLF_CATEGORIES, CLF_SERVICE_NAMES, getClfDataServiceNames } from "@/lib/clfServiceMap";
 import { useExam } from "@/contexts/ExamContext";
+import { CLF_CATEGORIES, getClfDataServiceNames, CLF_SERVICE_NAMES } from "@/lib/clfServiceMap";
+import { CLF_CONCEPT_DATA, type ClfConceptCategory } from "@/lib/clfConceptData";
 
 interface AWSService {
   name: string;
@@ -1265,29 +1266,35 @@ const ALL_CONCEPT_NAMES = AWS_SERVICES.flatMap((cat) =>
 );
 
 export default function ConceptsPage() {
-  const { currentExam } = useExam();
-  const isCLF = currentExam === "CLF-C02";
-  const activeCategories = (isCLF ? CLF_CATEGORIES : AWS_SERVICES) as AWSCategory[];
-  const activeServiceNames = isCLF ? CLF_SERVICE_NAMES : ALL_CONCEPT_NAMES;
-  const activeGetNames = isCLF ? getClfDataServiceNames : getDataServiceNames;
-
   const [search, setSearch] = useState("");
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [expandedService, setExpandedService] = useState<string | null>(null);
   const [statsMap, setStatsMap] = useState<Map<string, ServiceStats>>(new Map());
+  const examContext = useExam();
+  const currentExam = examContext?.currentExam ?? "SAA-C03";
+  const isCLF = currentExam === "CLF-C02";
+
+  // CLF인 경우 CLF_CONCEPT_DATA, 아니면 SAA AWS_SERVICES
+  const serviceData: AWSCategory[] = isCLF
+    ? (CLF_CONCEPT_DATA as unknown as AWSCategory[])
+    : AWS_SERVICES;
+  const conceptNames = isCLF
+    ? CLF_SERVICE_NAMES
+    : ALL_CONCEPT_NAMES;
+  const getServiceNames = isCLF ? getClfDataServiceNames : getDataServiceNames;
 
   useEffect(() => {
     fetch(`/api/questions?exam=${currentExam}`)
       .then((res) => res.json())
       .then((data) => {
         const questions = data.questions as Question[];
-        const stats = getAllServiceStats(questions, activeGetNames, activeServiceNames);
+        const stats = getAllServiceStats(questions, getServiceNames, conceptNames);
         setStatsMap(stats);
       })
       .catch(() => {});
   }, [currentExam]);
 
-  const filteredCategories = activeCategories.map((cat) => ({
+  const filteredCategories = serviceData.map((cat) => ({
     ...cat,
     services: cat.services.filter(
       (svc) =>
@@ -1298,7 +1305,7 @@ export default function ConceptsPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-24">
-      <h1 className="text-xl font-bold mb-4">{isCLF ? "CLF-C02 개념 사전" : "AWS 서비스 사전"}</h1>
+      <h1 className="text-xl font-bold mb-4">AWS 서비스 사전</h1>
 
       {/* 검색 */}
       <input
@@ -1404,7 +1411,7 @@ export default function ConceptsPage() {
                           {/* 시험 팁 */}
                           {svc.examTips && (
                             <div className="bg-warning-bg border border-warning-border rounded-lg p-3">
-                              <p className="text-xs font-bold text-warning-fg mb-1.5">SAA 시험 팁</p>
+                              <p className="text-xs font-bold text-warning-fg mb-1.5">{isCLF ? "CLF" : "SAA"} 시험 팁</p>
                               <ul className="space-y-1">
                                 {svc.examTips.map((tip, i) => (
                                   <li key={i} className="text-xs text-warning-fg leading-relaxed flex gap-1.5">
