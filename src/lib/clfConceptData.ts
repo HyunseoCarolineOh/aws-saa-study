@@ -13,6 +13,7 @@ export interface ClfConceptService {
   useCases?: string[];
   examTips?: string[];
   pricing?: string;
+  frequency?: number;
 }
 
 export interface ClfConceptCategory {
@@ -28,6 +29,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "EC2",
         summary: "가상 서버. 클라우드에서 컴퓨팅 용량 제공",
         compare: "Lambda, Lightsail",
+        frequency: 9,
         description: "Amazon EC2는 클라우드에서 크기 조정이 가능한 가상 서버를 제공하는 핵심 컴퓨팅 서비스입니다. 다양한 인스턴스 유형과 구매 옵션(온디맨드, 예약, 스팟)을 통해 워크로드에 최적화된 컴퓨팅 환경을 구성할 수 있습니다.",
         keyFeatures: [
           "다양한 인스턴스 유형: 범용, 컴퓨팅 최적화, 메모리 최적화 등",
@@ -46,6 +48,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "S3",
         summary: "객체 스토리지. 무제한 용량, 높은 내구성",
         compare: "EBS, EFS",
+        frequency: 4,
         description: "Amazon S3는 어디서든 원하는 양의 데이터를 저장하고 검색할 수 있는 객체 스토리지 서비스입니다. 99.999999999%(11 9's)의 내구성을 제공하며, 다양한 스토리지 클래스로 비용을 최적화할 수 있습니다.",
         keyFeatures: [
           "무제한 스토리지 용량, 단일 객체 최대 5TB",
@@ -105,6 +108,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "IAM",
         summary: "ID/액세스 관리. 사용자, 역할, 정책",
         compare: "Cognito",
+        frequency: 3,
         description: "AWS IAM은 AWS 리소스에 대한 액세스를 안전하게 관리하는 서비스입니다. 사용자, 그룹, 역할을 생성하고 세밀한 권한 정책을 부여하여 최소 권한 원칙을 실현합니다.",
         keyFeatures: [
           "사용자(User), 그룹(Group), 역할(Role)로 접근 관리",
@@ -230,6 +234,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "VPC",
         summary: "가상 네트워크. 격리된 네트워크 환경 구성",
         compare: "",
+        frequency: 2,
         description: "Amazon VPC는 AWS 클라우드에서 논리적으로 격리된 가상 네트워크를 정의하는 서비스입니다. 퍼블릭/프라이빗 서브넷으로 리소스를 분리하고 보안 그룹으로 접근을 제어합니다.",
         keyFeatures: [
           "퍼블릭 서브넷(인터넷 접근) / 프라이빗 서브넷(격리)",
@@ -281,6 +286,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "ELB",
         summary: "로드 밸런서. 트래픽 분산",
         compare: "",
+        frequency: 2,
         description: "Elastic Load Balancing은 수신 트래픽을 여러 대상(EC2, 컨테이너 등)에 자동으로 분산하는 서비스입니다. 고가용성과 내결함성을 제공합니다.",
         keyFeatures: [
           "ALB(HTTP/HTTPS, L7), NLB(TCP/UDP, L4) 유형",
@@ -298,6 +304,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "Auto Scaling",
         summary: "자동 확장/축소. 수요에 따라 인스턴스 조정",
         compare: "",
+        frequency: 2,
         description: "Amazon EC2 Auto Scaling은 수요에 따라 EC2 인스턴스 수를 자동으로 늘리거나 줄이는 서비스입니다. 성능을 유지하면서 비용을 최적화합니다.",
         keyFeatures: [
           "최소/최대/원하는 인스턴스 수 설정",
@@ -315,6 +322,7 @@ export const CLF_CONCEPT_DATA: ClfConceptCategory[] = [
         name: "EBS",
         summary: "블록 스토리지. EC2에 연결하는 가상 디스크",
         compare: "S3, EFS",
+        frequency: 2,
         description: "Amazon EBS는 EC2 인스턴스에 연결하여 사용하는 블록 수준 스토리지입니다. 하드디스크나 SSD처럼 동작하며, 인스턴스와 독립적으로 존재합니다.",
         keyFeatures: [
           "EC2에 연결하는 가상 하드디스크",
